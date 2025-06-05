@@ -1,0 +1,121 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 36 33% 97%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 17 100% 60%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 36 33% 97%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 17 100% 70%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 17 100% 60%;
+
+    --radius: 0.5rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    @apply selection:bg-desi-orange selection:text-white;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+}
+
+/* Custom classes */
+@layer components {
+  .transition-fade {
+    @apply transition-all duration-300 ease-in-out;
+  }
+  
+  .transition-slow {
+    @apply transition-all duration-500 ease-in-out;
+  }
+
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-sm border border-white/20 shadow-md;
+  }
+  
+  .nav-link {
+    @apply relative transition-colors duration-200 hover:text-desi-orange after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-desi-orange after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left;
+  }
+  
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Enhanced smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px; /* Adjust based on your header height */
+  overflow-y: scroll; /* Always show scrollbar to prevent layout shifts */
+}
+
+/* Custom scrollbar styling */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted));
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.7);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--muted)) hsl(var(--background));
+}
+
+/* Image loading blur effect */
+.blur-load {
+  background-size: cover;
+  background-position: center;
+}
+
+.blur-load.loaded > img {
+  opacity: 1;
+}
+
+.blur-load > img {
+  opacity: 0;
+  transition: opacity 200ms ease-in-out;
+}
