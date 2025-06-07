@@ -75,7 +75,7 @@ export const SidebarBody = (props: React.ComponentProps<typeof motion.div>) => {
   return (
     <>
       <DesktopSidebar {...props} />
-      <MobileSidebar {...(props as React.ComponentProps<"div">)} />
+      <MobileSidebar {...(props as unknown as React.ComponentProps<'div'>)} />
     </>
   );
 };
@@ -89,7 +89,7 @@ export const DesktopSidebar = ({
   return (
     <motion.div
       className={cn(
-        "h-full px-4 py-4 hidden md:flex md:flex-col bg-neutral-100 dark:bg-neutral-800 w-[300px] flex-shrink-0",
+        "h-full px-4 py-4 hidden md:flex md:flex-col bg-desi-black text-white w-[300px] flex-shrink-0",
         className
       )}
       animate={{
@@ -168,7 +168,7 @@ export const SidebarLink = ({
     <Link
       href={link.href}
       className={cn(
-        "flex items-center justify-start gap-2 group/sidebar py-2",
+        "flex items-center justify-start gap-2 py-2 group/sidebar text-white hover:text-desi-orange transition-colors duration-200",
         className
       )}
       {...props}
