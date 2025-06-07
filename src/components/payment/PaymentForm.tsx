@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState } from 'react';
 import { 
   CreditCard, 
@@ -29,6 +30,10 @@ interface PaymentFormProps {
   deliveryAddress: string;
   setDeliveryAddress: (value: string) => void;
   deliveryMethod: string;
+  selectedMethod: 'card' | 'applePay' | 'googlePay' | 'cashApp';
+  handleApplePay: () => void;
+  handleGooglePay: () => void;
+  handleCashApp: () => void;
   isProcessing: boolean;
   handleSubmit: (e: React.FormEvent) => void;
 }
@@ -53,9 +58,17 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
   deliveryAddress,
   setDeliveryAddress,
   deliveryMethod,
+  selectedMethod,
+  handleApplePay,
+  handleGooglePay,
+  handleCashApp,
   isProcessing,
   handleSubmit
 }) => {
+  const [customerNameError, setCustomerNameError] = useState('');
+  const [customerEmailError, setCustomerEmailError] = useState('');
+  const [customerPhoneError, setCustomerPhoneError] = useState('');
+  const [deliveryAddressError, setDeliveryAddressError] = useState('');
 
   const formatCardNumber = (value: string) => {
     const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
@@ -111,76 +124,162 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
     setCustomerPhone(formatted);
   };
 
-  return (
-    <div className="bg-white rounded-2xl shadow-lg overflow-hidden p-6">
-      <h1 className="text-2xl font-display font-bold mb-6">Payment Details</h1>
+  // Determine if all required customer fields are valid
+  const digits = customerPhone.replace(/\D/g, '');
+  const isCustomerValid =
+    customerName.trim() !== '' &&
+    /\S+@\S+\.\S+/.test(customerEmail) &&
+    /^\d+$/.test(digits) &&
+    digits.length >= 10 &&
+    (deliveryMethod !== 'delivery' || deliveryAddress.trim() !== '');
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="space-y-6">
-          <h2 className="font-medium text-lg">Customer Information</h2>
-          <div className="space-y-4 mb-6">
-            <div className="space-y-2 sm:space-y-2">
-              <Label htmlFor="customerName">Full Name</Label>
-              <Input id="customerName" placeholder="John Smith" value={customerName} onChange={(e) => setCustomerName(e.target.value)} required className="rounded-full border-gray-300 shadow-sm transition-all focus:ring-2 focus:ring-desi-orange focus:outline-none" />
-            </div>
-            <div className="space-y-2 sm:space-y-2">
-              <Label htmlFor="customerEmail">Email Address</Label>
-              <Input id="customerEmail" type="email" placeholder="john@example.com" value={customerEmail} onChange={(e) => setCustomerEmail(e.target.value)} required className="rounded-full border-gray-300 shadow-sm transition-all focus:ring-2 focus:ring-desi-orange focus:outline-none" />
-            </div>
-            <div className="space-y-2 sm:space-y-2">
-              <Label htmlFor="customerPhone">Phone Number</Label>
-              <Input id="customerPhone" placeholder="(123) 456-7890" value={customerPhone} onChange={handlePhoneChange} required className="rounded-full border-gray-300 shadow-sm transition-all focus:ring-2 focus:ring-desi-orange focus:outline-none" />
-            </div>
-            {deliveryMethod === 'delivery' && (
-              <div className="space-y-2 sm:space-y-2">
-                <Label htmlFor="deliveryAddress">Delivery Address</Label>
-                <Input id="deliveryAddress" placeholder="123 Main St, City, State, ZIP" value={deliveryAddress} onChange={(e) => setDeliveryAddress(e.target.value)} required className="rounded-full border-gray-300 shadow-sm transition-all focus:ring-2 focus:ring-desi-orange focus:outline-none" />
-              </div>
+  return (
+    <div className="bg-white rounded-2xl shadow-lg overflow-hidden p-6 transition-shadow duration-300 ease-in-out hover:shadow-2xl animate-fade-in">
+      <h1 className="text-2xl font-display font-bold mb-4">Customer Information</h1>
+
+      {/* Customer Info Fields */}
+      <div className="space-y-4 mb-6 animate-fade-in-delay">
+        <div className="space-y-2">
+          <Label htmlFor="customerName">Full Name</Label>
+          <Input
+            id="customerName"
+            aria-invalid={!!customerNameError}
+            aria-describedby={customerNameError ? 'customerName-error' : undefined}
+            placeholder="John Smith"
+            value={customerName}
+            onChange={(e) => setCustomerName(e.target.value)}
+            onBlur={() => {
+              if (!customerName.trim()) setCustomerNameError('Name is required');
+              else setCustomerNameError('');
+            }}
+            required
+            className="rounded-half border-gray-300 shadow-sm transition-all focus:ring-2 focus:ring-desi-orange focus:outline-none"
+          />
+          {customerNameError && (
+            <p id="customerName-error" role="alert" className="mt-1 text-sm text-red-500">
+              {customerNameError}
+            </p>
+          )}
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="customerEmail">Email Address</Label>
+          <Input
+            id="customerEmail"
+            aria-invalid={!!customerEmailError}
+            aria-describedby={customerEmailError ? 'customerEmail-error' : undefined}
+            type="email"
+            placeholder="john@example.com"
+            value={customerEmail}
+            onChange={(e) => setCustomerEmail(e.target.value)}
+            onBlur={() => {
+              if (!customerEmail.trim()) setCustomerEmailError('Email is required');
+              else if (!/\S+@\S+\.\S+/.test(customerEmail)) setCustomerEmailError('Enter a valid email address');
+              else setCustomerEmailError('');
+            }}
+            required
+            className="rounded-half border-gray-300 shadow-sm transition-all focus:ring-2 focus:ring-desi-orange focus:outline-none"
+          />
+          {customerEmailError && (
+            <p id="customerEmail-error" role="alert" className="mt-1 text-sm text-red-500">
+              {customerEmailError}
+            </p>
+          )}
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="customerPhone">Phone Number</Label>
+          <Input
+            id="customerPhone"
+            aria-invalid={!!customerPhoneError}
+            aria-describedby={customerPhoneError ? 'customerPhone-error' : undefined}
+            placeholder="(123) 456-7890"
+            value={customerPhone}
+            onChange={handlePhoneChange}
+            onBlur={() => {
+              const digits = customerPhone.replace(/\D/g, '');
+              if (!digits) setCustomerPhoneError('Phone number is required');
+              else if (!/^\d+$/.test(digits)) setCustomerPhoneError('Phone number must be numeric');
+              else setCustomerPhoneError('');
+            }}
+            required
+            className="rounded-half border-gray-300 shadow-sm transition-all focus:ring-2 focus:ring-desi-orange focus:outline-none"
+          />
+          {customerPhoneError && (
+            <p id="customerPhone-error" role="alert" className="mt-1 text-sm text-red-500">
+              {customerPhoneError}
+            </p>
+          )}
+        </div>
+        {deliveryMethod === 'delivery' && (
+          <div className="space-y-2">
+            <Label htmlFor="deliveryAddress">Delivery Address</Label>
+            <Input
+              id="deliveryAddress"
+              aria-invalid={!!deliveryAddressError}
+              aria-describedby={deliveryAddressError ? 'deliveryAddress-error' : undefined}
+              placeholder="123 Main St, City, State, ZIP"
+              value={deliveryAddress}
+              onChange={(e) => setDeliveryAddress(e.target.value)}
+              onBlur={() => {
+                if (!deliveryAddress.trim()) setDeliveryAddressError('Delivery address is required');
+                else setDeliveryAddressError('');
+              }}
+              required
+              className="rounded-half border-gray-300 shadow-sm transition-all focus:ring-2 focus:ring-desi-orange focus:outline-none"
+            />
+            {deliveryAddressError && (
+              <p id="deliveryAddress-error" role="alert" className="mt-1 text-sm text-red-500">
+                {deliveryAddressError}
+              </p>
             )}
           </div>
+        )}
+      </div>
 
-          <div className="space-y-2 sm:space-y-2">
+      {/* Payment Method Specific Section */}
+      {selectedMethod === 'card' && (
+        <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in-delay">
+          {/* Card Details */}
+          <h1 className="text-2xl font-display font-bold mb-4 mt-4">Card Details</h1>
+          <div className="space-y-2">
             <Label htmlFor="cardName">Name on Card</Label>
             <div className="relative">
-              <Input id="cardName" placeholder="John Smith" value={cardName} onChange={(e) => setCardName(e.target.value)} className="pl-10 rounded-full border-gray-300 shadow-sm transition-all focus:ring-2 focus:ring-desi-orange focus:outline-none" required />
+              <Input id="cardName" placeholder="John Smith" value={cardName} onChange={(e) => setCardName(e.target.value)} className="pl-10 rounded-half border-gray-300 shadow-sm transition-all focus:ring-2 focus:ring-desi-orange focus:outline-none" required />
               <User size={16} className="absolute left-3 top-3 text-gray-500" />
             </div>
           </div>
-
-          <div className="space-y-2 sm:space-y-2">
+          <div className="space-y-2">
             <Label htmlFor="cardNumber">Card Number</Label>
             <div className="relative">
-              <Input id="cardNumber" placeholder="4242 4242 4242 4242" value={cardNumber} onChange={handleCardNumberChange} maxLength={19} className="pl-10 rounded-full border-gray-300 shadow-sm transition-all focus:ring-2 focus:ring-desi-orange focus:outline-none" required />
+              <Input id="cardNumber" placeholder="4242 4242 4242 4242" value={cardNumber} onChange={handleCardNumberChange} maxLength={19} className="pl-10 rounded-half border-gray-300 shadow-sm transition-all focus:ring-2 focus:ring-desi-orange focus:outline-none" required />
               <CreditCardIcon size={16} className="absolute left-3 top-3 text-gray-500" />
             </div>
           </div>
-
           <div className="grid grid-cols-3 gap-4">
-            <div className="space-y-2 sm:space-y-2 col-span-1">
+            <div className="space-y-2 col-span-1">
               <Label htmlFor="expiryDate">Expiry Date</Label>
               <div className="relative">
-                <Input id="expiryDate" placeholder="MM/YY" value={expiryDate} onChange={handleExpiryDateChange} maxLength={5} className="pl-10 rounded-full border-gray-300 shadow-sm transition-all focus:ring-2 focus:ring-desi-orange focus:outline-none" required />
+                <Input id="expiryDate" placeholder="MM/YY" value={expiryDate} onChange={handleExpiryDateChange} maxLength={5} className="pl-10 rounded-half border-gray-300 shadow-sm transition-all focus:ring-2 focus:ring-desi-orange focus:outline-none" required />
                 <Calendar size={16} className="absolute left-3 top-3 text-gray-500" />
               </div>
             </div>
-
-            <div className="space-y-2 sm:space-y-2 col-span-1">
+            <div className="space-y-2 col-span-1">
               <Label htmlFor="cvv">CVV</Label>
-              <Input id="cvv" placeholder="123" value={cvv} onChange={(e) => setCvv(e.target.value.replace(/\D/g, ''))} maxLength={4} type="password" className="rounded-full border-gray-300 shadow-sm transition-all focus:ring-2 focus:ring-desi-orange focus:outline-none" required />
+              <Input id="cvv" placeholder="123" value={cvv} onChange={(e) => setCvv(e.target.value.replace(/\D/g, ''))} maxLength={4} type="password" className="rounded-half border-gray-300 shadow-sm transition-all focus:ring-2 focus:ring-desi-orange focus:outline-none" required />
             </div>
-
-            <div className="space-y-2 sm:space-y-2 col-span-1">
+            <div className="space-y-2 col-span-1">
               <Label htmlFor="billingZip">Billing Zip</Label>
-              <Input id="billingZip" placeholder="12345" value={billingZip} onChange={(e) => setBillingZip(e.target.value.replace(/\D/g, ''))} maxLength={5} className="rounded-full border-gray-300 shadow-sm transition-all focus:ring-2 focus:ring-desi-orange focus:outline-none" required />
+              <Input id="billingZip" placeholder="12345" value={billingZip} onChange={(e) => setBillingZip(e.target.value.replace(/\D/g, ''))} maxLength={5} className="rounded-half border-gray-300 shadow-sm transition-all focus:ring-2 focus:ring-desi-orange focus:outline-none" required />
             </div>
           </div>
-
           <div className="flex items-center pt-4">
             <CreditCard size={16} className="text-gray-500 mr-2" />
             <p className="text-sm text-gray-500">Your payment information is secure and encrypted</p>
           </div>
-
-          <Button type="submit" disabled={isProcessing} className="w-full bg-desi-orange hover:bg-desi-orange/90 text-white py-6 text-lg rounded-full transition-all shadow-md">
+          <Button
+            type="submit"
+            disabled={!isCustomerValid || isProcessing}
+            className="w-full bg-desi-orange hover:bg-desi-orange/90 text-white py-6 text-lg rounded-xl transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             {isProcessing ? (
               <span className="flex items-center">
                 <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -191,8 +290,35 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
               </span>
             ) : 'Checkout'}
           </Button>
-        </div>
-      </form>
+        </form>
+      )}
+      {selectedMethod === 'applePay' && (
+        <button
+          onClick={handleApplePay}
+          disabled={!isCustomerValid || isProcessing}
+          className="w-full bg-black text-white py-3 text-lg rounded-xl transition-all shadow-md hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Pay with Apple Pay
+        </button>
+      )}
+      {selectedMethod === 'googlePay' && (
+        <button
+          onClick={handleGooglePay}
+          disabled={!isCustomerValid || isProcessing}
+          className="w-full bg-red-600 text-white py-3 text-lg rounded-xl transition-all shadow-md hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Pay with GPay
+        </button>
+      )}
+      {selectedMethod === 'cashApp' && (
+        <button
+          onClick={handleCashApp}
+          disabled={!isCustomerValid || isProcessing}
+          className="w-full bg-green-500 text-white py-3 text-lg rounded-xl transition-all shadow-md hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Pay with Cash App Pay
+        </button>
+      )}
     </div>
   );
 };

@@ -49,6 +49,9 @@
   h1, h2, h3, h4, h5, h6 {
     @apply font-display;
   }
+  .theme {
+    --animate-caret-blink: caret-blink 1.25s ease-out infinite;
+  }
 }
 
 /* Custom classes */
@@ -56,7 +59,7 @@
   .transition-fade {
     @apply transition-all duration-300 ease-in-out;
   }
-  
+
   .transition-slow {
     @apply transition-all duration-500 ease-in-out;
   }
@@ -64,11 +67,11 @@
   .glass-card {
     @apply bg-white/80 backdrop-blur-sm border border-white/20 shadow-md;
   }
-  
+
   .nav-link {
     @apply relative transition-colors duration-200 hover:text-desi-orange after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-desi-orange after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left;
   }
-  
+
   .text-balance {
     text-wrap: balance;
   }
@@ -118,4 +121,24 @@ html {
 .blur-load > img {
   opacity: 0;
   transition: opacity 200ms ease-in-out;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@theme inline {
+  @keyframes caret-blink {
+  0%,70%,100% {
+    opacity: 1;
+    }
+  20%,50% {
+    opacity: 0;
+    }
+  }
 }

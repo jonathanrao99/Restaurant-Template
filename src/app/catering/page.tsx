@@ -117,8 +117,8 @@ const Catering = () => {
               <div>
                 <h3 className="font-semibold">Email</h3>
                 <p className="text-gray-600">
-                  <a href="mailto:desiflavorskaty@gmail.com" className="hover:text-desi-orange transition-colors">
-                    desiflavorskaty@gmail.com
+                  <a href="mailto:info@desiflavorskaty.com" className="hover:text-desi-orange transition-colors">
+                    info@desiflavorskaty.com
                   </a>
                 </p>
               </div>

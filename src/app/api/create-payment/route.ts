@@ -1,12 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from 'next/server';
-import { Client, Environment } from 'square';
-
-const squareClient = new Client({
-  environment: process.env.NODE_ENV === 'production' ? Environment.Production : Environment.Sandbox,
-  accessToken: process.env.SQUARE_ACCESS_TOKEN!,
-});
-
 export async function POST(req: NextRequest) {
+  // Dynamically import Square SDK to ensure correct runtime module
+  const { Client, Environment } = await import('square');
+  const squareClient = new Client({
+    environment: process.env.NODE_ENV === 'production' ? Environment.Production : Environment.Sandbox,
+    accessToken: process.env.SQUARE_ACCESS_TOKEN!,
+  });
   try {
     const { sourceId, amount, idempotencyKey } = await req.json();
     if (!sourceId || !amount || !idempotencyKey) {

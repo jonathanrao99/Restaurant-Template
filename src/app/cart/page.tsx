@@ -97,17 +97,17 @@ const Cart = () => {
             <Badge variant="outline" className="bg-orange-100 text-orange-800 text-base px-4 py-1 rounded-xl font-medium">
               Earn 1 loyalty point for every $1 spent. Accumulate 100 points to redeem $10 off your order!
             </Badge>
-          </div>
+        </div>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
             {/* Cart Items and Returning Customer */}
-            <div className="lg:col-span-2">
-              <CartItems
-                items={cartItems}
-                onRemove={removeFromCart}
-                onUpdateQuantity={updateQuantity}
-                onUpdateInstructions={updateSpecialInstructions}
-              />
-            </div>
+          <div className="lg:col-span-2">
+            <CartItems 
+              items={cartItems}
+              onRemove={removeFromCart}
+              onUpdateQuantity={updateQuantity}
+              onUpdateInstructions={updateSpecialInstructions}
+            />
+          </div>
 
             {/* Order Summary and Checkout */}
             <div className="mt-0">

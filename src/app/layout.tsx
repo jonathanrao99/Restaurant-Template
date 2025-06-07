@@ -1,6 +1,6 @@
 import './globals.css';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
+import NavbarWrapper from '@/components/NavbarWrapper';
+import FooterWrapper from '@/components/FooterWrapper';
 import { CartProvider } from '@/context/CartContext';
 import ReactQueryProvider from '@/components/ReactQueryProvider';
 
@@ -19,9 +19,9 @@ export default function RootLayout({
       <body>
         <CartProvider>
           <ReactQueryProvider>
-            <Navbar />
+            <NavbarWrapper />
             {children}
-            <Footer />
+            <FooterWrapper />
           </ReactQueryProvider>
         </CartProvider>
       </body>

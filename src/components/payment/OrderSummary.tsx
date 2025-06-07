@@ -19,13 +19,13 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
   deliveryMethod
 }) => {
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 sticky top-24">
+    <div className="bg-white rounded-2xl shadow-md p-6 sticky top-24 transition-shadow duration-300 ease-in-out hover:shadow-lg animate-fade-in">
       <h2 className="font-display font-bold text-lg mb-4 pb-2 border-b text-black">Order Summary</h2>
       
       <div className="space-y-3 mb-4">
         {cartItems.map(item => (
           <div key={item.id} className="flex justify-between">
-            <span className="text-gray-600">
+            <span className="text-black">
               {item.quantity} x {item.name}
             </span>
             <span>
@@ -37,7 +37,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
       
       <div className="space-y-3 border-t border-gray-200 pt-4 mb-4">
         <div className="flex justify-between">
-          <span className="text-gray-600">Subtotal</span>
+          <span className="text-black">Subtotal</span>
           <span>${subtotal.toFixed(2)}</span>
         </div>
         <div className="flex justify-between">

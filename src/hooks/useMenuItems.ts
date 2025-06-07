@@ -52,7 +52,7 @@ type Category = typeof CATEGORY_ORDER[number];
 export function useMenuItems() {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
-  const { data: menuData, isLoading, error } = useQuery({
+  const { data: menuData, isLoading, error } = useQuery<MenuItemRow[], Error>({
     queryKey: ['menuItems'],
     queryFn: async () => {
       try {

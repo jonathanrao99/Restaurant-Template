@@ -1,6 +1,7 @@
 import { useState, useEffect, ImgHTMLAttributes } from 'react';
 import { cn } from '@/lib/utils';
 import { motion, type MotionProps } from 'framer-motion';
+import { generateSrcSet, getModernFormat } from './optimized-image.utils';
 
 export interface OptimizedImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'srcSet'> {
   src: string;
@@ -14,42 +15,6 @@ export interface OptimizedImageProps extends Omit<ImgHTMLAttributes<HTMLImageEle
   blur?: boolean;
   withAnimation?: boolean;
   animationProps?: MotionProps;
-}
-
-export function generateSrcSet(src: string): string {
-  // If src already contains query params, append width params
-  const hasParams = src.includes('?');
-  const connector = hasParams ? '&' : '?';
-  
-  // Only generate srcset if the image is from our domain
-  if (src.startsWith('/')) {
-    return `
-      ${src} 1x,
-      ${src}${connector}w=640 640w,
-      ${src}${connector}w=750 750w,
-      ${src}${connector}w=828 828w,
-      ${src}${connector}w=1080 1080w,
-      ${src}${connector}w=1200 1200w,
-      ${src}${connector}w=1920 1920w,
-      ${src}${connector}w=2048 2048w,
-      ${src}${connector}w=3840 3840w
-    `;
-  }
-  
-  // For external images, we can't generate a srcset
-  return '';
-}
-
-// Try to load webp version if available
-export function getModernFormat(src: string): string {
-  if (src.startsWith('/') && !src.includes('?') && !src.endsWith('.webp') && !src.endsWith('.avif')) {
-    // Extract extension and replace with webp
-    const extension = src.split('.').pop();
-    if (extension && ['jpg', 'jpeg', 'png'].includes(extension)) {
-      return src.replace(`.${extension}`, '.webp');
-    }
-  }
-  return src;
 }
 
 export const OptimizedImage = ({

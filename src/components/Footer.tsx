@@ -104,7 +104,7 @@ const Footer = () => {
               </li>
               <li className="flex items-center">
                 <Mail size={18} className="text-desi-orange mr-2 flex-shrink-0" />
-                <a href="mailto:desiflavorskaty@gmail.com" className="hover:text-desi-orange transition-colors">desiflavorskaty@gmail.com</a>
+                <a href="mailto:info@desiflavorskaty.com" className="hover:text-desi-orange transition-colors">info@desiflavorskaty.com</a>
               </li>
               <li className="flex items-center">
                 <svg 

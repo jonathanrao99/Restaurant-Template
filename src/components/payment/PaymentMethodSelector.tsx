@@ -1,7 +1,6 @@
 import React from 'react';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { CreditCard, Apple, Globe, DollarSign } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface PaymentMethodSelectorProps {
   value: 'card' | 'applePay' | 'googlePay' | 'cashApp';
@@ -11,26 +10,50 @@ interface PaymentMethodSelectorProps {
 const options = [
   { value: 'card', label: 'Card', icon: <CreditCard size={20} /> },
   { value: 'applePay', label: 'Apple Pay', icon: <Apple size={20} /> },
-  { value: 'googlePay', label: 'Google Pay', icon: <Globe size={20} /> },
+  { value: 'googlePay', label: 'GPay', icon: <Globe size={20} /> },
   { value: 'cashApp', label: 'Cash App', icon: <DollarSign size={20} /> },
-];
+] as const;
+
+// Styles for selected and unselected states
+const selectedStyles: Record<string, string> = {
+  card: 'bg-desi-orange text-white',
+  applePay: 'bg-black text-white',
+  googlePay: 'bg-red-600 text-white',
+  cashApp: 'bg-green-500 text-white',
+};
+
+const unselectedStyles: Record<string, string> = {
+  card: 'border border-desi-orange text-desi-orange hover:bg-desi-orange/10',
+  applePay: 'border border-gray-300 text-gray-700 hover:bg-gray-100',
+  googlePay: 'border border-gray-300 text-gray-700 hover:bg-gray-100',
+  cashApp: 'border border-gray-300 text-gray-700 hover:bg-gray-100',
+};
 
 export default function PaymentMethodSelector({ value, onChange }: PaymentMethodSelectorProps) {
   return (
-    <div className="grid grid-cols-4 gap-4 mb-8">
+    <div
+      role="group"
+      aria-label="Payment Methods"
+      className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 animate-fade-in"
+    >
       {options.map(opt => (
-        <Button
+        <button
           key={opt.value}
-          variant={value === opt.value ? 'default' : 'outline'}
-          size='lg'
-          onClick={() => onChange(opt.value as any)}
-          className="w-full flex items-center justify-center gap-2 rounded-xl shadow-sm py-4 px-2 transition-all duration-150"
+          type="button"
+          onClick={() => onChange(opt.value)}
+          aria-pressed={value === opt.value}
+          className={cn(
+            'w-full flex items-center justify-center gap-2 rounded-2xl py-4 px-2 cursor-pointer transition-colors duration-300 ease-in-out',
+            value === opt.value
+              ? selectedStyles[opt.value]
+              : unselectedStyles[opt.value]
+          )}
         >
-          <span className="flex items-center justify-center gap-2">
-            <span className="text-lg flex items-center justify-center">{opt.icon}</span>
+          <span className="flex items-center gap-2">
+            <span className="text-lg">{opt.icon}</span>
             <span className="text-base font-medium">{opt.label}</span>
           </span>
-        </Button>
+        </button>
       ))}
     </div>
   );

@@ -1,16 +1,18 @@
 import { ShoppingCart } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useCart } from '../../context/CartContext';
+import { useCart } from '@/context/CartContext';
+import { useRouter } from 'next/navigation';
 
 export const Cart = () => {
-  const { items, isOpen, setIsOpen } = useCart();
-  const itemCount = items.reduce((total, item) => total + item.quantity, 0);
+  const { cartItems } = useCart();
+  const itemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+  const router = useRouter();
 
   return (
     <motion.button
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
-      onClick={() => setIsOpen(!isOpen)}
+      onClick={() => router.push('/cart')}
       className="relative p-2 text-gray-700 hover:text-desi-orange transition-colors no-underline"
     >
       <ShoppingCart className="w-6 h-6" />
