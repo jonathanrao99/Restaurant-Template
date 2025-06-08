@@ -8,13 +8,6 @@ import { Home } from "lucide-react";
 export default function NotFound() {
   const pathname = usePathname();
 
-  useEffect(() => {
-    console.error(
-      "404 Error: User attempted to access non-existent route:",
-      pathname
-    );
-  }, [pathname]);
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-desi-cream px-4">
       <div className="text-center max-w-md animate-fade-in">
