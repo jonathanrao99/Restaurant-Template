@@ -11,20 +11,24 @@ import {
   TableIcon,
   DocsIcon,
   TrashBinIcon,
+  ChevronLeftIcon,
+  ArrowRightIcon,
 } from "@/icons/index";
 
+// Icon sources imported as StaticImageData
 const navItems = [
-  { icon: <GridIcon className="w-5 h-5" />, name: "Dashboard", path: "/nimda/dashboard" },
-  { icon: <TableIcon className="w-5 h-5" />, name: "Orders", path: "/nimda/orders" },
-  { icon: <ListIcon className="w-5 h-5" />, name: "Menu", path: "/nimda/menu" },
-  { icon: <DocsIcon className="w-5 h-5" />, name: "Blog", path: "/nimda/blog" },
-  { icon: <CalenderIcon className="w-5 h-5" />, name: "Calendar", path: "/nimda/calendar" },
+  { iconSrc: GridIcon, name: "Dashboard", path: "/nimda/dashboard" },
+  { iconSrc: TableIcon, name: "Orders", path: "/nimda/orders" },
+  { iconSrc: ListIcon, name: "Menu", path: "/nimda/menu" },
+  { iconSrc: DocsIcon, name: "Blog", path: "/nimda/blog" },
+  { iconSrc: CalenderIcon, name: "Calendar", path: "/nimda/calendar" },
 ];
 
-const logoutItem = { icon: <TrashBinIcon className="w-5 h-5" />, name: "Logout", path: "/logout" };
+// Logout icon source
+const logoutItem = { iconSrc: TrashBinIcon, name: "Logout", path: "/logout" };
 
 const AppSidebar: React.FC = () => {
-  const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
+  const { isExpanded, isMobileOpen, isHovered, setIsHovered, toggleSidebar } = useSidebar();
   const pathname = usePathname();
   const router = useRouter();
   const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -75,6 +79,18 @@ const AppSidebar: React.FC = () => {
           )}
         </Link>
       </div>
+      <div className="flex items-center justify-center p-2">
+        <button
+          onClick={() => toggleSidebar()}
+          className="p-1 rounded-full hover:bg-gray-200"
+        >
+          {isExpanded ? (
+            <ChevronLeftIcon className="w-5 h-5 text-gray-600" />
+          ) : (
+            <ArrowRightIcon className="w-5 h-5 text-gray-600" />
+          )}
+        </button>
+      </div>
       <div className="flex flex-col h-full">
         <div className="flex-1 overflow-y-auto py-4">
           <nav className="px-2">
@@ -84,7 +100,11 @@ const AppSidebar: React.FC = () => {
                 href={nav.path || "#"}
                 className="flex items-center gap-3 py-2 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               >
-                <span>{nav.icon}</span>
+                <img
+                  src={nav.iconSrc?.src ?? nav.iconSrc}
+                  alt={`${nav.name} icon`}
+                  className="w-5 h-5 flex-shrink-0"
+                />
                 <span className="font-medium">{nav.name}</span>
               </Link>
             ))}
@@ -95,7 +115,11 @@ const AppSidebar: React.FC = () => {
             onClick={handleLogout}
             className="w-full flex items-center gap-3 py-2 px-3 rounded-lg hover:bg-red-100 dark:hover:bg-red-800 transition-colors text-red-600"
           >
-            <span>{logoutItem.icon}</span>
+            <img
+              src={logoutItem.iconSrc?.src ?? logoutItem.iconSrc}
+              alt="Logout icon"
+              className="w-5 h-5 flex-shrink-0"
+            />
             <span className="font-medium">{logoutItem.name}</span>
           </button>
         </div>
