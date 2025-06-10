@@ -76,7 +76,7 @@ const Navbar = () => {
         <nav className="hidden md:flex items-center space-x-8 flex-1 justify-start">
           <Link 
             href="/menu" 
-            className={`font-against font-semibold uppercase tracking-wider text-lg px-2 py-1 rounded transition-colors duration-300 ${!isScrolled ? 'text-white hover:text-desi-orange' : 'text-gray-900 hover:text-desi-orange'}`}
+            className={`font-against font-semibold uppercase tracking-wider text-md px-2 py-1 rounded transition-colors duration-300 ${!isScrolled ? 'text-white hover:text-desi-orange' : 'text-gray-900 hover:text-desi-orange'}`}
             onClick={(e) => {
               e.preventDefault();
               handleNavClick('/menu');
@@ -86,7 +86,7 @@ const Navbar = () => {
           </Link>
           <Link 
             href="/catering" 
-            className={`font-against font-semibold uppercase tracking-wider text-lg px-2 py-1 rounded transition-colors duration-300 ${!isScrolled ? 'text-white hover:text-desi-orange' : 'text-gray-900 hover:text-desi-orange'}`}
+            className={`font-against font-semibold uppercase tracking-wider text-md px-2 py-1 rounded transition-colors duration-300 ${!isScrolled ? 'text-white hover:text-desi-orange' : 'text-gray-900 hover:text-desi-orange'}`}
             onClick={(e) => {
               e.preventDefault();
               handleNavClick('/catering');
@@ -115,7 +115,7 @@ const Navbar = () => {
         <nav className="hidden md:flex items-center space-x-8 flex-1 justify-end">
           <Link 
             href="/blog" 
-            className={`font-against font-semibold uppercase tracking-wider text-lg px-2 py-1 rounded transition-colors duration-300 ${!isScrolled ? 'text-white hover:text-desi-orange' : 'text-gray-900 hover:text-desi-orange'}`}
+            className={`font-against font-semibold uppercase tracking-wider text-md px-2 py-1 rounded transition-colors duration-300 ${!isScrolled ? 'text-white hover:text-desi-orange' : 'text-gray-900 hover:text-desi-orange'}`}
             onClick={(e) => {
               e.preventDefault();
               handleNavClick('/blog');
@@ -125,7 +125,7 @@ const Navbar = () => {
           </Link>
           <Link 
             href="/about" 
-            className={`font-against font-semibold uppercase tracking-wider text-lg px-2 py-1 rounded transition-colors duration-300 ${!isScrolled ? 'text-white hover:text-desi-orange' : 'text-gray-900 hover:text-desi-orange'}`}
+            className={`font-against font-semibold uppercase tracking-wider text-md px-2 py-1 rounded transition-colors duration-300 ${!isScrolled ? 'text-white hover:text-desi-orange' : 'text-gray-900 hover:text-desi-orange'}`}
             onClick={(e) => {
               e.preventDefault();
               handleNavClick('/about');
