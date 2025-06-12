@@ -1,11 +1,39 @@
+'use client';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
+import { fadeInUp } from '@/utils/motion.variants';
 
 export default function BlogPage() {
   return (
-    <main className="min-h-screen bg-desi-cream py-12 px-4">
-      <section className="max-w-3xl mx-auto text-center mb-12">
-        <h1 className="text-4xl md:text-5xl font-display font-bold text-desi-black mb-4">Desi Flavors Blog</h1>
-        <p className="text-lg text-gray-700 mb-6">Stories, recipes, and updates from the Desi Flavors Katy team. Check back for new dishes, behind-the-scenes, and more!</p>
+    <main className="min-h-screen bg-desi-cream">
+      <section className="relative h-[60vh] flex items-center justify-center overflow-hidden">
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30 z-10" />
+        {/* Background image */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src="/Truck/IMG-20250610-WA0011.jpg"
+            alt="Desi Flavors Blog"
+            className="w-full h-full object-cover animate-float"
+          />
+        </div>
+        {/* Content */}
+        <div className="relative z-20 container mx-auto px-4 max-w-5xl text-center">
+          <motion.div
+            variants={fadeInUp}
+            initial="hidden"
+            animate="visible"
+            transition={{ duration: 0.5 }}
+            className="text-white animate-fade-in"
+          >
+            <h1 className="text-4xl md:text-5xl font-display font-bold mb-4">
+              Desi Flavors Blog
+            </h1>
+            <p className="text-lg mb-6">
+              Stories, recipes, and updates from the Desi Flavors Katy team. Check back for new dishes, behind-the-scenes, and more!
+            </p>
+          </motion.div>
+        </div>
       </section>
       <section className="max-w-4xl mx-auto grid gap-8 md:grid-cols-2">
         {/* Example blog post cards */}

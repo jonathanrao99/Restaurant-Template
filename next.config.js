@@ -19,5 +19,10 @@ const nextConfig = {
       },
     ],
   },
+  // Transpile framer-motion and allow ESM externals loosely to avoid export * errors
+  transpilePackages: ['framer-motion'],
+  experimental: {
+    esmExternals: 'loose',
+  },
 };
 export default nextConfig; 

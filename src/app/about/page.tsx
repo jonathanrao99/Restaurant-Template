@@ -2,7 +2,6 @@
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { MapPin, Phone, Mail, Clock, ArrowRight, X, Star, ChevronDown, ExternalLink, Instagram, Facebook, Youtube } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
-import { useScrollToTopOnNavClick } from '@/hooks/useScrollToTopOnNavClick';
 import { fadeInUp } from '@/utils/motion.variants';
 import MagneticButton from '@/components/MagneticButton';
 import AnimatedCardGrid, { AnimatedCard } from '@/components/AnimatedCardGrid';
@@ -54,8 +53,7 @@ const About = () => {
   const opacity = useTransform(springProgress, [0, 1], [1, 0.7]);
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    
+    // Removed autoscroll to top
     // Set up intersection observers for each section
     const observers = sectionRefs.map((ref, index) => {
       const observer = new IntersectionObserver(
@@ -66,14 +64,11 @@ const About = () => {
         },
         { threshold: 0.3 }
       );
-      
       if (ref.current) {
         observer.observe(ref.current);
       }
-      
       return observer;
     });
-    
     return () => {
       observers.forEach((observer, index) => {
         if (sectionRefs[index].current) {
@@ -82,8 +77,6 @@ const About = () => {
       });
     };
   }, [sectionRefs]);
-
-  useScrollToTopOnNavClick();
 
   // Gallery images
   const galleryImages = [
@@ -113,7 +106,7 @@ const About = () => {
       {/* Hero Section */}
       <section 
         ref={sectionRefs[0]}
-        className="relative h-[100vh] flex items-center justify-center overflow-hidden"
+        className="relative h-[60vh] flex items-center justify-center overflow-hidden"
       >
         <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30 z-10"></div>
         
@@ -149,14 +142,11 @@ const About = () => {
               A culinary journey bringing authentic Indian flavors to Katy, with a focus on tradition, quality, and exceptional taste.
             </p>
             <div className="flex items-center space-x-4">
-              <MagneticButton onClick={() => scrollToSection(1)} className="flex items-center gap-2">
-                <span>Our Story</span>
-                <ArrowRight className="w-4 h-4" />
-              </MagneticButton>
+              
               <motion.div 
                 animate={{ y: [0, 8, 0] }}
                 transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-                className="hidden md:flex text-gray-300 items-center cursor-pointer"
+                className="hidden md:flex text-desi-orange items-center cursor-pointer"
                 onClick={() => scrollToSection(1)}
               >
                 <span className="mr-2">Scroll to explore</span>
