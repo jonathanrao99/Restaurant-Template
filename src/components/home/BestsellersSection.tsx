@@ -184,7 +184,7 @@ const BestsellersSection = () => {
             className="mt-10 md:mt-12 text-center"
           >
             <Link href="/menu">
-              <MagneticButton className="inline-flex items-center text-desi-orange hover:text-desi-orange/80 font-medium transition-colors group transition-transform duration-300 hover:scale-105">
+              <MagneticButton className="inline-flex items-center text-desi-orange hover:text-white/80 font-medium transition-colors group transition-transform duration-300 hover:scale-105">
                 <span className="border-b border-desi-orange/30 group-hover:border-desi-orange/80 transition-colors pb-1">View Full Menu</span>
                 <ChevronRight size={16} className="ml-1 group-hover:translate-x-1 transition-transform duration-300" />
               </MagneticButton>

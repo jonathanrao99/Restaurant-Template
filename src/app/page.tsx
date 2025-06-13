@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import HeroSection from '@/components/home/HeroSection';
 import DesiExperienceSection from '@/components/home/DesiExperienceSection';
 import BestsellersSection from '@/components/home/BestsellersSection';
+import HomeFoodCarouselSection from '@/components/home/HomeFoodCarouselSection';
 import QualityCommitmentSection from '@/components/home/QualityCommitmentSection';
 import CustomerReviewsSection from '@/components/home/CustomerReviewsSection';
 import ConnectSection from '@/components/home/ConnectSection';
@@ -56,6 +57,7 @@ const Index = () => {
       <HeroSection />
       <DesiExperienceSection />
       <BestsellersSection />
+      <HomeFoodCarouselSection />
       <QualityCommitmentSection />
       <CustomerReviewsSection />
       <ConnectSection />
