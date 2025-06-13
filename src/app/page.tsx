@@ -2,7 +2,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import HeroSection from '@/components/home/HeroSection';
-import DesiExperienceSection from '@/components/home/DesiExperienceSection';
 import BestsellersSection from '@/components/home/BestsellersSection';
 import HomeFoodCarouselSection from '@/components/home/HomeFoodCarouselSection';
 import QualityCommitmentSection from '@/components/home/QualityCommitmentSection';
@@ -55,7 +54,6 @@ const Index = () => {
       </motion.button>
 
       <HeroSection />
-      <DesiExperienceSection />
       <BestsellersSection />
       <HomeFoodCarouselSection />
       <QualityCommitmentSection />

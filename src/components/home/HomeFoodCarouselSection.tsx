@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 
@@ -20,6 +20,18 @@ const media = [
 export default function HomeFoodCarouselSection() {
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(0); // -1 for left, 1 for right
+  const [inView, setInView] = useState(false);
+  const sectionRef = useRef(null);
+
+  // Intersection Observer to detect if section is in view
+  useEffect(() => {
+    const observer = new window.IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      { threshold: 0.3 }
+    );
+    if (sectionRef.current) observer.observe(sectionRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   // Auto-advance carousel every 4 seconds
   React.useEffect(() => {
@@ -40,7 +52,7 @@ export default function HomeFoodCarouselSection() {
   };
 
   return (
-    <section className="w-full bg-white py-12 md:py-20 relative overflow-hidden">
+    <section ref={sectionRef} className="w-full bg-white py-12 md:py-20 relative overflow-hidden">
       {/* Decorative background elements */}
       <Image src="/Ingredients/mint-removebg-preview.png" alt="Mint" width={80} height={80} className="absolute top-8 left-8 opacity-10 rotate-12 select-none pointer-events-none z-0" />
       <Image src="/Ingredients/cinamon-removebg-preview.png" alt="Cinnamon" width={90} height={90} className="absolute bottom-8 right-8 opacity-10 -rotate-12 select-none pointer-events-none z-0" />
@@ -50,7 +62,7 @@ export default function HomeFoodCarouselSection() {
       <div className="container mx-auto px-4 flex flex-col md:flex-row items-center gap-10 md:gap-16 max-w-6xl relative z-10">
         {/* Carousel */}
         <div className="w-full md:w-1/2 flex justify-center items-center relative">
-          <div className="aspect-[9/16] w-[350px] md:w-[350px] h-[620px] md:h-[620px] rounded-2xl overflow-hidden shadow-2xl bg-gray-100 flex items-center justify-center relative border-4 border-yellow-100">
+          <div className="aspect-[9/16] w-[350px] md:w-[350px] h-[620px] md:h-[620px] rounded-2xl overflow-hidden shadow-2xl bg-gray-100 flex items-center justify-center relative">
             <AnimatePresence initial={false} custom={direction}>
               <motion.div
                 key={current}
@@ -74,7 +86,7 @@ export default function HomeFoodCarouselSection() {
                   <video
                     src={media[current].src}
                     autoPlay
-                    muted
+                    muted={!inView ? true : false}
                     loop
                     playsInline
                     className="object-cover w-full h-full"
