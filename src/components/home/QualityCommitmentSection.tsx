@@ -37,13 +37,6 @@ const CateringAndEvents = () => {
 
   return (
     <section ref={sectionRef} className="pt-8 pb-16 md:pt-12 md:pb-20 lg:pt-16 lg:pb-24 bg-gradient-to-b from-transparent via-orange-50 to-white relative overflow-hidden">
-      {/* Background decoration */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 1 }}
-        className="absolute inset-0 bg-gradient-to-br from-transparent via-gray-50/50 to-desi-cream/50"
-      />
       {/* Decorative elements with parallax */}
       <motion.div 
         className="absolute top-0 left-0 w-24 h-24 bg-desi-orange/5 rounded-full -translate-x-1/2 -translate-y-1/2"

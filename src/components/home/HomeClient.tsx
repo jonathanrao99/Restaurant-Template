@@ -2,13 +2,13 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import HeroSection from '@/components/home/HeroSection';
-import DesiExperienceSection from '@/components/home/DesiExperienceSection';
 import dynamic from 'next/dynamic';
-import CustomerReviewsSection from '@/components/home/CustomerReviewsSection';
-import ConnectSection from '@/components/home/ConnectSection';
 
 const BestsellersSection = dynamic(() => import('@/components/home/BestsellersSection'), { loading: () => <div style={{height: 400}} /> });
 const QualityCommitmentSection = dynamic(() => import('@/components/home/QualityCommitmentSection'), { loading: () => <div style={{height: 400}} /> });
+const HomeFoodCarouselSection = dynamic(() => import('@/components/home/HomeFoodCarouselSection'), { loading: () => <div style={{ height: 400 }} /> });
+const CustomerReviewsSection = dynamic(() => import('@/components/home/CustomerReviewsSection'), { loading: () => <div style={{ height: 400 }} /> });
+const ConnectSection = dynamic(() => import('@/components/home/ConnectSection'), { loading: () => <div style={{ height: 400 }} /> });
 
 export default function HomeClient() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -51,9 +51,9 @@ export default function HomeClient() {
         </svg>
       </motion.button>
       <HeroSection />
-      <DesiExperienceSection />
       <BestsellersSection />
       <QualityCommitmentSection />
+      <HomeFoodCarouselSection />
       <CustomerReviewsSection />
       <ConnectSection />
     </main>

@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, Fragment } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, Phone, User, MessageSquare, Calendar, Check, AlertCircle, ArrowRight } from 'lucide-react';
+import { Mail, Phone, User, MessageSquare, Check, AlertCircle, ArrowRight, Users, PartyPopper, ChevronDown, Download, HelpCircle } from 'lucide-react';
 import { createClient } from '@supabase/supabase-js';
+import { Listbox, Transition } from '@headlessui/react';
 
 // Initialize Supabase client
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -17,6 +18,15 @@ const ContactForm = () => {
     event_type: 'general',
     subscribe_newsletter: false
   });
+  // Dropdown options for Event Type
+  const eventOptions = [
+    { value: 'general', label: 'General Inquiry', icon: HelpCircle },
+    { value: 'private', label: 'Private/Corporate Event', icon: Users },
+    { value: 'festival', label: 'Festival Catering', icon: PartyPopper },
+    { value: 'catering', label: 'Tray Ordering', icon: Download },
+  ];
+  const selectedEvent = eventOptions.find(opt => opt.value === formData.event_type) || eventOptions[0];
+  const SelectedEventIcon = selectedEvent.icon;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<{
     type: 'success' | 'error' | null;
@@ -43,6 +53,7 @@ const ContactForm = () => {
           phone: formData.phone,
           message: formData.message,
           event_type: formData.event_type,
+          event_label: selectedEvent.label,
           subscribe_newsletter: formData.subscribe_newsletter,
           created_at: new Date().toISOString()
         }]);
@@ -128,15 +139,24 @@ Desi Flavors Katy
 1989 North Fry Rd, Katy, TX 77449
 (346)-824-4212 · https://desiflavorskaty.com
       `;
+      // Determine event label for customer email
+      const eventLabel = selectedEvent.label;
       // Send customer email
+      const customerHtmlWithEvent = customerHtml.replace(
+        `<p>Hi ${formData.name},</p>`,
+        `<p>Hi ${formData.name},</p><p><strong>Event Type:</strong> ${eventLabel}</p>`
+      );
       await fetch('/api/send-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           to: formData.email,
           subject: 'Thanks for reaching out to Desi Flavors Katy',
-          html: customerHtml,
-          text: customerText
+          html: customerHtmlWithEvent,
+          text: customerText.replace(
+            `Hi ${formData.name},`,
+            `Hi ${formData.name},\nEvent Type: ${eventLabel}`
+          )
         })
       });
       // Admin email template
@@ -148,7 +168,7 @@ Desi Flavors Katy
           <li><strong>Name:</strong> ${formData.name}</li>
           <li><strong>Email:</strong> ${formData.email}</li>
           <li><strong>Phone:</strong> ${formData.phone || 'N/A'}</li>
-          <li><strong>Event Type:</strong> ${formData.event_type}</li>
+          <li><strong>Event Type:</strong> ${eventLabel}</li>
           <li><strong>Subscribed to Newsletter:</strong> ${formData.subscribe_newsletter ? 'Yes' : 'No'}</li>
           <li><strong>Message:</strong><br/>${formData.message}</li>
         </ul>
@@ -162,7 +182,7 @@ Submission Date: ${now}
 Name: ${formData.name}
 Email: ${formData.email}
 Phone: ${formData.phone || 'N/A'}
-Event Type: ${formData.event_type}
+Event Type: ${eventLabel}
 Subscribed to Newsletter: ${formData.subscribe_newsletter ? 'Yes' : 'No'}
 Message:
 ${formData.message}
@@ -234,7 +254,7 @@ ${formData.message}
                 onChange={handleChange}
                 placeholder="John Doe"
                 required
-                className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 focus:border-desi-orange focus:ring-2 focus:ring-desi-orange/20 transition-all bg-white"
+                className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-desi-orange focus:ring-2 focus:ring-desi-orange/20 transition-all bg-white"
               />
             </div>
           </motion.div>
@@ -256,7 +276,7 @@ ${formData.message}
                 onChange={handleChange}
                 placeholder="john@example.com"
                 required
-                className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 focus:border-desi-orange focus:ring-2 focus:ring-desi-orange/20 transition-all bg-white"
+                className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-desi-orange focus:ring-2 focus:ring-desi-orange/20 transition-all bg-white"
               />
             </div>
           </motion.div>
@@ -278,7 +298,7 @@ ${formData.message}
                 onChange={handleChange}
                 placeholder="(123) 456-7890"
                 required
-                className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 focus:border-desi-orange focus:ring-2 focus:ring-desi-orange/20 transition-all bg-white"
+                className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-desi-orange focus:ring-2 focus:ring-desi-orange/20 transition-all bg-white"
               />
             </div>
           </motion.div>
@@ -287,38 +307,55 @@ ${formData.message}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4, delay: 0.4 }}
-            className="relative group"
+            className="relative"
           >
             <label htmlFor="eventType" className="block text-sm font-medium text-gray-700 mb-1">Event Type</label>
-            <div className="relative">
-              <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-desi-orange/80 group-focus-within:text-desi-orange transition-colors z-10" size={20} />
-              <select
-                id="eventType"
-                name="event_type"
-                value={formData.event_type}
-                onChange={handleChange}
-                className="w-full pl-10 pr-10 py-3 rounded-lg border border-gray-200 focus:border-desi-orange focus:ring-2 focus:ring-desi-orange/20 transition-all appearance-none bg-white"
-              >
-                <option value="general">General Inquiry</option>
-                <option value="private">Private Event</option>
-                <option value="corporate">Corporate Event</option>
-                <option value="festival">Festival Catering</option>
-              </select>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M6 9l6 6 6-6" />
-              </svg>
-            </div>
+            <Listbox
+              value={formData.event_type}
+              onChange={(value) => setFormData(prev => ({ ...prev, event_type: value }))}
+            >
+              <div className="relative mt-1">
+                <Listbox.Button className="w-full pl-4 pr-3 py-3 rounded-xl border border-gray-200 focus:border-desi-orange focus:ring-2 focus:ring-desi-orange/20 transition-all bg-white flex justify-between items-center">
+                  <span className="flex items-center space-x-2">
+                    <SelectedEventIcon className="w-5 h-5 text-desi-orange" />
+                    <span className="block truncate text-gray-700">{selectedEvent.label}</span>
+                  </span>
+                  <ChevronDown className="w-5 h-5 text-gray-400" />
+                </Listbox.Button>
+                <Transition as={Fragment} leave="transition ease-in duration-100" leaveFrom="opacity-100" leaveTo="opacity-0">
+                  <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                    {eventOptions.map((option) => {
+                      const Icon = option.icon;
+                      return (
+                        <Listbox.Option
+                          key={option.value}
+                          value={option.value}
+                          className={({ active }) =>
+                            `relative cursor-default select-none py-2 pl-3 pr-9 ${
+                              active ? 'bg-desi-orange/10 text-desi-orange' : 'text-gray-900'
+                            }`
+                          }
+                        >
+                          {({ selected, active }) => (
+                            <>
+                              <div className="flex items-center space-x-2">
+                                <Icon className={`${selected || active ? 'text-desi-orange' : 'text-gray-400'} w-5 h-5`} />
+                                <span className={`${selected ? 'font-semibold' : ''} truncate`}>
+                                  {option.label}
+                                </span>
+                              </div>
+                              {selected && (
+                                <Check className="absolute inset-y-0 right-0 h-5 w-5 text-desi-orange" aria-hidden="true" />
+                              )}
+                            </>
+                          )}
+                        </Listbox.Option>
+                      );
+                    })}
+                  </Listbox.Options>
+                </Transition>
+              </div>
+            </Listbox>
           </motion.div>
         </div>
 
@@ -339,7 +376,7 @@ ${formData.message}
               placeholder="How can we help you?"
               required
               rows={4}
-              className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 focus:border-desi-orange focus:ring-2 focus:ring-desi-orange/20 transition-all bg-white"
+              className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-desi-orange focus:ring-2 focus:ring-desi-orange/20 transition-all bg-white"
             />
           </div>
         </motion.div>
@@ -348,7 +385,7 @@ ${formData.message}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.5 }}
-          className="flex items-start space-x-3"
+          className="flex items-center space-x-2"
         >
           <input
             type="checkbox"
@@ -356,9 +393,9 @@ ${formData.message}
             name="subscribe_newsletter"
             checked={formData.subscribe_newsletter}
             onChange={(e) => setFormData(prev => ({ ...prev, subscribe_newsletter: e.target.checked }))}
-            className="mt-1 h-4 w-4 rounded border-gray-300 text-desi-orange focus:ring-desi-orange"
+            className="h-5 w-5 rounded border-gray-300 text-desi-orange focus:ring-desi-orange"
           />
-          <label htmlFor="subscribe_newsletter" className="text-sm text-gray-600">
+          <label htmlFor="subscribe_newsletter" className="text-sm text-desi-black">
             Subscribe to our newsletter for exclusive promotions and special offers.
           </label>
         </motion.div>

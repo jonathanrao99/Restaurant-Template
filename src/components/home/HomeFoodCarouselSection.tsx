@@ -38,7 +38,7 @@ export default function HomeFoodCarouselSection() {
     const video = videoRef.current;
     if (!video) return;
     let targetVolume = inView ? 1 : 0;
-    let step = inView ? 0.05 : -0.05;
+    let step = inView ? 0.5 : -0.5;
     clearInterval(fadeAudioInterval.current);
     fadeAudioInterval.current = setInterval(() => {
       if (!video) return;
@@ -88,11 +88,11 @@ export default function HomeFoodCarouselSection() {
   };
 
   return (
-    <section ref={sectionRef} className="w-full bg-white py-12 md:py-20 relative overflow-hidden">
+    <section ref={sectionRef} className="w-full bg-gradient-to-b from-transparent via-orange-50 to-white py-12 md:py-20 relative overflow-hidden">
       {/* Decorative background elements */}
       <Image src="/Ingredients/mint-removebg-preview.png" alt="Mint" width={80} height={80} className="absolute top-8 left-8 opacity-10 rotate-12 select-none pointer-events-none z-0" />
       <Image src="/Ingredients/cinamon-removebg-preview.png" alt="Cinnamon" width={90} height={90} className="absolute bottom-8 right-8 opacity-10 -rotate-12 select-none pointer-events-none z-0" />
-      <svg className="absolute left-1/3 top-1/4 w-40 h-40 opacity-10 z-0" viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="48" stroke="#FFD700" strokeWidth="4" fill="none" /><path d="M50 10 Q60 30 50 50 Q40 70 50 90" stroke="#FFD700" strokeWidth="2" fill="none" /></svg>
+      <svg className="absolute right-1 top-1/4 w-40 h-40 opacity-10 z-0" viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="48" stroke="#FFD700" strokeWidth="4" fill="none" /><path d="M50 10 Q60 30 50 50 Q40 70 50 90" stroke="#FFD700" strokeWidth="2" fill="none" /></svg>
       {/* Gold shimmer accent */}
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full bg-gradient-to-br from-yellow-200/30 via-yellow-100/10 to-orange-100/0 blur-2xl opacity-40 z-0" />
       <div className="container mx-auto px-4 flex flex-col md:flex-row items-center gap-10 md:gap-16 max-w-6xl relative z-10">
@@ -113,8 +113,8 @@ export default function HomeFoodCarouselSection() {
                   <Image
                     src={media[current].src}
                     alt={media[current].alt}
-                    width={800}
-                    height={1000}
+                    width={1000}
+                    height={800}
                     className="object-cover w-full h-full"
                     priority={current === 0}
                   />
@@ -133,10 +133,10 @@ export default function HomeFoodCarouselSection() {
             </AnimatePresence>
             {/* Controls at bottom of carousel */}
             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-4 z-20">
-              <button onClick={handlePrev} aria-label="Previous" className="bg-white/80 hover:bg-yellow-400/90 text-yellow-700 hover:text-white rounded-full p-3 shadow transition-colors">
+              <button onClick={handlePrev} aria-label="Previous" className="bg-white/80 hover:bg-desi-orange/90 text-desi-orange hover:text-white rounded-full p-3 shadow transition-colors">
                 <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" /></svg>
               </button>
-              <button onClick={handleNext} aria-label="Next" className="bg-white/80 hover:bg-yellow-400/90 text-yellow-700 hover:text-white rounded-full p-3 shadow transition-colors">
+              <button onClick={handleNext} aria-label="Next" className="bg-white/80 hover:bg-desi-orange/90 text-desi-orange hover:text-white rounded-full p-3 shadow transition-colors">
                 <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" /></svg>
               </button>
             </div>
@@ -151,9 +151,9 @@ export default function HomeFoodCarouselSection() {
         >
           {/* Decorative bg behind text */}
           <div className="absolute -left-10 -top-10 w-32 h-32 bg-gradient-to-br from-yellow-100/40 via-orange-100/20 to-white/0 rounded-full blur-2xl opacity-60 -z-10" />
-          <h3 className="text-3xl md:text-4xl font-display font-bold text-desi-black mb-4 drop-shadow-sm">Made Fresh, Tastes Like Home</h3>
+          <h3 className="text-3xl md:text-4xl font-display font-bold text-desi-black mb-4 drop-shadow-sm">Made Fresh, From our Heart to your Plate</h3>
           <p className="text-lg md:text-xl text-gray-700 mb-4 font-medium">
-            Savor the magic of India in every bite. Our chefs blend tradition and creativity, using only the freshest ingredients and hand-ground spices. From the sizzle of the pan to the aroma of our kitchen, every dish is a celebration of flavor, warmth, and home.
+          Experience the essence of Indian cooking with every bite. At <span className="font-display font-semibold text-desi-orange">Desi Flavors Katy</span>, we bring together time-honored traditions and a spark of creativity—using only the freshest ingredients and authentic, hand-ground spices. From the first sizzle in the pan to the comforting aroma that fills the air, every dish is a warm reminder of home, crafted with love and served with pride.
           </p>
         </motion.div>
       </div>

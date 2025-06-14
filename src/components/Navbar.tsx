@@ -111,7 +111,7 @@ const Navbar = () => {
             }}
           >
             <span className="font-samarkan text-4xl text-desi-orange">Desi</span>
-            <span className={`font-against text-2xl font-bold ml-2 tracking-wide transition-colors duration-300 ${useDarkText ? 'text-gray-900' : 'text-white'}`}>Flavors Katy</span>
+            <span className={`font-against text-2xl font-bold ml-2 tracking-wide transition-colors duration-300 ${useDarkText ? 'text-gray-900' : 'text-white'}`}>FlavorsKaty</span>
           </Link>
         </div>
 

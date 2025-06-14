@@ -13,7 +13,10 @@ const Index = () => {
   
   // Reset scroll position and handle scroll events
   useEffect(() => {
-    window.scrollTo(0, 0);
+    // If there's no hash in URL, scroll to top on mount
+    if (!window.location.hash) {
+      window.scrollTo(0, 0);
+    }
     
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);

@@ -3,7 +3,7 @@ import Script from 'next/script';
 
 const CustomerReviewsSection = () => {
   return (
-    <section className="py-16 bg-transparent">
+    <section className="py-16 bg-gradient-to-b from-transparent via-orange-50 to-white relative overflow-hidden">
 
 
       <div className="container mx-auto px-4 md:px-6 relative">
@@ -18,7 +18,7 @@ const CustomerReviewsSection = () => {
             What Our Customers Say
           </h2>
           <p className="text-gray-700 max-w-2xl mx-auto">
-            Don't just take our word for it - hear what our satisfied customers have to say about their Desi Flavors experience.
+            Don't just take our word for it - hear what our satisfied customers have to say about their <br /> <span className="font-semibold font-display text-desi-orange">Desi Flavors</span> experience.
           </p>
         </motion.div>
         

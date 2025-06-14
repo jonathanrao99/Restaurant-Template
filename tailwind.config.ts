@@ -180,6 +180,11 @@ export default {
     				'50%': {
     					backgroundPosition: '100% 50%'
     				}
+    			},
+    			'gradient': {
+    				'0%': { backgroundPosition: '0% 50%' },
+    				'50%': { backgroundPosition: '100% 50%' },
+    				'100%': { backgroundPosition: '0% 50%' }
     			}
     		},
     		animation: {
@@ -191,6 +196,7 @@ export default {
     			float: 'float 6s ease-in-out infinite',
     			'pulse-subtle': 'pulse-subtle 3s ease-in-out infinite',
     			'caret-blink': 'caret-blink 1.25s ease-out infinite',
+    			'gradient': 'gradient 4s linear infinite',
     			'gradient-x': 'gradient-x 8s ease infinite'
     		}
     	}

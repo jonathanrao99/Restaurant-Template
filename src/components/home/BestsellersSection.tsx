@@ -67,7 +67,7 @@ const BestsellersSection = () => {
         style={{ y: scrollYProgress ? -scrollYProgress.get() * 20 : 0 }}
       />
       <motion.div 
-        className="absolute top-1/4 right-10 w-12 h-12 bg-desi-orange/10 rounded-full"
+        className="absolute top-1/4 left-10 w-12 h-12 bg-desi-orange/10 rounded-full"
         style={{ y: scrollYProgress ? scrollYProgress.get() * 10 : 0 }}
       />
       
