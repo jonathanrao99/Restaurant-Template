@@ -42,7 +42,10 @@ export default function MenuItemCard({ item, handleAddToCart }: MenuItemCardProp
         variants={fadeInUp}
         initial="hidden"
         animate="visible"
-        className="relative bg-white rounded-2xl shadow-md overflow-hidden transition-all duration-300 transform hover:shadow-lg hover:scale-110 h-[400px] flex flex-col"
+        whileHover={{ scale: 1.04, boxShadow: '0 4px 32px #ffb34733' }}
+        transition={{ type: 'spring', stiffness: 200 }}
+        className="relative bg-white rounded-2xl overflow-hidden shadow-md h-[400px] flex flex-col cursor-pointer"
+        onClick={() => setIsDialogOpen(true)}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
@@ -89,7 +92,7 @@ export default function MenuItemCard({ item, handleAddToCart }: MenuItemCardProp
               <h3 className="text-lg font-semibold text-gray-900">{item.name}</h3>
               <span className="text-desi-orange font-medium text-base">{item.price}</span>
             </div>
-            <p className="text-gray-600 text-xs line-clamp-2 mt-1">{item.description}</p>
+            <p className="text-gray-600 text-sm line-clamp-2 mt-1">{item.description}</p>
           </div>
 
           <div className="flex items-center justify-between">
@@ -113,7 +116,10 @@ export default function MenuItemCard({ item, handleAddToCart }: MenuItemCardProp
               </span>
             ) : (
               <InteractiveHoverButton
-                onClick={() => setIsDialogOpen(true)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleAddToCart({ ...item, quantity: 1 });
+                }}
                 className="bg-white text-desi-orange hover:bg-desi-orange hover:text-white text-sm"
               >
                 Add to Cart

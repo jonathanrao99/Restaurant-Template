@@ -21,7 +21,7 @@ const MenuHeader = () => {
   return (
     <section
       ref={containerRef}
-      className="relative min-h-[60svh] flex items-center justify-center overflow-hidden bg-desi-black"
+      className="relative min-h-[70svh] flex items-center justify-center overflow-hidden bg-desi-black"
     >
       <motion.div
         style={{ scale, opacity }}
@@ -81,7 +81,7 @@ const MenuHeader = () => {
             whileInView="visible"
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 1.1 }}
-            className="text-lg md:text-xl text-white leading-relaxed max-w-2xl mx-auto mb-8 font-source-pro"
+            className="text-lg md:text-xl text-desi-orange font-bold leading-relaxed max-w-2xl mx-auto mb-4 font-source-pro"
           >
             Find us on your favorite delivery platforms:
           </motion.p>

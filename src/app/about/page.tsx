@@ -106,7 +106,7 @@ const About = () => {
       {/* Hero Section */}
       <section 
         ref={sectionRefs[0]}
-        className="relative h-[60vh] flex items-center justify-center overflow-hidden"
+        className="relative h-[70vh] flex items-center justify-center overflow-hidden"
       >
         <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30 z-10"></div>
         

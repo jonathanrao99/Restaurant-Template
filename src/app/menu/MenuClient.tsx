@@ -10,8 +10,8 @@ import { Accordion, AccordionItem } from '@heroui/react';
 import MenuItemCard from '@/components/menu/MenuItemCard';
 import OrderDialog from '@/components/order/OrderDialog';
 import type { MenuItem } from '@/hooks/useMenuItems';
-import { Search } from 'lucide-react';
 import { toast } from 'sonner';
+import { Search } from 'lucide-react';
 
 export default function MenuClient() {
   const { menuItems, loading, error, categories } = useMenuItems();
@@ -19,7 +19,7 @@ export default function MenuClient() {
   const [spicyOnly, setSpicyOnly] = useState(false);
   const [under10Only, setUnder10Only] = useState(false);
   const [searchFilter, setSearchFilter] = useState('');
-  const { addToCart } = useCart();
+  const { addToCart, updateQuantity, cartItems } = useCart();
   const searchParams: ReadonlyURLSearchParams = useSearchParams();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
@@ -36,17 +36,23 @@ export default function MenuClient() {
   }, [searchParams, menuItems]);
 
   const handleAddToCart = useCallback((item: MenuItem) => {
-    addToCart({
-      id: item.id,
-      name: item.name,
-      price: item.price,
-      quantity: item.quantity || 1,
-      specialInstructions: item.specialInstructions,
-      isVegetarian: item.isvegetarian,
-      isSpicy: item.isspicy,
-    });
+    const qtyToAdd = item.quantity && item.quantity > 0 ? item.quantity : 1;
+    const existing = cartItems.find(ci => ci.id === item.id);
+    if (existing) {
+      updateQuantity(item.id, existing.quantity + qtyToAdd);
+    } else {
+      addToCart({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: qtyToAdd,
+        specialInstructions: item.specialInstructions,
+        isVegetarian: item.isvegetarian,
+        isSpicy: item.isspicy,
+      });
+    }
     toast.success(`${item.name} has been added to your cart.`);
-  }, [addToCart]);
+  }, [addToCart, updateQuantity, cartItems]);
 
   if (loading) {
       return (

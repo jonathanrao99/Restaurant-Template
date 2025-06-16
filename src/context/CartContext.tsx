@@ -47,24 +47,15 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       const existingItemIndex = prevItems.findIndex(i => i.id === item.id);
       
       if (existingItemIndex >= 0) {
-        // Item exists, update quantity and any other changes
+        // Item exists, increment quantity by provided amount (default 1)
         const updatedItems = [...prevItems];
         const existingItem = updatedItems[existingItemIndex];
-        
-        // Set quantity (either add to existing or use the provided quantity)
-        if (item.quantity) {
-          updatedItems[existingItemIndex].quantity = item.quantity;
-        } else {
-          updatedItems[existingItemIndex].quantity += 1;
-        }
-        
-        // Always update special instructions if provided, even if empty string
+        const qtyToAdd = item.quantity && item.quantity > 0 ? item.quantity : 1;
+        updatedItems[existingItemIndex].quantity = existingItem.quantity + qtyToAdd;
+        // Update special instructions if provided
         if (item.specialInstructions !== undefined) {
           updatedItems[existingItemIndex].specialInstructions = item.specialInstructions;
         }
-        
-        toast.success(`${item.name} quantity updated to ${updatedItems[existingItemIndex].quantity}`);
-        
         return updatedItems;
       } else {
         // Item doesn't exist, add new item with quantity specified or default to 1
@@ -79,8 +70,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           specialInstructions: item.specialInstructions,
           imageSrc: item.imageSrc
         };
-        
-        toast.success(`${item.name} has been added to your cart`);
         
         return [...prevItems, newItem];
       }

@@ -98,7 +98,7 @@ export default function HomeFoodCarouselSection() {
       <div className="container mx-auto px-4 flex flex-col md:flex-row items-center gap-10 md:gap-16 max-w-6xl relative z-10">
         {/* Carousel */}
         <div className="w-full md:w-1/2 flex justify-center items-center relative">
-          <div className="aspect-[9/16] w-[350px] md:w-[350px] h-[620px] md:h-[620px] rounded-2xl overflow-hidden shadow-2xl bg-gray-100 flex items-center justify-center relative">
+          <div className="w-[800px] h-[600px] rounded-2xl overflow-hidden shadow-2xl bg-gray-100 flex items-center justify-center relative">
             <AnimatePresence initial={false} custom={direction}>
               <motion.div
                 key={current}
@@ -113,8 +113,8 @@ export default function HomeFoodCarouselSection() {
                   <Image
                     src={media[current].src}
                     alt={media[current].alt}
-                    width={1000}
-                    height={800}
+                    width={800}
+                    height={600}
                     className="object-cover w-full h-full"
                     priority={current === 0}
                   />

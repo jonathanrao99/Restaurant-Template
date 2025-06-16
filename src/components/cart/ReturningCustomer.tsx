@@ -65,7 +65,7 @@ export default function ReturningCustomer() {
         </div>
         <Button
           onClick={handleLookup}
-          className="bg-orange-500 text-black hover:bg-black hover:text-orange-500 transition-colors rounded-xl px-6"
+          className="bg-orange-500 text-white hover:bg-black hover:text-orange-500 transition-colors rounded-xl px-6"
         >
           {loading ? 'Looking up...' : 'Look up'}
         </Button>
