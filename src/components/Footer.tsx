@@ -124,7 +124,7 @@ const Footer = () => {
                 <Clock size={18} className="text-desi-orange mr-2 flex-shrink-0" />
                 <span>
                   Monday - Sunday<br/>
-                  1:00 PM - 12:00 AM
+                  5:00 PM - 1:00 AM
                 </span>
               </li>
             </ul>

@@ -127,7 +127,7 @@ const ConnectSection = () => {
                   <div>
                     <p className="font-medium text-white">Hours</p>
                     <p className="text-gray-300">Monday - Sunday: </p>
-                    <p className="text-gray-300">1:00 PM - 12:00 AM</p>
+                    <p className="text-gray-300">5:00 PM - 1:00 AM</p>
                   </div>
                 </div>
               </motion.div>

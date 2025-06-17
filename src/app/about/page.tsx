@@ -51,6 +51,18 @@ const About = () => {
     offset: ["start end", "end start"]
   });
 
+  // Team section scroll effect for decorative elements
+  const { scrollYProgress: teamScrollYProgress } = useScroll({
+    target: sectionRefs[3],
+    offset: ["start end", "end start"]
+  });
+
+  const [hasAnimatedTeam, setHasAnimatedTeam] = useState(false);
+  useEffect(() => {
+    const timerTeam = setTimeout(() => { setHasAnimatedTeam(true); }, 1000);
+    return () => clearTimeout(timerTeam);
+  }, []);
+
   // Use spring physics for smooth animation
   const springConfig = { stiffness: 50, damping: 20, mass: 1 };
   const springProgress = useSpring(scrollYProgress, springConfig);
@@ -200,7 +212,7 @@ const About = () => {
                 When we moved to Katy, we noticed something was missing - authentic Indian cuisine that reminded us of home. That's when we decided to bring our passion for Indian food to this vibrant community.
               </p>
               <p className="text-gray-800 text-lg md:text-xl">
-                In February 2025, we launched <span className="font-bold"><span className="text-desi-orange font-samarkan text-2xl">Desi</span> Flavors</span> with a simple mission: to serve exceptional Indian dishes that combine traditional recipes with modern culinary expertise. Every recipe we serve is a piece of our heritage, crafted with the same love and care that has been passed down through generations.
+                In February 2025, we launched <span className="font-bold"><span className="text-desi-orange font-samarkan text-2xl">Desi</span> Flavors Katy</span> with a simple mission: to serve exceptional Indian dishes that combine traditional recipes with modern culinary expertise. Every recipe we serve is a piece of our heritage, crafted with the same love and care that has been passed down through generations.
               </p>
             </div>
             
@@ -340,10 +352,33 @@ const About = () => {
       {/* Team Section */}
       <section 
         ref={sectionRefs[3]}
-        className="py-20 bg-desi-cream relative overflow-hidden"
+        className="pt-8 pb-16 md:pt-12 md:pb-20 lg:pt-16 lg:pb-24 bg-gradient-to-b from-transparent via-orange-50 to-white relative overflow-hidden"
       >
-        {/* Background decoration */}
-        <div className="absolute inset-0 bg-gradient-to-br from-desi-orange/5 via-gray-50/50 to-transparent"></div>
+        {/* Decorative elements with parallax */}
+        <motion.div 
+          className="absolute top-0 left-0 w-24 h-24 bg-desi-orange/5 rounded-full -translate-x-1/2 -translate-y-1/2"
+          style={{ y: teamScrollYProgress ? teamScrollYProgress.get() * 20 : 0 }}
+        />
+        <motion.div 
+          className="absolute bottom-0 right-0 w-48 h-48 bg-desi-orange/5 rounded-full translate-x-1/3 translate-y-1/3"
+          style={{ y: teamScrollYProgress ? -teamScrollYProgress.get() * 20 : 0 }}
+        />
+        <motion.div 
+          className="absolute top-1/4 right-10 w-12 h-12 bg-desi-orange/10 rounded-full"
+          style={{ y: teamScrollYProgress ? teamScrollYProgress.get() * 10 : 0 }}
+        />
+        <motion.div 
+          className="absolute left-10 bottom-20 w-3 h-3 rounded-full bg-desi-orange/40"
+          animate={hasAnimatedTeam ? { y: 0, opacity: 0.6 } : { y: [0, -15, 0], opacity: [0.4, 0.8, 0.4] }}
+          transition={{ duration: 3, repeat: hasAnimatedTeam ? 0 : Infinity, ease: "easeInOut" }}
+          viewport={{ once: true }}
+        />
+        <motion.div 
+          className="absolute right-1/3 top-40 w-4 h-4 rounded-full bg-desi-orange/30"
+          animate={hasAnimatedTeam ? { y: 0, opacity: 0.5 } : { y: [0, -20, 0], opacity: [0.3, 0.7, 0.3] }}
+          transition={{ duration: 4, repeat: hasAnimatedTeam ? 0 : Infinity, ease: "easeInOut", delay: 1 }}
+          viewport={{ once: true }}
+        />
         
         <div className="container mx-auto px-4 max-w-6xl relative">
           <motion.div
@@ -392,43 +427,9 @@ const About = () => {
       {/* Gallery Section */}
       <section 
         ref={sectionRefs[4]}
-        className="py-20 bg-gradient-to-b from-white to-orange-50 relative overflow-hidden"
+        className="py-16 bg-gradient-to-b from-transparent via-orange-50 to-white relative overflow-hidden"
       >
-        {/* Decorative elements */}
-        <div className="absolute top-0 left-0 w-24 h-24 bg-desi-orange/5 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
-        <div className="absolute bottom-0 right-0 w-48 h-48 bg-desi-orange/5 rounded-full translate-x-1/3 translate-y-1/3"></div>
-        <div className="absolute top-1/4 right-10 w-12 h-12 bg-desi-orange/10 rounded-full"></div>
-        
-        <motion.div 
-          className="absolute left-10 bottom-20 w-3 h-3 rounded-full bg-desi-orange/40"
-          animate={{ 
-            y: [0, -15, 0],
-            opacity: [0.4, 0.8, 0.4]
-          }}
-          transition={{
-            duration: 3,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-          viewport={{ once: true }}
-        ></motion.div>
-        
-        <motion.div 
-          className="absolute right-1/3 top-40 w-4 h-4 rounded-full bg-desi-orange/30"
-          animate={{ 
-            y: [0, -20, 0],
-            opacity: [0.3, 0.7, 0.3]
-          }}
-          transition={{
-            duration: 4,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 1
-          }}
-          viewport={{ once: true }}
-        ></motion.div>
-        
-        <div className="container mx-auto px-4 max-w-6xl relative">
+        <div className="container mx-auto px-4 md:px-6 relative">
           <motion.div
             variants={fadeInUp}
             initial="hidden"
@@ -515,44 +516,7 @@ const About = () => {
             </div>
           </motion.div>
           
-          <div className="mt-16 bg-white rounded-lg shadow-md overflow-hidden">
-            <div className="p-8 text-center">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Our Customer Experience</h3>
-              <p className="text-gray-700 max-w-3xl mx-auto mb-10">
-                We pride ourselves on creating not just delicious food, but a complete dining experience that connects you with authentic Indian culinary traditions.
-              </p>
-              
-              <div className="grid md:grid-cols-3 gap-8">
-                {[
-                  {
-                    title: "Warm Welcome",
-                    description: "Greeted with a smile and the aromatic scents of authentic Indian spices.",
-                    icon: "/Ingredients/clove-removebg-preview.png"
-                  },
-                  {
-                    title: "Culinary Transparency",
-                    description: "Open kitchen concept lets you watch our chefs craft your meal with care.",
-                    icon: "/Ingredients/pngtree-onion-slice-transparent-background-5727009.png"
-                  },
-                  {
-                    title: "Cultural Experience",
-                    description: "Each dish tells a story, connecting you to India's rich culinary heritage.",
-                    icon: "/Ingredients/mint-removebg-preview.png"
-                  }
-                ].map((item, i) => (
-                  <div key={i} className="bg-gray-50 rounded-lg p-6">
-                    <div className="flex items-center justify-center mb-4">
-                      <div className="w-14 h-14 bg-white rounded-full shadow-sm flex items-center justify-center">
-                        <img src={item.icon} alt={item.title} className="h-8 w-8 opacity-70" />
-                      </div>
-                    </div>
-                    <h4 className="text-xl font-bold text-gray-900 mb-3">{item.title}</h4>
-                    <p className="text-gray-700">{item.description}</p>
-                </div>
-            ))}
-              </div>
-            </div>
-          </div>
+          
         </div>
       </section>
 
@@ -674,7 +638,7 @@ const About = () => {
                 <div>
                   <p className="font-medium text-white">Hours</p>
                   <p className="text-gray-300">Monday - Sunday: </p>
-                  <p className="text-gray-300">1:00 PM - 12:00 AM</p>
+                  <p className="text-gray-300">5:00 PM - 1:00 AM</p>
                 </div>
               </div>
               

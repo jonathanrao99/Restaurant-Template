@@ -34,7 +34,7 @@ const OtherWaysSection = () => {
                 <h4 className="font-medium">Operating Hours</h4>
                 <p className="text-gray-600">
                   Monday - Sunday<br/>
-                  1:00 PM - 12:00 AM
+                  5:00 PM - 1:00 AM
                 </p>
               </div>
             </div>
