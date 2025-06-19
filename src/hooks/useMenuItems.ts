@@ -6,7 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 interface MenuItemRow {
   id: number;
   name: string;
-  description: string;
+  description: string | null;
   price: string;
   isvegetarian: boolean;
   isspicy: boolean;
@@ -14,6 +14,8 @@ interface MenuItemRow {
   menu_img: string | null;
   sold_out: boolean;
   square_variation_id: string | null;
+  images?: string[] | null;
+  isSoldOut?: boolean;
 }
 
 export interface MenuItem {
@@ -25,6 +27,7 @@ export interface MenuItem {
   isspicy: boolean;
   category: string;
   menu_img?: string;
+  images?: string[];
   quantity?: number;
   specialInstructions?: string;
   sold_out: boolean;

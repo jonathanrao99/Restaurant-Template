@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MenuItem } from '@/hooks/useMenuItems';
 import { X, Plus, Minus, ShoppingCart, Image as ImageIcon } from 'lucide-react';
+import ImageCarousel from '@/components/ui/ImageCarousel';
 import Image from 'next/image';
 
 interface OrderDialogProps {
@@ -64,27 +65,16 @@ const OrderDialog = ({ item, onClose, onAddToCart }: OrderDialogProps) => {
             <X className="w-4 h-4 text-gray-600" />
           </button>
 
-          {/* Image Section */}
+          {/* Image Section (carousel) */}
           <div className="md:w-2/5 h-48 md:h-auto relative overflow-hidden">
-            {imageLoading && (
-              <div className="absolute inset-0 flex items-center justify-center bg-gray-50">
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-desi-orange"></div>
-              </div>
-            )}
-            {imageError ? (
-              <div className="absolute inset-0 flex items-center justify-center bg-gray-50">
-                <ImageIcon className="h-6 w-6 text-gray-300" />
-              </div>
+            {item.images && item.images.length > 0 ? (
+              <ImageCarousel images={item.images} alt={item.name} />
             ) : item.menu_img ? (
               <Image
                 src={item.menu_img}
                 alt={item.name}
                 fill
-                className={`object-cover transition-all duration-500 ${
-                  imageLoading ? 'opacity-0' : 'opacity-100'
-                }`}
-                onLoadingComplete={handleImageLoad}
-                onError={handleImageError}
+                className="object-cover"
                 sizes="(max-width: 768px) 100vw, 40vw"
               />
             ) : (

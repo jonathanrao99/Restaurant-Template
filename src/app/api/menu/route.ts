@@ -37,7 +37,7 @@ export async function GET() {
   const { data: items, error } = await supabase
     .from('menu_items')
     .select(
-      'id, name, description, price, isvegetarian, isspicy, category, menu_img, sold_out, square_variation_id'
+      'id, name, description, price, isvegetarian, isspicy, category, menu_img, sold_out, square_variation_id, images'
     );
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   if (!items) return NextResponse.json([], { status: 200 });
@@ -57,15 +57,72 @@ export async function GET() {
   }
 
   // 4. Merge: sold_out (Supabase) OR not available (Square)
-  const merged = items.map((item: any) => ({
-    ...item,
-    isSoldOut: !!item.sold_out || (item.square_variation_id ? !squareAvailability[item.square_variation_id] : false)
-  }));
+  const merged = items.map((item: any) => {
+    // Merge menu_img into images if images is empty or missing
+    let images = item.images;
+    if ((!images || images.length === 0) && item.menu_img) {
+      images = [item.menu_img];
+    } else if (images && item.menu_img && !images.includes(item.menu_img)) {
+      images = [item.menu_img, ...images];
+    }
+    return {
+      ...item,
+      images,
+      isSoldOut: !!item.sold_out || (item.square_variation_id ? !squareAvailability[item.square_variation_id] : false)
+    };
+  });
 
+  // Cache results for quick subsequent loads
   return NextResponse.json(merged, {
     status: 200,
     headers: {
-      'Cache-Control': 'public, max-age=300, stale-while-revalidate=59'
+      'Cache-Control': 'public, max-age=60, stale-while-revalidate=300'
     }
   });
+}
+
+// Create a new menu item
+export async function POST(request: Request) {
+  try {
+    const { name, description, price, isvegetarian, isspicy, category, menu_img, sold_out, square_variation_id, images } = await request.json();
+    // Insert and return the created row
+    const { data, error } = await supabase
+      .from('menu_items')
+      .insert([{ name, description, price, isvegetarian, isspicy, category, menu_img, sold_out, square_variation_id, images }])
+      .select();
+    if (error || !data) {
+      console.error('Supabase insert error:', error);
+      return NextResponse.json({ error: error?.message || 'No data returned' }, { status: 500 });
+    }
+    return NextResponse.json(data[0], { status: 201 });
+  } catch (err) {
+    console.error('API POST error:', err);
+    return NextResponse.json({ error: String(err) }, { status: 500 });
+  }
+}
+
+// Update an existing menu item
+export async function PATCH(request: Request) {
+  const { id, ...updates } = await request.json();
+  const { data, error } = await supabase
+    .from('menu_items')
+    .update(updates)
+    .eq('id', id);
+  if (error || !data) {
+    return NextResponse.json({ error: error?.message || 'No data returned' }, { status: 500 });
+  }
+  return NextResponse.json(data[0], { status: 200 });
+}
+
+// Delete a menu item
+export async function DELETE(request: Request) {
+  const { id } = await request.json();
+  const { error } = await supabase
+    .from('menu_items')
+    .delete()
+    .eq('id', id);
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+  return NextResponse.json({ success: true }, { status: 200 });
 } 

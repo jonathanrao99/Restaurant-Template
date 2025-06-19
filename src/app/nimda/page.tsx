@@ -1,7 +1,12 @@
 'use client';
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { InputOtp } from '@heroui/input-otp';
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+  InputOTPSeparator,
+} from '@/components/ui/input-otp';
 import { Button } from '@heroui/react';
 import { Confetti } from '@/components/magicui/confetti';
 import { motion } from 'framer-motion';
@@ -136,14 +141,23 @@ export default function NimdaAuthPage() {
           )}
           <h2 className="text-2xl font-display font-bold text-center text-desi-orange">Admin Login</h2>
 
-          <InputOtp
-            length={6}
+          <InputOTP
+            maxLength={6}
             type="password"
             value={code}
-            onValueChange={handleOTPChange}
+            onChange={handleOTPChange}
             containerClassName="flex justify-center space-x-4"
             className="w-14 h-14 text-center border border-gray-300 rounded-lg bg-white focus:outline-none focus:border-desi-orange focus:ring-1 focus:ring-desi-orange"
-          />
+          >
+            <InputOTPGroup>
+              <InputOTPSlot index={0} />
+              <InputOTPSlot index={1} />
+              <InputOTPSlot index={2} />
+              <InputOTPSlot index={3} />
+              <InputOTPSlot index={4} />
+              <InputOTPSlot index={5} />
+            </InputOTPGroup>
+          </InputOTP>
 
           {error && (
             <div className="text-sm text-red-500 text-center transition-opacity duration-300 ease-in-out">{error}</div>

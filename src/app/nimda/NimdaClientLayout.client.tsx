@@ -12,9 +12,10 @@ const AppHeader = dynamic(() => import('@/layout/AppHeader'), { ssr: false });
 export default function NimdaClientLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const isLogin = pathname === '/nimda';
+  const isDashboard = pathname.startsWith('/nimda/dashboard');
 
-  // On the login page, render only the page content without the admin layout
-  if (isLogin) {
+  // On the login or dashboard page, render only the page content without the admin layout
+  if (isLogin || isDashboard) {
     return <>{children}</>;
   }
 
