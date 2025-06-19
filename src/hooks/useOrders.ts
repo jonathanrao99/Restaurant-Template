@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 export interface Order {
   id: number;
@@ -23,6 +23,7 @@ export function useOrders() {
     staleTime: 1000 * 60 * 1,
   });
 
+  // Return orders data
   return {
     orders: data || [],
     loading: isLoading,

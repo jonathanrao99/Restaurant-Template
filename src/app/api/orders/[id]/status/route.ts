@@ -1,12 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 import { SquareClient, SquareEnvironment } from 'square';
-
-// Secure Supabase admin client
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { createHmac } from 'crypto';
 
 // Initialize Square client
 const sqEnv = process.env.SQUARE_ENVIRONMENT === 'production'
@@ -17,43 +11,49 @@ const squareClient = new SquareClient({
   environment: sqEnv,
 });
 
-// Helper to generate DoorDash JWT
+// Helper to generate DoorDash JWT using Node crypto
 async function generateDoorDashJWT() {
-  const developer_id = Deno.env.get('DD_DEVELOPER_ID');
-  const key_id = Deno.env.get('DD_KEY_ID');
-  const signing_secret = Deno.env.get('DD_SIGNING_SECRET');
+  const developer_id = process.env.DD_DEVELOPER_ID;
+  const key_id = process.env.DD_KEY_ID;
+  const signing_secret = process.env.DD_SIGNING_SECRET;
   if (!developer_id || !key_id || !signing_secret) throw new Error('Missing DoorDash credentials');
   const header = { alg: 'HS256', typ: 'JWT', 'dd-ver': 'DD-JWT-V1' };
   const iat = Math.floor(Date.now() / 1000);
   const exp = iat + 300;
   const payload = { aud: 'doordash', iss: developer_id, kid: key_id, iat, exp };
-  const encoder = new TextEncoder();
-  const base64url = (data: Uint8Array) => btoa(String.fromCharCode(...data)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-  const headerB64 = base64url(encoder.encode(JSON.stringify(header)));
-  const payloadB64 = base64url(encoder.encode(JSON.stringify(payload)));
-  const toSign = `${headerB64}.${payloadB64}`;
-  const keyBytes = Uint8Array.from(atob(signing_secret.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
-  const cryptoKey = await crypto.subtle.importKey('raw', keyBytes, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
-  const sig = await crypto.subtle.sign('HMAC', cryptoKey, encoder.encode(toSign));
-  const sigB64 = base64url(new Uint8Array(sig));
-  return `${toSign}.${sigB64}`;
+  const headerB64 = Buffer.from(JSON.stringify(header)).toString('base64url');
+  const payloadB64 = Buffer.from(JSON.stringify(payload)).toString('base64url');
+  const dataToSign = `${headerB64}.${payloadB64}`;
+  const signature = createHmac('sha256', Buffer.from(signing_secret, 'base64'))
+    .update(dataToSign)
+    .digest('base64url');
+  return `${dataToSign}.${signature}`;
 }
 
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const orderId = Number(params.id);
     const { status } = await request.json();
-    if (!['pending', 'success', 'cancelled'].includes(status)) {
+    if (!['pending', 'completed', 'cancelled'].includes(status)) {
       return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
     }
 
-    // Fetch current order data
-    const { data: order, error: fetchErr } = await supabaseAdmin
-      .from('orders')
-      .select('payment_id, external_delivery_id, total_amount')
-      .eq('id', orderId)
-      .single();
-    if (fetchErr || !order) {
+    // Fetch current order data via Supabase REST
+    const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+    const fetchUrl = `${SUPABASE_URL}/rest/v1/orders?id=eq.${orderId}&select=payment_id,external_delivery_id,total_amount`;
+    const fetchRes = await fetch(fetchUrl, {
+      headers: {
+        apikey: SERVICE_KEY,
+        authorization: `Bearer ${SERVICE_KEY}`
+      }
+    });
+    if (!fetchRes.ok) {
+      const errText = await fetchRes.text();
+      return NextResponse.json({ error: errText }, { status: 404 });
+    }
+    const [order] = await fetchRes.json();
+    if (!order) {
       return NextResponse.json({ error: 'Order not found' }, { status: 404 });
     }
 
@@ -78,12 +78,21 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       }
     }
 
-    // Update status in Supabase
-    const { error: updateErr } = await supabaseAdmin
-      .from('orders')
-      .update({ status })
-      .eq('id', orderId);
-    if (updateErr) throw updateErr;
+    // Update status in Supabase via REST
+    const updateUrl = `${SUPABASE_URL}/rest/v1/orders?id=eq.${orderId}`;
+    const updateRes = await fetch(updateUrl, {
+      method: 'PATCH',
+      headers: {
+        apikey: SERVICE_KEY,
+        authorization: `Bearer ${SERVICE_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ status })
+    });
+    if (!updateRes.ok) {
+      const txt = await updateRes.text(); console.error('Update error:', txt);
+      return NextResponse.json({ error: txt }, { status: 500 });
+    }
 
     return NextResponse.json({ success: true });
   } catch (err: any) {

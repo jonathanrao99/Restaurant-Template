@@ -1,10 +1,30 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useOrders } from "@/hooks/useOrders";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export default function TransactionsPage() {
   const { orders, loading, error } = useOrders();
+  const queryClient = useQueryClient();
+  const statusMutation = useMutation<Response, Error, { id: number; status: string }>({
+    mutationFn: async ({ id, status }) => {
+      const res = await fetch(`/api/orders/${id}/status`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status }),
+      });
+      if (!res.ok) throw new Error('Failed to update order status');
+      return res;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['orders'] });
+    }
+  });
+  const handleStatusChange = (id: number, status: string) => {
+    statusMutation.mutate({ id, status });
+  };
+  const [openRow, setOpenRow] = useState<number | null>(null);
 
   return (
     <div>
@@ -30,7 +50,30 @@ export default function TransactionsPage() {
                 <td className="px-4 py-2">{new Date(order.created_at).toLocaleString()}</td>
                 <td className="px-4 py-2">{order.customer_name}</td>
                 <td className="px-4 py-2 text-right">${order.total_amount.toFixed(2)}</td>
-                <td className="px-4 py-2">{order.status}</td>
+                <td
+                  className="px-4 py-2 relative cursor-pointer"
+                  onClick={() => setOpenRow(openRow === order.id ? null : order.id)}
+                >
+                  <span>{order.status}</span>
+                  {openRow === order.id && (
+                    <div className="absolute z-10 mt-1 bg-white border rounded shadow-lg">
+                      {['pending', 'success', 'cancelled']
+                        .filter(s => s !== order.status)
+                        .map(s => (
+                          <button
+                            key={s}
+                            className="block w-full text-left px-3 py-1 hover:bg-gray-100"
+                            onClick={() => {
+                              handleStatusChange(order.id, s);
+                              setOpenRow(null);
+                            }}
+                          >
+                            {s}
+                          </button>
+                        ))}
+                    </div>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
