@@ -12,7 +12,8 @@ export async function generateStaticParams() {
   return posts.map(post => ({ slug: post.slug }));
 }
 
-export default function Page({ params }: { params: { slug: string } }) {
+export default async function Page({ params: paramsPromise }: { params: Promise<{ slug: string }> }) {
+  const params = await paramsPromise;
   const post = posts.find(p => p.slug === params.slug);
   if (!post) {
     return <div>Post not found</div>;

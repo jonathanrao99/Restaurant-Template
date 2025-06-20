@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import dynamic from 'next/dynamic';
 import { AnimatePresence } from 'framer-motion';
 import { useMenuItems } from '@/hooks/useMenuItems';
 import { useCart } from '@/context/CartContext';
@@ -8,10 +9,11 @@ import { useSearchParams } from 'next/navigation';
 import type { ReadonlyURLSearchParams } from 'next/navigation';
 import { Accordion, AccordionItem } from '@heroui/react';
 import MenuItemCard from '@/components/menu/MenuItemCard';
-import OrderDialog from '@/components/order/OrderDialog';
 import type { MenuItem } from '@/hooks/useMenuItems';
 import { toast } from 'sonner';
 import { Search } from 'lucide-react';
+
+const OrderDialog = dynamic(() => import('@/components/order/OrderDialog'));
 
 type MenuClientProps = {
   initialMenuItems?: MenuItem[];
@@ -27,6 +29,19 @@ export default function MenuClient({ initialMenuItems }: MenuClientProps) {
   const searchParams: ReadonlyURLSearchParams = useSearchParams();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
+
+  const filteredMenuItems = useMemo(() => {
+    if (!menuItems) return {};
+    return categories.reduce((acc, category) => {
+      acc[category] = menuItems
+        .filter(item => item.category === category)
+        .filter(item => !vegetarianOnly || item.isvegetarian)
+        .filter(item => !spicyOnly || item.isspicy)
+        .filter(item => !under10Only || parseFloat(item.price.replace(/[^0-9.]/g, '')) < 10)
+        .filter(item => item.name.toLowerCase().includes(searchFilter.toLowerCase()));
+      return acc;
+    }, {} as { [key: string]: MenuItem[] });
+  }, [menuItems, categories, vegetarianOnly, spicyOnly, under10Only, searchFilter]);
 
   useEffect(() => {
     const itemId = searchParams.get('itemId');
@@ -121,13 +136,7 @@ export default function MenuClient({ initialMenuItems }: MenuClientProps) {
               }}
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-                {menuItems
-                  .filter(item => item.category === category)
-                  .filter(item => !vegetarianOnly || item.isvegetarian)
-                  .filter(item => !spicyOnly || item.isspicy)
-                  .filter(item => !under10Only || parseFloat(item.price.replace(/[^0-9.]/g, '')) < 10)
-                  .filter(item => item.name.toLowerCase().includes(searchFilter.toLowerCase()))
-                  .map(item => (
+                {filteredMenuItems[category]?.map(item => (
                     <MenuItemCard key={item.id} item={item} handleAddToCart={handleAddToCart} />
                 ))}
               </div>

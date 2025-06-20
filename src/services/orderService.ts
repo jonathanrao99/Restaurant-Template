@@ -22,6 +22,11 @@ export interface OrderData {
   payment_id?: string;
 }
 
+interface OrderRecord extends OrderData {
+  id: number;
+  created_at: string;
+}
+
 // Submit order to database
 export const submitOrder = async (orderData: OrderData) => {
   try {
@@ -39,7 +44,8 @@ export const submitOrder = async (orderData: OrderData) => {
     
     if (error || !data?.[0]) throw error || new Error('No data returned');
 
-    return { success: true, orderId: data[0].id };
+    const typedData = data as unknown as OrderRecord[];
+    return { success: true, orderId: typedData[0].id };
   } catch (error) {
     console.error('Error submitting order:', error);
     return { success: false, error };
@@ -56,7 +62,7 @@ export const getOrderById = async (orderId: number) => {
       .single();
     
     if (error) throw error;
-    return { success: true, order: data };
+    return { success: true, order: data as unknown as OrderRecord };
     
   } catch (error) {
     console.error('Error fetching order:', error);

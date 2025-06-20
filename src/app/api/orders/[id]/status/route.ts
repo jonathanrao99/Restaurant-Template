@@ -30,8 +30,12 @@ async function generateDoorDashJWT() {
   return `${dataToSign}.${signature}`;
 }
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(
+  request: NextRequest,
+  { params: paramsPromise }: { params: Promise<{ id: string }> },
+): Promise<NextResponse> {
   try {
+    const params = await paramsPromise;
     const orderId = Number(params.id);
     const { status } = await request.json();
     if (!['pending', 'completed', 'cancelled'].includes(status)) {

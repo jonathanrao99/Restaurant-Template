@@ -77,30 +77,30 @@ const Payment = () => {
     if (deliveryMethod !== 'delivery') return;
     const digits = customerPhone.replace(/\D/g, '').length;
     if (!deliveryAddress.trim() || digits < 10) return;
-    setFeeLoading(true);
-    setDeliveryFee(null);
-    const timer = setTimeout(async () => {
-      try {
-        const phoneE164 = getE164Phone(customerPhone);
-        if (!phoneE164) throw new Error('Invalid phone number');
-        const res = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_FUNCTION_URL}/calculate-fee`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-            'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!}`,
-          },
-          body: JSON.stringify({ address: deliveryAddress, dropoffPhoneNumber: phoneE164 }),
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Fee error');
-        setDeliveryFee(data.fee);
-      } catch (err: any) {
-        toast.error("Sorry, we don't deliver to that address yet — we're expanding to your region soon!");
+        setFeeLoading(true);
         setDeliveryFee(null);
-      } finally {
-        setFeeLoading(false);
-      }
+    const timer = setTimeout(async () => {
+        try {
+          const phoneE164 = getE164Phone(customerPhone);
+          if (!phoneE164) throw new Error('Invalid phone number');
+          const res = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_FUNCTION_URL}/calculate-fee`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+            'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!}`,
+            },
+            body: JSON.stringify({ address: deliveryAddress, dropoffPhoneNumber: phoneE164 }),
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || 'Fee error');
+          setDeliveryFee(data.fee);
+        } catch (err: any) {
+          toast.error("Sorry, we don't deliver to that address yet — we're expanding to your region soon!");
+          setDeliveryFee(null);
+        } finally {
+          setFeeLoading(false);
+        }
     }, 2000);
     return () => clearTimeout(timer);
   }, [deliveryAddress, customerPhone, deliveryMethod]);
@@ -240,7 +240,7 @@ const Payment = () => {
           {/* Payment Form */}
           <div className="lg:col-span-2 space-y-6">
             {/* Card Payment Form */}
-            <PaymentForm
+            <PaymentForm 
               cardName={cardName}
               setCardName={setCardName}
               onCardReady={setCard}

@@ -130,6 +130,7 @@ export default function HomeFoodCarouselSection() {
                     autoPlay
                     muted={!inView ? true : false}
                     playsInline
+                    preload="metadata"
                     className="object-cover w-full h-full"
                     title={media[current].alt}
                   />

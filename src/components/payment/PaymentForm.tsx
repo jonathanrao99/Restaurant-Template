@@ -225,96 +225,96 @@ const PaymentForm = ({
               </p>
             )}
           </div>
-          <div className="space-y-2 relative">
-            <label htmlFor="deliveryAddress" className="block text-sm font-medium text-gray-700">Delivery Address</label>
-            <input
-              id="deliveryAddress"
+            <div className="space-y-2 relative">
+              <label htmlFor="deliveryAddress" className="block text-sm font-medium text-gray-700">Delivery Address</label>
+              <input
+                id="deliveryAddress"
               autoComplete="off"
               readOnly
               onFocus={(e) => e.currentTarget.removeAttribute('readonly')}
-              placeholder="123 Main St, City, State, ZIP"
-              value={deliveryAddress}
-              onChange={handleInput}
-              required
-              aria-invalid={!!deliveryAddressError}
-              aria-describedby={deliveryAddressError ? 'deliveryAddress-error' : undefined}
-              className="rounded-md border-gray-300 shadow-sm transition-all focus:ring-2 focus:ring-desi-orange focus:outline-none w-full"
-              ref={inputRef}
-            />
-            {/* Render suggestions via portal to overlay above all UI */}
-            {dropdownStyles && suggestionStatus === 'OK' && createPortal(
-              <ul
-                style={{
-                  position: 'absolute',
-                  top: dropdownStyles.top,
-                  left: dropdownStyles.left,
-                  width: dropdownStyles.width,
-                  background: '#fff',
-                  border: '1px solid #e5e7eb',
-                  borderRadius: 4,
-                  boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
-                  zIndex: 10000,
-                  maxHeight: 240,
-                  overflowY: 'auto'
-                }}
-              >
-                {suggestionData.map((suggestion) => {
-                  const { place_id, structured_formatting } = suggestion;
-                  return (
-                    <li
-                      key={place_id}
-                      onClick={() => handleSelectSuggestion(suggestion.description)}
-                      style={{ padding: '8px 12px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
-                      onMouseEnter={(e) => (e.currentTarget.style.background = '#f3f4f6')}
-                      onMouseLeave={(e) => (e.currentTarget.style.background = 'white')}
-                    >
-                      <span style={{ fontWeight: 500 }}>{structured_formatting.main_text}</span>
-                      <small style={{ marginLeft: 8, color: '#6b7280' }}>{structured_formatting.secondary_text}</small>
-                    </li>
-                  );
-                })}
-              </ul>,
-              document.body
-            )}
-            {deliveryAddressError && (
-              <p id="deliveryAddress-error" role="alert" className="mt-1 text-sm text-red-500">
-                {deliveryAddressError}
-              </p>
-            )}
-          </div>
+                placeholder="123 Main St, City, State, ZIP"
+                value={deliveryAddress}
+                onChange={handleInput}
+                required
+                aria-invalid={!!deliveryAddressError}
+                aria-describedby={deliveryAddressError ? 'deliveryAddress-error' : undefined}
+                className="rounded-md border-gray-300 shadow-sm transition-all focus:ring-2 focus:ring-desi-orange focus:outline-none w-full"
+                ref={inputRef}
+              />
+              {/* Render suggestions via portal to overlay above all UI */}
+              {dropdownStyles && suggestionStatus === 'OK' && createPortal(
+                <ul
+                  style={{
+                    position: 'absolute',
+                    top: dropdownStyles.top,
+                    left: dropdownStyles.left,
+                    width: dropdownStyles.width,
+                    background: '#fff',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: 4,
+                    boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
+                    zIndex: 10000,
+                    maxHeight: 240,
+                    overflowY: 'auto'
+                  }}
+                >
+                  {suggestionData.map((suggestion) => {
+                    const { place_id, structured_formatting } = suggestion;
+                    return (
+                      <li
+                        key={place_id}
+                        onClick={() => handleSelectSuggestion(suggestion.description)}
+                        style={{ padding: '8px 12px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                        onMouseEnter={(e) => (e.currentTarget.style.background = '#f3f4f6')}
+                        onMouseLeave={(e) => (e.currentTarget.style.background = 'white')}
+                      >
+                        <span style={{ fontWeight: 500 }}>{structured_formatting.main_text}</span>
+                        <small style={{ marginLeft: 8, color: '#6b7280' }}>{structured_formatting.secondary_text}</small>
+                      </li>
+                    );
+                  })}
+                </ul>,
+                document.body
+              )}
+              {deliveryAddressError && (
+                <p id="deliveryAddress-error" role="alert" className="mt-1 text-sm text-red-500">
+                  {deliveryAddressError}
+                </p>
+              )}
+            </div>
         </div>
 
         {/* Payment Method Specific Section */}
         <form onSubmit={handleSubmit} autoComplete="off" className="space-y-6 animate-fade-in-delay">
-          {/* Card Details */}
-          <h1 className="text-2xl font-display font-bold mb-4 mt-4">Card Details</h1>
-          {/* Name on Card */}
-          <div className="space-y-2">
-            <label htmlFor="cardName" className="block text-sm font-medium text-gray-700">Name on Card</label>
-            <div className="relative">
-              <Input
-                id="cardName"
+            {/* Card Details */}
+            <h1 className="text-2xl font-display font-bold mb-4 mt-4">Card Details</h1>
+            {/* Name on Card */}
+            <div className="space-y-2">
+              <label htmlFor="cardName" className="block text-sm font-medium text-gray-700">Name on Card</label>
+              <div className="relative">
+                <Input
+                  id="cardName"
                 autoComplete="off"
                 readOnly
                 onFocus={(e) => e.currentTarget.removeAttribute('readonly')}
-                placeholder="John Smith"
-                value={cardName}
-                onChange={(e) => setCardName(e.target.value)}
-                className="pl-10 rounded-md border-gray-300 shadow-sm transition-all focus:ring-2 focus:ring-desi-orange focus:outline-none"
-                required
-              />
-              <User size={16} className="absolute left-3 top-3 text-gray-500" />
+                  placeholder="John Smith"
+                  value={cardName}
+                  onChange={(e) => setCardName(e.target.value)}
+                  className="pl-10 rounded-md border-gray-300 shadow-sm transition-all focus:ring-2 focus:ring-desi-orange focus:outline-none"
+                  required
+                />
+                <User size={16} className="absolute left-3 top-3 text-gray-500" />
+              </div>
             </div>
-          </div>
           <SquareCardContainer method="card" onCardReady={onCardReady} amount={amount} />
-          <Button
-            type="submit"
-            disabled={!isCustomerValid || isProcessing}
-            className="w-full bg-desi-orange hover:bg-desi-orange/90 text-white py-6 text-lg rounded-xl transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isProcessing ? 'Processing…' : 'Checkout'}
-          </Button>
-        </form>
+            <Button
+              type="submit"
+              disabled={!isCustomerValid || isProcessing}
+              className="w-full bg-desi-orange hover:bg-desi-orange/90 text-white py-6 text-lg rounded-xl transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isProcessing ? 'Processing…' : 'Checkout'}
+            </Button>
+          </form>
       </div>
     </div>
   );

@@ -1,12 +1,14 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import dynamic from 'next/dynamic';
 import HeroSection from '@/components/home/HeroSection';
 import BestsellersSection from '@/components/home/BestsellersSection';
 import HomeFoodCarouselSection from '@/components/home/HomeFoodCarouselSection';
-import QualityCommitmentSection from '@/components/home/QualityCommitmentSection';
-import CustomerReviewsSection from '@/components/home/CustomerReviewsSection';
-import ConnectSection from '@/components/home/ConnectSection';
+
+const QualityCommitmentSection = dynamic(() => import('@/components/home/QualityCommitmentSection'));
+const CustomerReviewsSection = dynamic(() => import('@/components/home/CustomerReviewsSection'));
+const ConnectSection = dynamic(() => import('@/components/home/ConnectSection'));
 
 const Index = () => {
   const [isScrolled, setIsScrolled] = useState(false);

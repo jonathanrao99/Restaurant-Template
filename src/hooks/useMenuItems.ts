@@ -10,9 +10,9 @@ interface MenuItemRow {
   isvegetarian: boolean;
   isspicy: boolean;
   category: string;
-  menu_img: string | null;
+  menu_img?: string | null;
   sold_out: boolean;
-  square_variation_id: string | null;
+  square_variation_id?: string | null;
   images?: string[] | null;
   isSoldOut?: boolean;
 }

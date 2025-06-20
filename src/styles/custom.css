@@ -1,19 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&family=Yeseva+One&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600&display=swap');
-
-/* Google Font classes */
-.font-yeseva {
-  font-family: 'Yeseva One', serif;
-}
-
-.font-josefin {
-  font-family: 'Josefin Sans', sans-serif;
-}
-
-.font-source-pro {
-  font-family: 'Source Sans Pro', sans-serif;
-}
-
 /* Custom styles for biryani positioning */
 .traditional-recipes-section {
   position: relative;
@@ -123,66 +107,6 @@ html {
   .ingredient-right {
     --slide-x: 80px;
   }
-}
-
-@font-face {
-  font-family: 'Samarkan';
-  src: url('/fonts/samarkan/SAMAN___.TTF') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'NekaLaurent';
-  src: url('/fonts/neka_laurent/Neka Laurent (Demo_Font).ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Against2';
-  src: url('/fonts/against_2/against regular.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'NewYork';
-  src: url('/fonts/newyork/NewYork PERSONAL USE.otf') format('opentype');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Butler';
-  src: url('/fonts/butler/Butler/Butler_Light.otf') format('opentype');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-.font-samarkan {
-  font-family: 'Samarkan', cursive;
-}
-
-.font-neka {
-  font-family: 'NekaLaurent', cursive;
-}
-
-.font-against {
-  font-family: 'Against2', cursive;
-}
-
-.font-newyork {
-  font-family: 'NewYork', serif;
-}
-
-.font-butler {
-  font-family: 'Butler', serif;
 }
 
 /* Shake animation */
