@@ -30,3 +30,4 @@ dist-ssr
 
 .cursor/
 .template/.next/
+.next/
