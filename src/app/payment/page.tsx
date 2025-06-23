@@ -2,23 +2,29 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { ArrowLeft, Lock } from 'lucide-react';
+import { ArrowLeft, Lock, Calendar, Clock } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { toast } from 'sonner';
 import OrderSummary from '@/components/payment/OrderSummary';
-import PaymentSuccessPage from '@/components/payment/PaymentSuccessPage';
 import { Button } from '@heroui/react';
 import { AddressAutocomplete } from '@/components/payment/AddressAutocomplete';
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
+
+const isWithinOperatingHours = () => {
+  const now = new Date();
+  const hour = now.getHours();
+  // Window is 5 PM (17) to 1 AM (01)
+  return (hour >= 17) || (hour < 1);
+};
 
 const PaymentPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { cartItems, getCartTotal, clearCart, fulfillmentMethod, scheduledTime, setScheduledTime } = useCart();
+  const { cartItems, getCartTotal, clearCart, fulfillmentMethod, setFulfillmentMethod } = useCart();
+  const { scheduledTime: cartScheduledTime, setScheduledTime: setCartScheduledTime } = useCart();
 
   const [isProcessing, setIsProcessing] = useState(false);
-  const [paymentSuccess, setPaymentSuccess] = useState(false);
-  
-  // Form state
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
@@ -26,27 +32,63 @@ const PaymentPage = () => {
   const [deliveryFee, setDeliveryFee] = useState<number | null>(null);
   const [feeLoading, setFeeLoading] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  
+  const [canOrderASAP, setCanOrderASAP] = useState(false);
+  const [scheduleType, setScheduleType] = useState<'ASAP' | 'scheduled'>('scheduled');
+  
+  const getInitialStartTime = () => {
+    const now = new Date();
+    const thirtyMinutesFromNow = new Date(now.getTime() + 30 * 60 * 1000);
+    
+    const today5pm = new Date();
+    today5pm.setHours(17, 0, 0, 0);
+
+    if (now.getHours() >= 1 && now.getHours() < 17) {
+      return today5pm;
+    }
+    return thirtyMinutesFromNow > today5pm ? thirtyMinutesFromNow : today5pm;
+  };
+
+  const [scheduledTime, setScheduledTime] = useState<Date>(getInitialStartTime());
+
+  useEffect(() => {
+    setIsClient(true);
+    const canOrderNow = isWithinOperatingHours();
+    setCanOrderASAP(canOrderNow);
+    if (canOrderNow) {
+      setScheduleType('ASAP');
+    }
+  }, []);
+
+  useEffect(() => {
+    // Redirect if cart is empty
+    if (isClient && cartItems.length === 0) {
+      router.push('/cart');
+    }
+  }, [cartItems.length, router, isClient]);
+
+  useEffect(() => {
+    // Sync with global cart context
+    if (scheduleType === 'ASAP') {
+      setCartScheduledTime('ASAP');
+    } else {
+      setCartScheduledTime(scheduledTime.toISOString());
+    }
+  }, [scheduleType, scheduledTime, setCartScheduledTime]);
+
+  const filterTime = (time: Date) => {
+    const now = new Date();
+    const selected = new Date(time);
+    const thirtyMinutesFromNow = new Date(now.getTime() + 30 * 60 * 1000);
+    if (selected < thirtyMinutesFromNow) return false;
+    const hour = selected.getHours();
+    return (hour >= 17) || (hour < 1);
+  };
 
   // Calculate order totals
   const subtotal = getCartTotal();
   const tax = subtotal * 0.0825;
   const total = subtotal + tax + (fulfillmentMethod === 'delivery' && deliveryFee ? deliveryFee : 0);
-
-  useEffect(() => {
-    setIsClient(true);
-    // Check for success status from redirect
-    if (searchParams.get('status') === 'success') {
-      setPaymentSuccess(true);
-      clearCart();
-    }
-  }, [searchParams, clearCart]);
-
-  useEffect(() => {
-    // Redirect if cart is empty and not on a success page
-    if (cartItems.length === 0 && !paymentSuccess) {
-      router.push('/cart');
-    }
-  }, [cartItems.length, router, paymentSuccess]);
 
   // Effect to calculate delivery fee
   useEffect(() => {
@@ -83,6 +125,15 @@ const PaymentPage = () => {
 
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (scheduleType === 'ASAP' && !isWithinOperatingHours()) {
+      toast.error('ASAP orders are currently unavailable.', {
+        description: 'We are open for orders from 5 PM to 1 AM.',
+      });
+      setCanOrderASAP(false);
+      setScheduleType('scheduled');
+      return;
+    }
     
     if ((fulfillmentMethod === 'delivery' && !deliveryAddress) || !customerName || !customerEmail || !customerPhone) {
       toast.error('Please fill in all required fields.');
@@ -125,7 +176,7 @@ const PaymentPage = () => {
         }),
       });
       const { url, error: linkError } = await linkRes.json();
-       
+
       if (linkError) throw new Error(linkError);
       if (url) router.push(url);
 
@@ -134,10 +185,6 @@ const PaymentPage = () => {
       setIsProcessing(false);
     }
   };
-
-  if (paymentSuccess) {
-    return <PaymentSuccessPage deliveryMethod={fulfillmentMethod} />;
-  }
 
   return (
     <main className="min-h-screen pt-24 pb-20 bg-gray-50">
@@ -153,56 +200,72 @@ const PaymentPage = () => {
         <form onSubmit={handleCheckout} className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
           <div className="lg:col-span-2 space-y-6 bg-white rounded-xl shadow-md p-6">
             <h2 className="text-2xl font-bold font-display mb-4">Customer Information</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700">Full Name</label>
-                <input type="text" id="name" value={customerName} onChange={(e) => setCustomerName(e.target.value)} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-desi-orange focus:ring-desi-orange sm:text-sm" />
-              </div>
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address</label>
-                <input type="email" id="email" value={customerEmail} onChange={(e) => setCustomerEmail(e.target.value)} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-desi-orange focus:ring-desi-orange sm:text-sm" />
-              </div>
-              <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone Number</label>
-                <input type="tel" id="phone" value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-desi-orange focus:ring-desi-orange sm:text-sm" />
-              </div>
-            </div>
-            {/* Scheduling Options */}
+            
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Pickup/Delivery Time</label>
-              <div className="flex items-center space-x-4 mb-2">
-                <label className="flex items-center space-x-1">
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700">Full Name</label>
+              <input type="text" id="name" value={customerName} onChange={(e) => setCustomerName(e.target.value)} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-desi-orange focus:ring-0 focus:outline-none sm:text-sm" />
+            </div>
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address</label>
+              <input type="email" id="email" value={customerEmail} onChange={(e) => setCustomerEmail(e.target.value)} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-desi-orange focus:ring-0 focus:outline-none sm:text-sm" />
+            </div>
+            <div>
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone Number</label>
+              <input type="tel" id="phone" value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-desi-orange focus:ring-0 focus:outline-none sm:text-sm" />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Pickup/Delivery Time</label>
+              <div className="flex items-center space-x-4 mb-3">
+                <label className={`flex items-center space-x-2 ${canOrderASAP ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}>
                   <input
                     type="radio"
-                    name="schedule"
+                    name="scheduleType"
                     value="ASAP"
-                    checked={scheduledTime === 'ASAP'}
-                    onChange={() => setScheduledTime('ASAP')}
-                    className="form-radio"
+                    checked={scheduleType === 'ASAP'}
+                    onChange={() => setScheduleType('ASAP')}
+                    className="form-radio text-desi-orange focus:ring-desi-orange"
+                    disabled={!canOrderASAP}
                   />
                   <span>ASAP</span>
                 </label>
-                <label className="flex items-center space-x-1">
+                <label className="flex items-center space-x-2 cursor-pointer">
                   <input
                     type="radio"
-                    name="schedule"
+                    name="scheduleType"
                     value="scheduled"
-                    checked={scheduledTime !== 'ASAP'}
-                    onChange={() => setScheduledTime(new Date().toISOString().slice(0,16))}
-                    className="form-radio"
+                    checked={scheduleType === 'scheduled'}
+                    onChange={() => setScheduleType('scheduled')}
+                    className="form-radio text-desi-orange focus:ring-desi-orange"
                   />
-                  <span>Scheduled</span>
+                  <span>Schedule for later</span>
                 </label>
               </div>
-              {scheduledTime !== 'ASAP' && (
-                <input
-                  type="datetime-local"
-                  value={scheduledTime}
-                  onChange={(e) => setScheduledTime(e.target.value)}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-desi-orange focus:ring-desi-orange sm:text-sm"
-                />
+
+              {!canOrderASAP && isClient && (
+                <p className="text-xs text-gray-500 -mt-2 mb-3">
+                  ASAP orders are only available from 5 PM to 1 AM.
+                </p>
+              )}
+
+              {scheduleType === 'scheduled' && (
+                 <div className="relative">
+                    <DatePicker
+                      selected={scheduledTime}
+                      onChange={(date: Date) => date && setScheduledTime(date)}
+                      showTimeSelect
+                      minDate={new Date()}
+                      filterTime={filterTime}
+                      dateFormat="MMMM d, yyyy h:mm aa"
+                      timeIntervals={30}
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-desi-orange focus:ring-0 focus:outline-none sm:text-sm pl-10"
+                      placeholderText="Select a date and time"
+                    />
+                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                 </div>
               )}
             </div>
+
             {fulfillmentMethod === 'delivery' && (
               <div>
                 <label htmlFor="address" className="block text-sm font-medium text-gray-700">Delivery Address</label>

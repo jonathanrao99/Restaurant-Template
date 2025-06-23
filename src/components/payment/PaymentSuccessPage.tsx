@@ -1,37 +1,25 @@
 'use client';
 import { CheckCircle } from 'lucide-react';
-import { Button } from "@heroui/react";
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
-interface PaymentSuccessPageProps {
-  deliveryMethod: string;
-}
-
-const PaymentSuccessPage: React.FC<PaymentSuccessPageProps> = ({ deliveryMethod }) => {
-  const router = useRouter();
-  
+export default function PaymentSuccessPage() {
   return (
-    <div className="container mx-auto px-4 md:px-6 pt-10">
-      <div className="max-w-md mx-auto text-center bg-white p-8 rounded-xl shadow-md">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mb-6">
-          <CheckCircle className="text-green-600" size={32} />
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 text-center p-4">
+      <div className="bg-white p-10 rounded-lg shadow-lg max-w-md w-full">
+        <div className="flex justify-center mb-4">
+          <CheckCircle className="w-16 h-16 text-green-500" />
         </div>
-        <h1 className="text-2xl font-display font-bold mb-4">Payment Successful!</h1>
+        <h1 className="text-3xl font-bold text-gray-800 mb-2">Payment Successful!</h1>
         <p className="text-gray-600 mb-6">
-          Thank you for your order. Your food will be prepared {deliveryMethod === 'pickup' ? 'for pickup' : 'for delivery'} shortly.
+          Thank you for your order. Your food is being prepared and will be ready for you soon.
         </p>
-        <p className="text-gray-600 mb-6">
-          A confirmation has been sent to your email address.
-        </p>
-        <Button 
-          onClick={() => router.push('/')}
-          className="bg-desi-orange hover:bg-desi-orange/90 text-white"
-        >
-          Return to Home
-        </Button>
+        <div className="space-y-4">
+            <p className="text-sm text-gray-500">You will receive a confirmation email shortly.</p>
+             <Link href="/menu" className="inline-block bg-primary text-white font-bold py-3 px-6 rounded-lg hover:bg-primary-dark transition-colors duration-300">
+                Continue Shopping
+            </Link>
+        </div>
       </div>
     </div>
   );
-};
-
-export default PaymentSuccessPage;
+}

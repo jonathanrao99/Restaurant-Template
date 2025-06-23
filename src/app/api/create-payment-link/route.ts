@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 const client = new Client({
   bearerAuthCredentials: {
-    accessToken: process.env.SQUARE_ACCESS_TOKEN!,
+  accessToken: process.env.SQUARE_ACCESS_TOKEN!,
   },
   environment:
     process.env.SQUARE_ENVIRONMENT?.toLowerCase() === 'production'
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
             type: fulfillmentMethod === 'delivery' ? 'DELIVERY' : 'PICKUP',
             state: 'PROPOSED',
             ...(fulfillmentMethod === 'pickup' && {
-              pickupDetails: {
+            pickupDetails: {
                 recipient: {
                   displayName: customerInfo.name,
                   phoneNumber: formattedPhone,
@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
                 scheduleType: scheduledTime === 'ASAP' ? 'ASAP' : 'SCHEDULED',
                 ...(scheduledTime !== 'ASAP' && { pickupAt: scheduledTime }),
                 note: `Customer: ${customerInfo.name}`,
-              },
+            },
             }),
             ...(fulfillmentMethod === 'delivery' && {
               deliveryDetails: {
@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
       },
       checkoutOptions: {
         allowTipping: true,
-        redirectUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/thank-you`,
+        redirectUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/payment-success`,
         askForShippingAddress: fulfillmentMethod === 'delivery',
       },
     });
