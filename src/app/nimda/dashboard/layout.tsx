@@ -43,6 +43,12 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             <Link href="/nimda/dashboard/blog">
               <button className="px-4 py-2 bg-desi-orange text-white rounded">Blog</button>
             </Link>
+            <Link href="/nimda/dashboard/customers">
+              <button className="px-4 py-2 bg-desi-orange text-white rounded">Customers</button>
+            </Link>
+            <Link href="/nimda/dashboard/transactions">
+              <button className="px-4 py-2 bg-desi-orange text-white rounded">Transactions</button>
+            </Link>
           </div>
         )}
         {children}

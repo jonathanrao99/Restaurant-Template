@@ -6,6 +6,7 @@ import ReactQueryProvider from '@/components/ReactQueryProvider';
 import { HeroUIProvider } from '@heroui/react';
 import { Toaster } from '@/components/ui/sonner';
 import { inter, samarkan, displayFont, butler } from './fonts';
+import Analytics from '@/components/Analytics';
 
 export const metadata = {
   title: 'Next.js',
@@ -20,6 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${samarkan.variable} ${displayFont.variable} ${butler.variable}`}>
       <body>
+        <Analytics />
         <CartProvider>
           <ReactQueryProvider>
             <HeroUIProvider>
