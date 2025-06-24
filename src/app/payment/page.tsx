@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ArrowLeft, Lock, Calendar, Clock } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
@@ -11,6 +11,8 @@ import dynamicComponent from 'next/dynamic';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { AddressAutocompleteProps } from '@/components/payment/AddressAutocomplete';
+
+export const dynamic = 'force-dynamic';
 
 const AddressAutocomplete = dynamicComponent<AddressAutocompleteProps>(
   () => import('@/components/payment/AddressAutocomplete').then(mod => mod.AddressAutocomplete),
@@ -23,7 +25,7 @@ const isWithinOperatingHours = () => {
   return hour >= 17 || hour < 1;
 };
 
-export default function PaymentPageClient() {
+function PaymentPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { cartItems, getCartTotal, clearCart, fulfillmentMethod, setFulfillmentMethod } = useCart();
@@ -130,5 +132,13 @@ export default function PaymentPageClient() {
             <div><label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address</label><input type="email" id="email" value={customerEmail} onChange={e=>setCustomerEmail(e.target.value)} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-desi-orange focus:ring-0 focus:outline-none sm:text-sm"/></div>
             <div><label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone Number</label><input type="tel" id="phone" value={customerPhone} onChange={e=>setCustomerPhone(e.target.value)} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-desi-orange focus:ring-0 focus:outline-none sm:text-sm"/></div>
             <div><label className="block text-sm font-medium text-gray-700 mb-2">Pickup/Delivery Time</label><div className="flex items-center space-x-4 mb-3"><label className={`flex items-center space-x-2 ${canOrderASAP?'cursor-pointer':'cursor-not-allowed opacity-50'}`}><input type="radio" name="scheduleType" value="ASAP" checked={scheduleType==='ASAP'} onChange={()=>setScheduleType('ASAP')} className="form-radio text-desi-orange focus:ring-desi-orange" disabled={!canOrderASAP}/><span>ASAP</span></label><label className="flex items-center space-x-2 cursor-pointer"><input type="radio" name="scheduleType" value="scheduled" checked={scheduleType==='scheduled'} onChange={()=>setScheduleType('scheduled')} className="form-radio text-desi-orange focus:ring-desi-orange"/><span>Schedule for later</span></label></div>{!canOrderASAP&&isClient&&<p className="text-xs text-gray-500 -mt-2 mb-3">ASAP orders are only available from 5 PM to 1 AM.</p>}{scheduleType==='scheduled'&&<div className="relative"><DatePicker selected={scheduledTime} onChange={(date: Date | null) => date && setScheduledTime(date)} showTimeSelect minDate={new Date()} filterTime={filterTime} dateFormat="MMMM d, yyyy h:mm aa" timeIntervals={30} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-desi-orange focus:ring-0 focus:outline-none sm:text-sm pl-10" placeholderText="Select a date and time"/><Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"/></div>}</div><Button type="submit" disabled={isProcessing||cartItems.length===0||(fulfillmentMethod==='delivery'&&(feeLoading||deliveryFee===null))} className="w-full flex items-center justify-center bg-desi-orange hover:bg-desi-orange/90 text-white py-3 px-4 rounded-xl font-medium transition-colors disabled:opacity-70">{isProcessing?'Redirecting...':<><Lock size={16} className="mr-2"/>Proceed to Secure Payment</>}</Button></div>{isClient&&<div className="lg:col-span-1"><OrderSummary subtotal={subtotal} tax={tax} deliveryFee={fulfillmentMethod==='delivery'?deliveryFee:0} total={total} feeLoading={feeLoading}/></div>}</form></div></main>
+  );
+}
+
+export default function PaymentPageClient() {
+  return (
+    <Suspense fallback={<div className="min-h-screen pt-24 pb-20 bg-gray-50 flex items-center justify-center">Loading...</div>}>
+      <PaymentPageContent />
+    </Suspense>
   );
 } 
