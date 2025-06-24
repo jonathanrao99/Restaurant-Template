@@ -82,6 +82,22 @@ export default function HomeFoodCarouselSection() {
     return () => clearTimeout(timeout);
   }, [current]);
 
+  // Preload all carousel images and videos
+  useEffect(() => {
+    media.forEach(item => {
+      if (item.type === 'image') {
+        const img = new window.Image();
+        img.src = item.src;
+      } else if (item.type === 'video') {
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'video';
+        link.href = item.src;
+        document.head.appendChild(link);
+      }
+    });
+  }, []);
+
   const handlePrev = () => {
     setDirection(-1);
     setCurrent((prev) => (prev - 1 + media.length) % media.length);
@@ -128,9 +144,9 @@ export default function HomeFoodCarouselSection() {
                     ref={videoRef}
                     src={media[current].src}
                     autoPlay
-                    muted={!inView ? true : false}
+                    muted={!inView}
                     playsInline
-                    preload="metadata"
+                    preload="auto"
                     className="object-cover w-full h-full"
                     title={media[current].alt}
                   />

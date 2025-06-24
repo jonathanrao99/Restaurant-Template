@@ -39,20 +39,30 @@ export default function BlogPage() {
         </motion.div>
         {/* Content */}
         <div className="relative z-20 container mx-auto px-4 max-w-5xl text-center">
-          <motion.div
-            variants={fadeInUp}
-            initial="hidden"
-            animate="visible"
-            transition={{ duration: 0.5 }}
-            className="text-white animate-fade-in"
-          >
-            <h1 className="text-4xl md:text-5xl font-display font-bold mb-4">
-              Desi Flavors Blog
-            </h1>
-            <p className="text-lg mb-6">
+          <div className="max-w-4xl mx-auto">
+            <motion.div
+              variants={fadeInUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.5 }}
+              className="mb-6 md:mb-8"
+            >
+              <h1 className="text-4xl md:text-4xl lg:text-7xl font-display font-bold tracking-tight leading-tight">
+                <span className="text-white block">Desi Flavors Blog</span>
+              </h1>
+            </motion.div>
+            <motion.p
+              variants={fadeInUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.8 }}
+              className="text-lg md:text-xl text-white leading-relaxed max-w-2xl mx-auto mb-4 font-sans"
+            >
               Stories, recipes, and updates from the Desi Flavors Katy team. Check back for new dishes, behind-the-scenes, and more!
-            </p>
-          </motion.div>
+            </motion.p>
+          </div>
         </div>
       </section>
       <section className="py-20 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">

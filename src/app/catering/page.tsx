@@ -45,6 +45,23 @@ const Catering = () => {
     { type: 'image', src: '/HomeCarousel/IMG-20250610-WA0023.jpg', alt: 'Delicious Dish' },
     { type: 'video', src: '/HomeCarousel/VID-20250609-WA0011.mp4' },
   ];
+
+  // Preload all carousel images and videos for smoother transitions
+  useEffect(() => {
+    media.forEach(item => {
+      if (item.type === 'image') {
+        const img = new window.Image();
+        img.src = item.src;
+      } else if (item.type === 'video') {
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'video';
+        link.href = item.src;
+        document.head.appendChild(link);
+      }
+    });
+  }, []);
+
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(0);
   const [inView, setInView] = useState(false);
@@ -196,7 +213,7 @@ const Catering = () => {
                     {media[current].type === 'image' ? (
                       <Image src={media[current].src} alt={media[current].alt || ''} width={800} height={600} className="object-cover w-full h-full" priority={current === 0} />
                     ) : (
-                      <video ref={videoRef} src={media[current].src} autoPlay muted={!inView} playsInline className="object-cover w-full h-full" title={media[current].alt} />
+                      <video ref={videoRef} src={media[current].src} autoPlay muted={!inView} playsInline preload="auto" className="object-cover w-full h-full" title={media[current].alt} />
                     )}
                   </motion.div>
                 </AnimatePresence>
