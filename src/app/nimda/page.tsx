@@ -10,6 +10,7 @@ import {
 import { Button } from '@heroui/react';
 import { Confetti } from '@/components/magicui/confetti';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 const ADMIN_CODE = '366736';
 
@@ -116,10 +117,10 @@ export default function NimdaAuthPage() {
     <div className="flex flex-col h-screen bg-desi-cream">
       <header className="shadow-none transition-colors duration-300">
         <div className="container mx-auto px-4 py-4 flex items-center justify-center">
-          <div className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2">
             <span className="font-samarkan text-3xl text-desi-orange">Desi</span>
-            <span className="font-butler text-2xl font-bold tracking-wide text-desi-black">Flavors Katy</span>
-          </div>
+            <span className="font-against text-2xl font-bold tracking-wide text-desi-black">Flavors Katy</span>
+          </Link>
         </div>
       </header>
       <div className="flex-1 flex items-center justify-center px-4">
