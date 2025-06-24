@@ -88,7 +88,7 @@ export default {
     			sans: ['var(--font-sans)', 'sans-serif'],
     			serif: ['var(--font-butler)', 'serif'],
     			display: ['var(--font-display)', 'cursive'],
-    			samarkan: ['var(--font-samarkan)', 'cursive'],
+    			samarkan: ['Samarkan', 'cursive'],
     			mono: ['var(--font-geist-mono)'],
     		},
     		keyframes: {

@@ -5,7 +5,7 @@ import { CartProvider } from '@/context/CartContext';
 import ReactQueryProvider from '@/components/ReactQueryProvider';
 import { HeroUIProvider } from '@heroui/react';
 import { Toaster } from '@/components/ui/sonner';
-import { inter, samarkan, displayFont, butler } from './fonts';
+import { inter, displayFont, butler } from './fonts';
 
 export const metadata = {
   title: 'Next.js',
@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${samarkan.variable} ${displayFont.variable} ${butler.variable}`}>
+    <html lang="en" className={`font-samarkan ${inter.variable} ${displayFont.variable} ${butler.variable}`}>
       <body>
         <CartProvider>
           <ReactQueryProvider>
@@ -32,5 +32,5 @@ export default function RootLayout({
         </CartProvider>
       </body>
     </html>
-  )
+  );
 }
