@@ -1,4 +1,7 @@
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
+import bundleAnalyzer from '@next/bundle-analyzer';
+
+// Configure bundle analyzer
+const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
 });
 
@@ -14,7 +17,7 @@ const nextConfig = {
   },
   compress: true,
   trailingSlash: false,
-  webpack: (config, { dev, isServer }) => {
+  webpack(config, { dev, isServer }) {
     if (!dev && !isServer) {
       config.optimization.splitChunks = {
         chunks: 'all',
@@ -39,14 +42,18 @@ const nextConfig = {
     return [
       {
         source: '/api/:path*',
-        headers: [{ key: 'Cache-Control', value: 'no-cache, no-store, must-revalidate' }],
+        headers: [
+          { key: 'Cache-Control', value: 'no-cache, no-store, must-revalidate' },
+        ],
       },
       {
         source: '/_next/static/:path*',
-        headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+        ],
       },
     ];
   },
 };
 
-module.exports = withBundleAnalyzer(nextConfig); 
+export default withBundleAnalyzer(nextConfig); 
