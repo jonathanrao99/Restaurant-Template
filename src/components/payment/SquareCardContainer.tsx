@@ -79,39 +79,39 @@ export default function SquareCardContainer({ onCardReady, method, onWalletReady
       }
 
       try {
-      if (method === 'card') {
-        cardInstance = await payments.card({ postalCode: 'required' });
-        await cardInstance.attach('#card-container');
-        onCardReady && onCardReady(cardInstance);
-      } else if (method === 'googlePay') {
-        const paymentRequest = payments.paymentRequest({
-          countryCode: 'US',
-          currencyCode: 'USD',
+        if (method === 'card') {
+          cardInstance = await payments.card({ postalCode: 'required' });
+          await cardInstance.attach('#card-container');
+          onCardReady && onCardReady(cardInstance);
+        } else if (method === 'googlePay') {
+          const paymentRequest = payments.paymentRequest({
+            countryCode: 'US',
+            currencyCode: 'USD',
             total: { amount, label: 'Total' },
-        });
-        walletInstance = await payments.googlePay(paymentRequest);
+          });
+          walletInstance = await payments.googlePay(paymentRequest);
           await walletInstance.attach('#google-pay-button', {
             buttonColor: 'black',
             buttonType: 'long',
             buttonSizeMode: 'fill'
           });
-        onWalletReady && onWalletReady(walletInstance);
-      } else if (method === 'applePay') {
-        const paymentRequest = payments.paymentRequest({
-          countryCode: 'US',
-          currencyCode: 'USD',
+          onWalletReady && onWalletReady(walletInstance);
+        } else if (method === 'applePay') {
+          const paymentRequest = payments.paymentRequest({
+            countryCode: 'US',
+            currencyCode: 'USD',
             total: { amount, label: 'Total' },
-        });
-        walletInstance = await payments.applePay(paymentRequest);
+          });
+          walletInstance = await payments.applePay(paymentRequest);
           await walletInstance.attach('#apple-pay-button');
-        onWalletReady && onWalletReady(walletInstance);
-      } else if (method === 'cashApp') {
-        const paymentRequest = payments.paymentRequest({
-          countryCode: 'US',
-          currencyCode: 'USD',
+          onWalletReady && onWalletReady(walletInstance);
+        } else if (method === 'cashApp') {
+          const paymentRequest = payments.paymentRequest({
+            countryCode: 'US',
+            currencyCode: 'USD',
             total: { amount, label: 'Total' },
-        });
-        walletInstance = await payments.cashAppPay(paymentRequest, {
+          });
+          walletInstance = await payments.cashAppPay(paymentRequest, {
             redirectURL: window.location.origin + window.location.pathname,
             referenceId: 'order-' + Date.now(),
             buttonOptions: {
@@ -120,7 +120,7 @@ export default function SquareCardContainer({ onCardReady, method, onWalletReady
               customButtonColor: '#00D632'
             }
           });
-          onWalletReady?.(walletInstance);
+          onWalletReady && onWalletReady(walletInstance);
           await walletInstance.attach('#cash-app-pay-button');
         }
       } catch (error) {
