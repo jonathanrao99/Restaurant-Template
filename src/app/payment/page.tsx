@@ -7,9 +7,15 @@ import { useCart } from '@/context/CartContext';
 import { toast } from 'sonner';
 import OrderSummary from '@/components/payment/OrderSummary';
 import { Button } from '@heroui/react';
-import { AddressAutocomplete } from '@/components/payment/AddressAutocomplete';
+import dynamic from 'next/dynamic';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
+import { AddressAutocompleteProps } from '@/components/payment/AddressAutocomplete';
+
+const AddressAutocomplete = dynamic<AddressAutocompleteProps>(
+  () => import('@/components/payment/AddressAutocomplete').then(mod => mod.AddressAutocomplete),
+  { ssr: false }
+);
 
 const isWithinOperatingHours = () => {
   const now = new Date();
@@ -107,7 +113,10 @@ const PaymentPage = () => {
               'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
               'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!}`,
             },
-            body: JSON.stringify({ address: deliveryAddress }),
+            body: JSON.stringify({ 
+              address: deliveryAddress,
+              dropoffPhoneNumber: customerPhone.replace(/\D/g, ''),
+            }),
           });
           const data = await res.json();
           if (!res.ok) throw new Error(data.error || 'Fee calculation error');
@@ -186,6 +195,14 @@ const PaymentPage = () => {
     }
   };
 
+  // Handler to clear deliveryAddress if browser autocomplete is used
+  const handleDeliveryAddressChange = (val: string) => {
+    setDeliveryAddress(val);
+    // If suggestions are not shown and value changes, clear deliveryAddress
+    // (This is a best-effort approach; browser autocomplete is hard to fully control)
+    // Optionally, you can add more logic here to validate the address format
+  };
+
   return (
     <main className="min-h-screen pt-24 pb-20 bg-gray-50">
       <div className="container mx-auto px-4 md:px-6 pt-4">
@@ -205,6 +222,16 @@ const PaymentPage = () => {
               <label htmlFor="name" className="block text-sm font-medium text-gray-700">Full Name</label>
               <input type="text" id="name" value={customerName} onChange={(e) => setCustomerName(e.target.value)} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-desi-orange focus:ring-0 focus:outline-none sm:text-sm" />
             </div>
+            {isClient && fulfillmentMethod === 'delivery' && (
+              <div>
+                <label htmlFor="address" className="block text-sm font-medium text-gray-700">Delivery Address</label>
+                <AddressAutocomplete
+                  value={deliveryAddress}
+                  onValueChange={handleDeliveryAddressChange}
+                  onAddressSelect={setDeliveryAddress}
+                />
+              </div>
+            )}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address</label>
               <input type="email" id="email" value={customerEmail} onChange={(e) => setCustomerEmail(e.target.value)} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-desi-orange focus:ring-0 focus:outline-none sm:text-sm" />
@@ -265,16 +292,9 @@ const PaymentPage = () => {
                  </div>
               )}
             </div>
-
-            {fulfillmentMethod === 'delivery' && (
-              <div>
-                <label htmlFor="address" className="block text-sm font-medium text-gray-700">Delivery Address</label>
-                <AddressAutocomplete onAddressSelect={setDeliveryAddress} />
-              </div>
-            )}
              <Button
                 type="submit"
-                disabled={isProcessing || cartItems.length === 0}
+                disabled={isProcessing || cartItems.length === 0 || (fulfillmentMethod === 'delivery' && (feeLoading || deliveryFee === null))}
                 className="w-full flex items-center justify-center bg-desi-orange hover:bg-desi-orange/90 text-white py-3 px-4 rounded-xl font-medium transition-colors disabled:opacity-70"
               >
                 {isProcessing ? 'Redirecting...' : (
