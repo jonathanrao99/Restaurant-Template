@@ -1,10 +1,5 @@
-import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
-
-const PaymentPageClient = dynamic(
-  () => import('./PaymentPageClient'),
-  { ssr: false }
-);
+import PaymentPageClient from './PaymentPageClient';
 
 export default function Page() {
   return (
