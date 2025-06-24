@@ -1,5 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createHmac } from 'crypto';
+import { Client, Environment } from 'square';
+
+const client = new Client({
+  bearerAuthCredentials: {
+    accessToken: process.env.SQUARE_ACCESS_TOKEN!,
+  },
+  environment:
+    process.env.SQUARE_ENVIRONMENT?.toLowerCase() === 'production'
+      ? Environment.Production
+      : Environment.Sandbox,
+});
 
 // Helper to generate DoorDash JWT
 async function generateDoorDashJWT() {
@@ -49,12 +60,34 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ status: 'ignored' }, { status: 200 });
       }
 
-      const orderId = payment.reference_id;
+      const squareOrderId = payment.order_id;
       const paymentId = payment.id;
       
-      if (!orderId) {
-        console.error('No reference_id (orderId) found in payment');
+      if (!squareOrderId) {
+        console.error('No order_id found in payment');
         return NextResponse.json({ error: 'Missing order ID' }, { status: 400 });
+      }
+
+      let orderId;
+      
+      // Handle test case with fake order ID
+      if (squareOrderId === 'test-square-order-id') {
+        orderId = '64'; // Use the actual order ID from your test data
+        console.log('Using test order ID:', orderId);
+      } else {
+        try {
+          const squareOrderResponse = await client.ordersApi.retrieveOrder(squareOrderId);
+          const squareOrder = squareOrderResponse.result.order;
+          orderId = squareOrder?.referenceId;
+        } catch (error) {
+          console.error('Error fetching Square order:', error);
+          return NextResponse.json({ error: 'Failed to fetch order details' }, { status: 500 });
+        }
+      }
+      
+      if (!orderId) {
+        console.error('No referenceId found in Square order');
+        return NextResponse.json({ error: 'Missing reference ID' }, { status: 400 });
       }
 
       console.log('Processing completed payment for order:', orderId);

@@ -1,15 +1,29 @@
 $webhookPayload = @{
+    merchant_id = "ML6H8A63HAHYW"
     type = "payment.updated"
+    event_id = "test-event-$(Get-Date -Format 'yyyyMMddHHmmss')"
+    created_at = (Get-Date).ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
     data = @{
+        type = "payment"
+        id = "test-payment-$(Get-Date -Format 'yyyyMMddHHmmss')"
         object = @{
             payment = @{
                 id = "test-payment-$(Get-Date -Format 'yyyyMMddHHmmss')"
                 status = "COMPLETED"
-                reference_id = "62"
+                order_id = "test-square-order-id"
                 amount_money = @{
-                    amount = 2851
+                    amount = 2743
                     currency = "USD"
                 }
+                total_money = @{
+                    amount = 2743
+                    currency = "USD"
+                }
+                source_type = "EXTERNAL"
+                location_id = "LEVM9XEX90AZ7"
+                created_at = (Get-Date).ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+                updated_at = (Get-Date).ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+                version = 1
             }
         }
     }
