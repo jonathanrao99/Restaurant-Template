@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from 'next/server';
-import { SquareClient, SquareEnvironment } from 'square';
+import { Client, Environment } from 'square/legacy';
 
 export const runtime = 'nodejs';
 export async function POST(req: NextRequest) {
@@ -26,14 +26,13 @@ export async function POST(req: NextRequest) {
 
   // Process payment with Square SDK
   try {
-    // Choose Square environment based on configuration
-    const env = process.env.SQUARE_ENVIRONMENT === 'production'
-      ? SquareEnvironment.Production
-      : SquareEnvironment.Sandbox;
-    console.log('Using Square environment:', env);
-    const squareClient = new SquareClient({
-      token: process.env.SQUARE_ACCESS_TOKEN!,
-      environment: env,
+    // Initialize Square client using legacy SDK
+    const client = new Client({
+      bearerAuthCredentials: { accessToken: process.env.SQUARE_ACCESS_TOKEN! },
+      environment:
+        process.env.SQUARE_ENVIRONMENT?.toLowerCase() === 'production'
+          ? Environment.Production
+          : Environment.Sandbox,
     });
 
     // Validate required payment fields
@@ -43,14 +42,14 @@ export async function POST(req: NextRequest) {
     }
 
     // Use the Payments resource from the Square client
-    const payments = squareClient.payments;
-    if (!payments || typeof payments.create !== 'function') {
-      console.error('Payments resource create method not available', Object.keys(payments || {}));
+    const paymentsApi = client.paymentsApi;
+    if (!paymentsApi || typeof paymentsApi.createPayment !== 'function') {
+      console.error('Payments resource createPayment method not available', Object.keys(paymentsApi || {}));
       return NextResponse.json({ error: 'Payments API unavailable' }, { status: 500 });
     }
     console.log('createPayment params:', { sourceId, amount, idempotencyKey, locationId: process.env.NEXT_PUBLIC_SQUARE_LOCATION_ID });
     // Execute the payment
-    const paymentResponse = await payments.create({
+    const paymentResponse = await paymentsApi.createPayment({
       sourceId,
       idempotencyKey,
       amountMoney: {
@@ -62,7 +61,7 @@ export async function POST(req: NextRequest) {
     // Debug: log full payment response
     console.log('Square payment response:', paymentResponse);
     // Success: return only the payment ID
-    const paymentId = paymentResponse.payment.id;
+    const paymentId = paymentResponse.result.payment.id;
     return NextResponse.json({ id: paymentId });
   } catch (error: any) {
     console.error('Error creating payment:', error);

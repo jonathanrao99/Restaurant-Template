@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { SquareClient, SquareEnvironment } from 'square';
+import { Client, Environment } from 'square/legacy';
 import { createHmac } from 'crypto';
 
-// Square client
-const sqEnv = process.env.SQUARE_ENVIRONMENT === 'production'
-  ? SquareEnvironment.Production
-  : SquareEnvironment.Sandbox;
-const squareClient = new SquareClient({
-  token: process.env.SQUARE_ACCESS_TOKEN!,
-  environment: sqEnv,
+// Square client using legacy SDK
+const client = new Client({
+  bearerAuthCredentials: { accessToken: process.env.SQUARE_ACCESS_TOKEN! },
+  environment:
+    process.env.SQUARE_ENVIRONMENT?.toLowerCase() === 'production'
+      ? Environment.Production
+      : Environment.Sandbox,
 });
 
 // DoorDash JWT generator for potential cancels (not needed here)
@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
         const data = await fetchRes.json();
         const order = data[0];
         if (order?.payment_id) {
-          const refundsApi = squareClient.refunds;
+          const refundsApi = client.refundsApi;
           await refundsApi.refundPayment({
             idempotencyKey: crypto.randomUUID(),
             paymentId: order.payment_id,

@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { SquareClient, SquareEnvironment } from 'square';
+import { Client, Environment } from 'square/legacy';
 import { createHmac } from 'crypto';
 
-// Initialize Square client
-const sqEnv = process.env.SQUARE_ENVIRONMENT === 'production'
-  ? SquareEnvironment.Production
-  : SquareEnvironment.Sandbox;
-const squareClient = new SquareClient({
-  token: process.env.SQUARE_ACCESS_TOKEN!,
-  environment: sqEnv,
+// Initialize Square client using legacy SDK
+const client = new Client({
+  bearerAuthCredentials: { accessToken: process.env.SQUARE_ACCESS_TOKEN! },
+  environment:
+    process.env.SQUARE_ENVIRONMENT?.toLowerCase() === 'production'
+      ? Environment.Production
+      : Environment.Sandbox,
 });
 
 // Helper to generate DoorDash JWT using Node crypto
@@ -73,13 +73,23 @@ export async function POST(
       }
       // Issue refund via Square
       if (order.payment_id) {
-        const refundsApi = squareClient.refunds;
+        const refundsApi = client.refundsApi;
         await refundsApi.refundPayment({
           idempotencyKey: crypto.randomUUID(),
           paymentId: order.payment_id,
           amountMoney: { amount: BigInt(Math.round(order.total_amount * 100)), currency: 'USD' }
         });
       }
+      const updateUrl = `${SUPABASE_URL}/rest/v1/orders?external_delivery_id=eq.${order.external_delivery_id}`;
+      await fetch(updateUrl, {
+        method: 'PATCH',
+        headers: {
+          apikey: SERVICE_KEY,
+          authorization: `Bearer ${SERVICE_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ status: 'cancelled' })
+      });
     }
 
     // Update status in Supabase via REST
