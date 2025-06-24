@@ -56,8 +56,8 @@ export const AddressAutocomplete = ({ value, onValueChange, onAddressSelect }: A
 
   const handleSelect = (address: string) => {
     if (isLoaded && ready) {
-      setValue(address, false);
-      clearSuggestions();
+    setValue(address, false);
+    clearSuggestions();
     }
     if (onValueChange) onValueChange(address);
     onAddressSelect(address);
@@ -136,7 +136,7 @@ export const AddressAutocomplete = ({ value, onValueChange, onAddressSelect }: A
                 <span style={{ fontWeight: 500 }}>{formatted?.main_text || description}</span>
                 {formatted?.secondary_text && (
                   <small style={{ marginLeft: 8, color: '#6b7280' }}>{formatted.secondary_text}</small>
-                )}
+      )}
               </li>
             );
           })}
@@ -145,4 +145,4 @@ export const AddressAutocomplete = ({ value, onValueChange, onAddressSelect }: A
       )}
     </div>
   );
-};
+}; 
