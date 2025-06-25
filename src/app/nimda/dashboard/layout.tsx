@@ -40,7 +40,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   }
   if (!pageTitle) pageTitle = "Dashboard";
 
-  return (
+                return (
     <div className="min-h-screen bg-desi-cream">
       <NimdaNavbar />
       <div className="relative mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-center gap-2 pt-10">
