@@ -47,9 +47,6 @@ export function ComprehensiveDashboard() {
   // Fetch Umami data
   const { data: umamiStats } = useSWR('/api/umami/stats', fetcher);
   
-  // Fetch GA4 QR campaign data
-  const { data: qrCampaignData } = useSWR('/api/ga4/qr-campaign', fetcher);
-
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -172,9 +169,7 @@ export function ComprehensiveDashboard() {
             <QrCode className="h-4 w-4 text-indigo-100" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {formatNumber(qrCampaignData?.totals?.[0]?.metricValues?.[2]?.value || 0)}
-            </div>
+            <div className="text-2xl font-bold">{formatNumber(umamiStats?.pageviews?.value || 0)}</div>
             <p className="text-xs text-indigo-100">Active users from QR</p>
           </CardContent>
         </Card>
@@ -357,20 +352,20 @@ export function ComprehensiveDashboard() {
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">Total QR Sessions</span>
                     <span className="text-lg font-bold">
-                      {formatNumber(qrCampaignData?.totals?.[0]?.metricValues?.[0]?.value || 0)}
+                      {formatNumber(umamiStats?.pageviews?.value || 0)}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">QR Conversions</span>
                     <span className="text-lg font-bold">
-                      {formatNumber(qrCampaignData?.totals?.[0]?.metricValues?.[1]?.value || 0)}
+                      {formatNumber(umamiStats?.visitors?.value || 0)}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">Conversion Rate</span>
                     <span className="text-lg font-bold text-green-600">
-                      {(((qrCampaignData?.totals?.[0]?.metricValues?.[1]?.value || 0) / 
-                         (qrCampaignData?.totals?.[0]?.metricValues?.[0]?.value || 1)) * 100).toFixed(1)}%
+                      {(((umamiStats?.visitors?.value || 0) / 
+                         (umamiStats?.pageviews?.value || 1)) * 100).toFixed(1)}%
                     </span>
                   </div>
                 </div>
