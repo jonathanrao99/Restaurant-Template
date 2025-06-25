@@ -72,7 +72,8 @@ const MenuHeader = () => {
             transition={{ duration: 0.7, delay: 0.8 }}
             className="text-lg md:text-xl text-white leading-relaxed max-w-5xl mx-auto mb-4 font-sans"
           >
-            Our menu celebrates traditional desi flavours with the finest ingredients crafted into culinary masterpieces. From starters to desserts, each dish is an exquisite experience that invites you on a journey.
+            Our menu celebrates traditional desi flavors, crafted with the finest ingredients and now available to enjoy wherever you are — dine in or have it delivered fresh to your door.
+
           </motion.p>
 
           <motion.p
