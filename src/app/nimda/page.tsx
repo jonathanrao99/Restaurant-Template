@@ -53,6 +53,9 @@ export default function NimdaAuthPage() {
     if (val.length === 6) {
       if (val === ADMIN_CODE) {
         setShowConfetti(true);
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('nimda_authed', 'true');
+        }
         setTimeout(() => {
           router.push('/nimda/dashboard');
         }, 1500);
