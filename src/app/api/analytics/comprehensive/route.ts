@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/integrations/supabase/client';
+import { supabase } from '@/integrations/supabase/client';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -7,8 +7,6 @@ export async function GET(request: Request) {
   const includeUmami = searchParams.get('includeUmami') === 'true';
   
   try {
-    const supabase = createClient();
-    
     // Calculate date range
     const days = timeRange === '7d' ? 7 : timeRange === '30d' ? 30 : 90;
     const startDate = new Date();
@@ -26,14 +24,17 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Failed to fetch orders' }, { status: 500 });
     }
 
+    // Explicitly type orders as any[] for TypeScript
+    const typedOrders = (orders ?? []) as any[];
+
     // Process sales data
     const today = new Date().toISOString().split('T')[0];
-    const todayOrders = orders?.filter(order => 
+    const todayOrders = typedOrders.filter(order => 
       new Date(order.created_at).toISOString().split('T')[0] === today
-    ) || [];
+    );
 
-    const totalSales = orders?.reduce((sum, order) => sum + (order.total_amount || 0), 0) || 0;
-    const totalOrders = orders?.length || 0;
+    const totalSales = typedOrders.reduce((sum, order) => sum + (order.total_amount || 0), 0);
+    const totalOrders = typedOrders.length;
     const avgOrderValue = totalOrders > 0 ? totalSales / totalOrders : 0;
 
     // Calculate sales by day
@@ -42,9 +43,9 @@ export async function GET(request: Request) {
       date.setDate(date.getDate() - (days - 1 - i));
       const dateString = date.toISOString().split('T')[0];
       
-      const dayOrders = orders?.filter(order => 
+      const dayOrders = typedOrders.filter(order => 
         new Date(order.created_at).toISOString().split('T')[0] === dateString
-      ) || [];
+      );
       
       return {
         date: dateString,
@@ -55,7 +56,7 @@ export async function GET(request: Request) {
 
     // Calculate top items
     const itemSales: { [key: string]: { quantity: number; revenue: number } } = {};
-    orders?.forEach(order => {
+    typedOrders.forEach(order => {
       if (order.items && Array.isArray(order.items)) {
         order.items.forEach((item: any) => {
           const itemName = item.name || 'Unknown Item';
@@ -75,7 +76,7 @@ export async function GET(request: Request) {
 
     // Calculate peak hours
     const hourlyOrders: { [hour: string]: number } = {};
-    orders?.forEach(order => {
+    typedOrders.forEach(order => {
       const hour = new Date(order.created_at).getHours();
       hourlyOrders[hour] = (hourlyOrders[hour] || 0) + 1;
     });
@@ -86,11 +87,11 @@ export async function GET(request: Request) {
       .slice(0, 6);
 
     // Order status breakdown
-    const orderStatusCount = orders?.reduce((acc: any, order) => {
+    const orderStatusCount = typedOrders.reduce((acc: any, order) => {
       const status = order.status || 'unknown';
       acc[status] = (acc[status] || 0) + 1;
       return acc;
-    }, {}) || {};
+    }, {});
 
     const analyticsData = {
       overview: {
