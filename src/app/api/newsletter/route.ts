@@ -73,14 +73,19 @@ export async function POST(request: NextRequest) {
 
     if (action === 'send') {
       // Get all active subscribers
-      const { data: subscribers, error: subscribersError } = await supabase
+      const { data, error: subscribersError } = await supabase
         .from('newsletter_subscribers')
         .select('email')
         .eq('active', true);
 
       if (subscribersError) throw subscribersError;
-
-      if (!subscribers || subscribers.length === 0) {
+      const subscribers: { email: string }[] = Array.isArray(data)
+        ? data
+            .filter(s => !('error' in s))
+            .filter(s => typeof (s as any)?.email === 'string')
+            .map(s => ({ email: (s as any).email as string }))
+        : [];
+      if (!subscribers.length) {
         return NextResponse.json({ error: 'No active subscribers found' }, { status: 400 });
       }
 
@@ -100,7 +105,7 @@ export async function POST(request: NextRequest) {
       if (campaignError) throw campaignError;
 
       // Send emails
-      const emailPromises = subscribers.map(subscriber => 
+      const emailPromises = subscribers.map((subscriber) => 
         transporter.sendMail({
           from: process.env.FROM_EMAIL,
           to: subscriber.email,
@@ -114,7 +119,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ 
         success: true, 
         message: `Newsletter sent to ${subscribers.length} subscribers`,
-        campaignId: campaign.id
+        campaignId: campaign && 'id' in campaign ? campaign.id : undefined
       });
     }
 
