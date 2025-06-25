@@ -1,291 +1,114 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { RecentOrdersWidget } from '@/components/admin/RecentOrdersWidget';
-import { SalesAnalytics } from '@/components/admin/SalesAnalytics';
-import { QrCodeStats } from '@/components/admin/QrCodeStats';
-import { CustomerFeedbackWidget } from '@/components/admin/CustomerFeedbackWidget';
-import { ComprehensiveDashboard } from '@/components/analytics/ComprehensiveDashboard';
-import { DollarSign, ShoppingCart, Users, TrendingUp, Clock, MapPin } from 'lucide-react';
+import React from 'react';
 import Link from 'next/link';
-import { FiShoppingCart, FiBarChart, FiCode, FiSettings, FiMessageSquare } from 'react-icons/fi';
-
-interface DashboardStats {
-  totalSales: number;
-  ordersToday: number;
-  qrScansToday: number;
-  webTraffic: number;
-  pendingOrders: number;
-  scheduledOrders: number;
-}
+import { MinimalisticDashboard } from '@/components/admin/MinimalisticDashboard';
+import { 
+  FiShoppingCart, 
+  FiBarChart, 
+  FiCode, 
+  FiSettings, 
+  FiMessageSquare,
+  FiUsers,
+  FiMail,
+  FiEdit
+} from 'react-icons/fi';
 
 export default function AdminDashboardPage() {
-  const [stats, setStats] = useState<DashboardStats>({
-    totalSales: 0,
-    ordersToday: 0,
-    qrScansToday: 0,
-    webTraffic: 0,
-    pendingOrders: 0,
-    scheduledOrders: 0
-  });
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchDashboardData() {
-      try {
-        // Fetch orders for calculations
-        const ordersResponse = await fetch('/api/orders');
-        if (ordersResponse.ok) {
-          const orders = await ordersResponse.json();
-          
-          const today = new Date().toISOString().split('T')[0];
-          const todayOrders = orders.filter((order: any) => 
-            new Date(order.created_at).toISOString().split('T')[0] === today
-          );
-          
-          const totalSales = orders.reduce((sum: number, order: any) => sum + order.total_amount, 0);
-          const pendingOrders = orders.filter((order: any) => order.status === 'pending').length;
-          const scheduledOrders = orders.filter((order: any) => order.status === 'scheduled').length;
-          
-          setStats({
-            totalSales,
-            ordersToday: todayOrders.length,
-            qrScansToday: 134, // Mock data - replace with actual QR analytics
-            webTraffic: 1200, // Mock data - replace with actual analytics
-            pendingOrders,
-            scheduledOrders
-          });
-        }
-      } catch (error) {
-        console.error('Error fetching dashboard data:', error);
-      } finally {
-        setLoading(false);
-      }
+  const navigationItems = [
+    {
+      label: 'Orders',
+      href: '/nimda/dashboard/orders',
+      icon: FiShoppingCart,
+      description: 'Manage orders'
+    },
+    {
+      label: 'Analytics',
+      href: '/nimda/dashboard/analytics',
+      icon: FiBarChart,
+      description: 'Sales insights'
+    },
+    {
+      label: 'QR Analytics',
+      href: '/nimda/dashboard/qr',
+      icon: FiCode,
+      description: 'QR code stats'
+    },
+    {
+      label: 'Menu',
+      href: '/nimda/dashboard/menu',
+      icon: FiSettings,
+      description: 'Edit menu items'
+    },
+    {
+      label: 'Feedback',
+      href: '/nimda/dashboard/feedback',
+      icon: FiMessageSquare,
+      description: 'Customer reviews'
+    },
+    {
+      label: 'Customers',
+      href: '/nimda/dashboard/customers',
+      icon: FiUsers,
+      description: 'Customer data'
+    },
+    {
+      label: 'Newsletter',
+      href: '/nimda/dashboard/newsletter',
+      icon: FiMail,
+      description: 'Email campaigns'
+    },
+    {
+      label: 'Blog',
+      href: '/nimda/dashboard/blog',
+      icon: FiEdit,
+      description: 'Content management'
     }
-
-    fetchDashboardData();
-  }, []);
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(amount);
-  };
-
-  const formatNumber = (num: number) => {
-    return new Intl.NumberFormat('en-US').format(num);
-  };
-
-  if (loading) {
-    return (
-      <div className="flex flex-col gap-6 p-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="animate-pulse">
-              <div className="h-24 bg-gray-200 rounded-lg"></div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  }
+  ];
 
   return (
-    <div className="flex flex-col gap-6 p-6">
-      {/* Subpage Navigation Buttons */}
-      <div className="flex flex-wrap justify-center gap-4 mb-6">
-        <Link href="/nimda/dashboard/orders">
-          <div className="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer min-w-[140px] flex flex-col items-center gap-2">
-            <FiShoppingCart className="h-6 w-6 text-desi-orange" />
-            <span className="text-sm font-medium text-gray-700">Orders</span>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
+          <p className="text-gray-600">Welcome back! Here's what's happening with your restaurant.</p>
+        </div>
+
+        {/* Main Dashboard */}
+        <div className="mb-8">
+          <MinimalisticDashboard />
+        </div>
+
+        {/* Navigation Grid */}
+        <div className="bg-white rounded-lg shadow-sm p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Access</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
+            {navigationItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="group p-4 rounded-lg border border-gray-200 hover:border-desi-orange hover:shadow-md transition-all duration-200 text-center"
+                >
+                  <div className="flex flex-col items-center space-y-2">
+                    <div className="p-2 rounded-lg bg-gray-50 group-hover:bg-desi-orange group-hover:text-white transition-colors">
+                      <Icon className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-900 group-hover:text-desi-orange transition-colors">
+                        {item.label}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">{item.description}</p>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
-        </Link>
-        <Link href="/nimda/dashboard/analytics">
-          <div className="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer min-w-[140px] flex flex-col items-center gap-2">
-            <FiBarChart className="h-6 w-6 text-desi-orange" />
-            <span className="text-sm font-medium text-gray-700">Sales Analytics</span>
-          </div>
-        </Link>
-        <Link href="/nimda/dashboard/qr">
-          <div className="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer min-w-[140px] flex flex-col items-center gap-2">
-            <FiCode className="h-6 w-6 text-desi-orange" />
-            <span className="text-sm font-medium text-gray-700">QR Code Analytics</span>
-          </div>
-        </Link>
-        <Link href="/nimda/dashboard/menu">
-          <div className="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer min-w-[140px] flex flex-col items-center gap-2">
-            <FiSettings className="h-6 w-6 text-desi-orange" />
-            <span className="text-sm font-medium text-gray-700">Menu Management</span>
-          </div>
-        </Link>
-        <Link href="/nimda/dashboard/feedback">
-          <div className="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer min-w-[140px] flex flex-col items-center gap-2">
-            <FiMessageSquare className="h-6 w-6 text-desi-orange" />
-            <span className="text-sm font-medium text-gray-700">Customer Feedback</span>
-          </div>
-        </Link>
-      </div>
-      {/* Overview Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-          <p className="text-gray-600 mt-1">Welcome back! Here's what's happening with your restaurant today.</p>
         </div>
       </div>
-
-      {/* Quick Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-        <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-green-100">Total Sales</CardTitle>
-            <DollarSign className="h-4 w-4 text-green-100" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(stats.totalSales)}</div>
-            <p className="text-xs text-green-100">All time revenue</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-blue-100">Orders Today</CardTitle>
-            <ShoppingCart className="h-4 w-4 text-blue-100" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.ordersToday}</div>
-            <p className="text-xs text-blue-100">Today's orders</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-purple-100">QR Scans Today</CardTitle>
-            <TrendingUp className="h-4 w-4 text-purple-100" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{formatNumber(stats.qrScansToday)}</div>
-            <p className="text-xs text-purple-100">Menu scans</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-r from-orange-500 to-orange-600 text-white">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-orange-100">Web Traffic</CardTitle>
-            <Users className="h-4 w-4 text-orange-100" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{formatNumber(stats.webTraffic)}</div>
-            <p className="text-xs text-orange-100">Visitors today</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-yellow-100">Pending Orders</CardTitle>
-            <Clock className="h-4 w-4 text-yellow-100" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.pendingOrders}</div>
-            <p className="text-xs text-yellow-100">Need attention</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-r from-indigo-500 to-indigo-600 text-white">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-indigo-100">Scheduled Orders</CardTitle>
-            <MapPin className="h-4 w-4 text-indigo-100" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.scheduledOrders}</div>
-            <p className="text-xs text-indigo-100">Future orders</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Comprehensive Analytics Dashboard */}
-      <div className="mt-8">
-        <ComprehensiveDashboard />
-      </div>
-
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Sales Analytics - Takes up 2 columns */}
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-desi-orange" />
-              Sales Analytics
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <SalesAnalytics />
-          </CardContent>
-        </Card>
-
-        {/* QR Code Analytics */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-desi-orange" />
-              QR Code Analytics
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <QrCodeStats />
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Recent Orders Widget */}
-      <RecentOrdersWidget />
-
-      {/* Customer Feedback */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-desi-orange" />
-            Latest Customer Feedback
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <CustomerFeedbackWidget />
-        </CardContent>
-      </Card>
-
-      {/* Quick Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <button className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left">
-              <div className="font-medium text-gray-900">Update Menu</div>
-              <div className="text-sm text-gray-600">Add or modify menu items</div>
-            </button>
-            
-            <button className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left">
-              <div className="font-medium text-gray-900">Process Orders</div>
-              <div className="text-sm text-gray-600">Manage pending orders</div>
-            </button>
-            
-            <button className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left">
-              <div className="font-medium text-gray-900">Send Campaigns</div>
-              <div className="text-sm text-gray-600">Email marketing campaigns</div>
-            </button>
-            
-            <button className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left">
-              <div className="font-medium text-gray-900">View Analytics</div>
-              <div className="text-sm text-gray-600">Detailed reports</div>
-            </button>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 } 
