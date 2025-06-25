@@ -126,8 +126,10 @@ export default function OrdersPage() {
 
   if (loading) {
     return (
-      <div>
-        <AdminHeader title="Orders Management" />
+      <div className="mt-10">
+        <div className="relative mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-center gap-2">
+          <h1 className="text-5xl font-bold font-display text-center w-full">Orders Management</h1>
+        </div>
         <div className="p-6">
           <div className="space-y-4">
             {[...Array(5)].map((_, i) => (
@@ -142,16 +144,10 @@ export default function OrdersPage() {
   }
 
   return (
-    <div>
-      <AdminHeader 
-        title="Orders Management" 
-        actionButton={{
-          label: 'Export Orders',
-          onClick: handleExport,
-          variant: 'outline'
-        }}
-      />
-      
+    <div className="mt-10">
+      <div className="relative mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-center gap-2">
+        <h1 className="text-5xl font-bold font-display text-center w-full">Orders Management</h1>
+      </div>
       <div className="p-6 space-y-6">
         {/* Filters and Search */}
         <Card>

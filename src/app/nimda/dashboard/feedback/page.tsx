@@ -195,13 +195,15 @@ export default function FeedbackPage() {
 
   if (loading) {
     return (
-      <div>
-        <AdminHeader title="Customer Feedback" />
+      <div className="mt-10">
+        <div className="relative mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-center gap-2">
+          <h1 className="text-5xl font-bold font-display text-center w-full">Customer Feedback</h1>
+        </div>
         <div className="p-6">
           <div className="space-y-4">
             {[...Array(5)].map((_, i) => (
               <div key={i} className="animate-pulse">
-                <div className="h-24 bg-gray-200 rounded"></div>
+                <div className="h-20 bg-gray-200 rounded"></div>
               </div>
             ))}
           </div>
@@ -211,8 +213,10 @@ export default function FeedbackPage() {
   }
 
   return (
-    <div>
-      <AdminHeader title="Customer Feedback" />
+    <div className="mt-10">
+      <div className="relative mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-center gap-2">
+        <h1 className="text-5xl font-bold font-display text-center w-full">Customer Feedback</h1>
+      </div>
       
       <div className="p-6 space-y-6">
         {/* Feedback Summary */}

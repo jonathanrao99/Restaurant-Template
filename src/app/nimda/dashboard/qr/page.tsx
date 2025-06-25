@@ -103,8 +103,10 @@ export default function QrAnalyticsPage() {
 
   if (loading) {
     return (
-      <div>
-        <AdminHeader title="QR Code Analytics" />
+      <div className="mt-10">
+        <div className="relative mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-center gap-2">
+          <h1 className="text-5xl font-bold font-display text-center w-full">QR Code Analytics</h1>
+        </div>
         <div className="p-6">
           <div className="space-y-4">
             {[...Array(4)].map((_, i) => (
@@ -119,15 +121,10 @@ export default function QrAnalyticsPage() {
   }
 
   return (
-    <div>
-      <AdminHeader 
-        title="QR Code Analytics" 
-        actionButton={{
-          label: 'Create QR Code',
-          onClick: () => setShowCreateForm(true)
-        }}
-      />
-      
+    <div className="mt-10">
+      <div className="relative mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-center gap-2">
+        <h1 className="text-5xl font-bold font-display text-center w-full">QR Code Analytics</h1>
+      </div>
       <div className="p-6 space-y-6">
         {/* QR Analytics Summary */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
