@@ -87,9 +87,13 @@ function PaymentPageContent() {
   }, [cartItems.length, router, isClient]);
 
   useEffect(() => {
-    if (scheduleType === 'ASAP') setCartScheduledTime('ASAP');
-    else setCartScheduledTime(scheduledTime.toISOString());
-  }, [scheduleType, scheduledTime, setCartScheduledTime]);
+    if (scheduleType === 'ASAP' && cartScheduledTime !== 'ASAP') {
+      setCartScheduledTime('ASAP');
+    } else if (scheduleType !== 'ASAP') {
+      const iso = scheduledTime.toISOString();
+      if (cartScheduledTime !== iso) setCartScheduledTime(iso);
+    }
+  }, [scheduleType, scheduledTime, setCartScheduledTime, cartScheduledTime]);
 
   const filterTime = (time: Date) => {
     const now = new Date();

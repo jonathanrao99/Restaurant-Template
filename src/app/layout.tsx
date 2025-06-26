@@ -20,6 +20,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${samarkan.variable} ${displayFont.variable} ${butler.variable}`}>
+      <head>
+        <script
+          src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places,placeswidget`}
+          async
+          defer
+        ></script>
+      </head>
       <body>
         <Analytics />
         <CartProvider>
