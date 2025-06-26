@@ -1,5 +1,6 @@
 import './globals.css';
 import { inter, samarkan, displayFont, butler } from './fonts';
+import LayoutClientWrapper from '@/components/LayoutClientWrapper';
 
 export const metadata = {
   title: 'Next.js',
@@ -21,7 +22,9 @@ export default function RootLayout({
         ></script>
       </head>
       <body>
-        {children}
+        <LayoutClientWrapper>
+          {children}
+        </LayoutClientWrapper>
       </body>
     </html>
   )

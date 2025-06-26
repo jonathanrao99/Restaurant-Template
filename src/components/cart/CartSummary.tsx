@@ -2,6 +2,8 @@
 import { useCart, CartItem } from '@/context/CartContext';
 import { useRouter } from 'next/navigation';
 import { Button } from '@heroui/react';
+import { useState } from 'react';
+import { Dialog, DialogOverlay, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription, DialogClose } from '@/components/ui/dialog';
 
 interface CartSummaryProps {
   items: CartItem[];
@@ -12,6 +14,7 @@ interface CartSummaryProps {
 const CartSummary = ({ items, deliveryMethod, setDeliveryMethod }: CartSummaryProps) => {
   const { getCartTotal } = useCart();
   const router = useRouter();
+  const [openDeliveryModal, setOpenDeliveryModal] = useState(false);
 
   const subtotal = getCartTotal();
   const tax = subtotal * 0.0825; // 8.25% tax rate
@@ -37,7 +40,7 @@ const CartSummary = ({ items, deliveryMethod, setDeliveryMethod }: CartSummaryPr
           </button>
           <button
             className={`w-1/2 py-2 ${deliveryMethod === 'delivery' ? 'bg-desi-orange text-white' : 'bg-gray-100 text-gray-700'}`}
-            onClick={() => setDeliveryMethod('delivery')}
+            onClick={() => setOpenDeliveryModal(true)}
           >
             Delivery
           </button>
@@ -75,6 +78,31 @@ const CartSummary = ({ items, deliveryMethod, setDeliveryMethod }: CartSummaryPr
       <p className="text-xs text-gray-500 mt-4 text-center">
         To set your delivery location and phone number, continue to the payment page.
       </p>
+      <Dialog open={openDeliveryModal} onOpenChange={setOpenDeliveryModal}>
+        <DialogOverlay className="bg-black/50 backdrop-blur-sm" />
+        <DialogContent className="bg-desi-cream rounded-xl p-8 w-[90vw] max-w-lg shadow-2xl border border-gray-200">
+          <DialogHeader className="flex-row justify-between items-center space-y-0 text-left">
+            <DialogTitle className="font-display font-semibold text-2xl text-desi-orange text-center">Delivery Not Available</DialogTitle>
+            <DialogClose className="hover:bg-gray-100 rounded-full p-1" />
+          </DialogHeader>
+          <DialogDescription className="mt-2 text-base text-desi-black text-center">
+            Sorry for the inconvenience but we are still working on our own delivery service. Please order Pickup, or use one of our delivery partners:
+          </DialogDescription>
+          <DialogFooter className="justify-center mt-2">
+            <div className="flex items-center space-x-2">
+              <a href="https://www.doordash.com" target="_blank" rel="noopener noreferrer">
+                <img src="/Doordash.webp" alt="DoorDash" className="h-10 w-auto" />
+              </a>
+              <a href="https://www.grubhub.com" target="_blank" rel="noopener noreferrer">
+                <img src="/Grubhub.webp" alt="Grubhub" className="h-15 w-80" />
+              </a>
+              <a href="https://www.ubereats.com" target="_blank" rel="noopener noreferrer">
+                <img src="/ubereats.png" alt="Uber Eats" className="h-10 w-auto" />
+              </a>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

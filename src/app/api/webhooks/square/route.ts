@@ -4,10 +4,10 @@ import { Client, Environment } from 'square/legacy';
 import { createClient } from '@supabase/supabase-js';
 
 const client = new Client({
-  accessToken: process.env.SQUARE_ACCESS_TOKEN!,
+    accessToken: process.env.SQUARE_ACCESS_TOKEN!,
   environment: process.env.SQUARE_ENVIRONMENT === 'production' 
-    ? Environment.Production 
-    : Environment.Sandbox,
+      ? Environment.Production
+      : Environment.Sandbox,
 });
 
 const supabase = createClient(
@@ -242,18 +242,18 @@ export async function POST(req: NextRequest) {
       const tipAmount = tipMoney ? Number(tipMoney.amount) / 100 : 0; // Convert from cents to dollars
       
       console.log('Payment completed with tip:', tipAmount);
-      
+
       // First, fetch the order details
       const { data: orders, error: fetchError } = await supabase
         .from('orders')
         .select('*')
         .eq('id', orderId);
-      
+
       if (fetchError || !orders || orders.length === 0) {
         console.error('Failed to fetch order:', fetchError);
         return NextResponse.json({ error: 'Order not found' }, { status: 404 });
       }
-      
+
       const order = orders[0];
       console.log('Found order:', order);
       
