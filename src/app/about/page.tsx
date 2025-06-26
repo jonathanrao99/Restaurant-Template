@@ -409,7 +409,7 @@ const About = () => {
             <div className="max-w-2xl mx-auto">
               <AnimatedCard className="bg-white rounded-xl shadow-md overflow-hidden flex flex-col items-center min-h-[600px] mb-10">
                 <div className="w-72 h-72 rounded-full overflow-hidden mt-8 mb-4 border-4 border-desi-orange/20">
-                  <img src="/Truck/IMG-20250610-WA0005.jpg" alt="Founders" className="w-full h-full object-cover" />
+                  <img src="/Truck/IMG-20250610-WA0005.jpg" alt="Founders" className="w-full h-full object-cover" loading="lazy" decoding="async" />
                 </div>
                 <div className="px-6 pt-6 pb-4 text-center">
                   <h3 className="text-xl font-display font-bold text-desi-black mb-1">Jaladevi & Venu Thota</h3>
@@ -464,6 +464,8 @@ const About = () => {
                   alt="Desi Flavors Food Truck" 
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                   onClick={() => setSelectedImage("/Truck/truck-1.jpg")}
+                  loading="lazy"
+                  decoding="async"
                 />
               </AnimatedCard>
               
@@ -474,6 +476,8 @@ const About = () => {
                   alt="Food Preparation" 
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                   onClick={() => setSelectedImage("/Truck/truck-2.jpg")}
+                  loading="lazy"
+                  decoding="async"
                 />
               </AnimatedCard>
               
@@ -483,6 +487,8 @@ const About = () => {
                   alt="Customer Experience" 
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                   onClick={() => setSelectedImage("/Truck/truck-3.jpg")}
+                  loading="lazy"
+                  decoding="async"
                 />
               </AnimatedCard>
               
@@ -493,6 +499,8 @@ const About = () => {
                   alt="Special Dishes" 
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                   onClick={() => setSelectedImage("/Truck/truck-4.jpg")}
+                  loading="lazy"
+                  decoding="async"
                 />
               </AnimatedCard>
               
@@ -502,6 +510,8 @@ const About = () => {
                   alt="Food Truck Interior" 
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                   onClick={() => setSelectedImage("/Truck/truck-5.jpg")}
+                  loading="lazy"
+                  decoding="async"
                 />
               </AnimatedCard>
               
@@ -511,6 +521,8 @@ const About = () => {
                   alt="Special Events" 
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                   onClick={() => setSelectedImage("/Truck/truck-old.png")}
+                  loading="lazy"
+                  decoding="async"
                 />
               </AnimatedCard>
             </div>
@@ -542,6 +554,8 @@ const About = () => {
               src={selectedImage}
               alt="Selected image"
               className="w-full h-auto rounded-lg"
+              loading="lazy"
+              decoding="async"
             />
           </motion.div>
           </div>

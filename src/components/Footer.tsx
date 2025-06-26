@@ -22,7 +22,7 @@ const XIcon = ({ size = 20 }: { size?: number }) => (
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
-  return <footer className="bg-desi-black text-white pt-12 pb-8">
+  return <footer className="bg-desi-black text-white pt-12 pb-2">
       <div className="container mx-auto px-4 md:px-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           {/* Logo and Description */}
@@ -155,7 +155,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="text-center mt-10 mb-4 md:mb-6">
+        <div className="text-center mt-6 mb-2 md:mb-2">
           <Link href="/" className="inline-block">
             <h2 className="flex items-center justify-center w-[85vw] mx-auto">
               <span className="font-samarkan text-[10vw] md:text-[12vw] text-desi-orange leading-none">Desi </span>
@@ -163,10 +163,10 @@ const Footer = () => {
             </h2>
           </Link>
         </div>
-        <div className="border-t border-gray-800 mt-2 pt-5 flex flex-col md:flex-row justify-between items-center text-gray-400 text-sm">
-      <p className="mb-2 md:mb-0">Designed by Jonathan Thota</p>
-  <p>© {currentYear} Desi Flavors Katy. All rights reserved.</p>
-</div>
+        <div className="border-t border-gray-800 mt-1 pt-2 pb-4 flex flex-col md:flex-row justify-between items-center text-gray-400 text-sm">
+          <p className="mb-1 md:mb-0">Designed by Jonathan Thota</p>
+          <p>© {currentYear} Desi Flavors Katy. All rights reserved.</p>
+        </div>
       </div>
     </footer>;
 };

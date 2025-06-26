@@ -53,6 +53,8 @@ const MenuNotes = () => {
                       src="/Delivery.png" 
                       alt="Delivery" 
                       className="w-5 h-5 object-contain"
+                      loading="lazy"
+                      decoding="async"
                     />
                   </div>
                   Online Ordering
@@ -78,6 +80,8 @@ const MenuNotes = () => {
                   src="/Grubhub.webp" 
                   alt="Order on Grubhub" 
                   className="h-8 w-auto transition-transform group-hover:scale-105"
+                  loading="lazy"
+                  decoding="async"
                 />
               </a>
               <a
@@ -90,6 +94,8 @@ const MenuNotes = () => {
                   src="/Doordash.webp" 
                   alt="Order on Doordash" 
                   className="h-5 w-auto transition-transform group-hover:scale-105"
+                  loading="lazy"
+                  decoding="async"
                 />
               </a>
               <a
@@ -102,6 +108,8 @@ const MenuNotes = () => {
                   src="/ubereats.png" 
                   alt="Order on UberEats" 
                   className="h-5 w-auto transition-transform group-hover:scale-105"
+                  loading="lazy"
+                  decoding="async"
                 />
               </a>
             </div>

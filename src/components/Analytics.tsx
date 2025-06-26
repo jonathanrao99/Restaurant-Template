@@ -24,6 +24,26 @@ export default function Analytics() {
         `}
       </Script>
 
+      {/* Scroll Depth Tracking */}
+      <Script id="scroll-depth-tracking" strategy="afterInteractive">
+        {`(function(){
+          var thresholds=[25,50,75,100];
+          var triggered={};
+          function onScroll(){
+            var scrollY=window.scrollY+window.innerHeight;
+            var docHeight=document.documentElement.scrollHeight;
+            var percent=Math.round((scrollY/docHeight)*100);
+            thresholds.forEach(function(t){
+              if(percent>=t && !triggered[t]){
+                window.gtag && window.gtag('event','scroll_depth',{event_category:'Scroll',event_label:t+'%',value:t});
+                triggered[t]=true;
+              }
+            });
+          }
+          window.addEventListener('scroll',function(){requestAnimationFrame(onScroll);});
+        })();`}
+      </Script>
+
       {/* Umami Analytics */}
       <Script
         src="https://cloud.umami.is/script.js"

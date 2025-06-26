@@ -52,7 +52,7 @@
     "cmdk": "^1.1.1",
     "date-fns": "^3.6.0",
     "embla-carousel-react": "^8.3.0",
-    "framer-motion": "^12.16.0",
+    "framer-motion": "^12.19.1",
     "input-otp": "^1.4.2",
     "libphonenumber-js": "^1.12.9",
     "lucide-react": "^0.462.0",

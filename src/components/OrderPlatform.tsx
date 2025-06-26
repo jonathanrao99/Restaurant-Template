@@ -1,4 +1,3 @@
-
 import { UtensilsCrossed, ChefHat, ArrowRight } from 'lucide-react';
 
 interface OrderPlatformProps {
@@ -33,7 +32,13 @@ const OrderPlatform = ({
       <div className="p-6">
         <div className="flex items-center space-x-4 mb-4">
           {logo ? (
-            <img src={logo} alt={name} className="w-12 h-12 object-contain" />
+            <img
+              src={logo}
+              alt={name}
+              className="w-12 h-12 object-contain"
+              loading="lazy"
+              decoding="async"
+            />
           ) : (
             <div className="w-12 h-12 bg-desi-orange/10 rounded-full flex items-center justify-center">
               {name.includes('Uber') ? (
@@ -50,10 +55,14 @@ const OrderPlatform = ({
           {description}
         </p>
         
-        <a 
-          href={link} 
-          target="_blank" 
+        <a
+          href={link}
+          target="_blank"
           rel="noopener noreferrer"
+          onClick={() => {
+            const gtag = (window as any).gtag;
+            if (gtag) gtag('event','order_platform_click',{event_category:'Engagement',platform:name});
+          }}
           className={`inline-flex items-center space-x-2 ${
             textColor.includes('white') 
               ? 'text-white hover:text-gray-200' 

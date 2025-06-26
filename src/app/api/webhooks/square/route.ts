@@ -1,16 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createHmac } from 'crypto';
 import { Client, Environment } from 'square/legacy';
+import { createClient } from '@supabase/supabase-js';
 
 const client = new Client({
-  bearerAuthCredentials: {
-    accessToken: process.env.SQUARE_ACCESS_TOKEN!,
-  },
-  environment:
-    process.env.SQUARE_ENVIRONMENT?.toLowerCase() === 'production'
-      ? Environment.Production
-      : Environment.Sandbox,
+  accessToken: process.env.SQUARE_ACCESS_TOKEN!,
+  environment: process.env.SQUARE_ENVIRONMENT === 'production' 
+    ? Environment.Production 
+    : Environment.Sandbox,
 });
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 // Helper to generate DoorDash JWT
 async function generateDoorDashJWT() {
@@ -234,33 +237,48 @@ export async function POST(req: NextRequest) {
 
       console.log('Processing completed payment for order:', orderId);
 
-      // Update order in Supabase with payment information
-      const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-      const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-
+      // Extract payment details including tip
+      const tipMoney = payment?.tip_money;
+      const tipAmount = tipMoney ? Number(tipMoney.amount) / 100 : 0; // Convert from cents to dollars
+      
+      console.log('Payment completed with tip:', tipAmount);
+      
       // First, fetch the order details
-      const fetchUrl = `${SUPABASE_URL}/rest/v1/orders?id=eq.${orderId}&select=*`;
-      const fetchRes = await fetch(fetchUrl, {
-        headers: {
-          apikey: SERVICE_KEY,
-          authorization: `Bearer ${SERVICE_KEY}`
-        }
-      });
-
-      if (!fetchRes.ok) {
-        console.error('Failed to fetch order:', await fetchRes.text());
+      const { data: orders, error: fetchError } = await supabase
+        .from('orders')
+        .select('*')
+        .eq('id', orderId);
+      
+      if (fetchError || !orders || orders.length === 0) {
+        console.error('Failed to fetch order:', fetchError);
         return NextResponse.json({ error: 'Order not found' }, { status: 404 });
       }
-
-      const orders = await fetchRes.json();
+      
       const order = orders[0];
-
-      if (!order) {
-        console.error('Order not found in database:', orderId);
-        return NextResponse.json({ error: 'Order not found' }, { status: 404 });
-      }
-
       console.log('Found order:', order);
+      
+      // Update order with payment details including tip
+      const updateData: any = { 
+        status: 'paid',
+        payment_id: payment?.id 
+      };
+      
+      // Store tip amount if present
+      if (tipAmount > 0) {
+        updateData.tip_amount = tipAmount;
+        // Calculate DoorDash tip allocation (30% of total tip)
+        updateData.doordash_tip = Math.round(tipAmount * 0.3 * 100) / 100; // Round to 2 decimal places
+      }
+      
+      const { error: updateError } = await supabase
+        .from('orders')
+        .update(updateData)
+        .eq('id', orderId);
+
+      if (updateError) {
+        console.error('Error updating order:', updateError);
+        return NextResponse.json({ error: 'Failed to update order' }, { status: 500 });
+      }
 
       // Calculate optimal timing
       const scheduledTime = order.scheduled_time && order.scheduled_time !== 'ASAP' 
@@ -272,30 +290,6 @@ export async function POST(req: NextRequest) {
 
       // Create Square order for POS visibility
       const squarePOSOrderId = await createSquareOrderForPOS(order, timing);
-
-      // Update order with payment ID and calculated status
-      const updateUrl = `${SUPABASE_URL}/rest/v1/orders?id=eq.${orderId}`;
-      const updateRes = await fetch(updateUrl, {
-        method: 'PATCH',
-        headers: {
-          apikey: SERVICE_KEY,
-          authorization: `Bearer ${SERVICE_KEY}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ 
-          payment_id: paymentId,
-          status: timing.status,
-          square_pos_order_id: squarePOSOrderId,
-          prep_time: timing.prepTime.toISOString()
-        })
-      });
-
-      if (!updateRes.ok) {
-        console.error('Failed to update order:', await updateRes.text());
-        return NextResponse.json({ error: 'Failed to update order' }, { status: 500 });
-      }
-
-      console.log('Order updated with payment ID and timing');
 
       // Create DoorDash delivery if applicable and timing allows
       if (order.order_type === 'delivery' && order.delivery_address && timing.shouldCreateNow) {
@@ -341,18 +335,13 @@ export async function POST(req: NextRequest) {
             console.log('DoorDash delivery created:', ddResult);
             
             // Update order with external delivery ID and set to pending
-            await fetch(updateUrl, {
-              method: 'PATCH',
-              headers: {
-                apikey: SERVICE_KEY,
-                authorization: `Bearer ${SERVICE_KEY}`,
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({ 
+            await supabase
+              .from('orders')
+              .update({ 
                 external_delivery_id: external_delivery_id,
                 status: 'pending'
               })
-            });
+              .eq('id', orderId);
           }
         } catch (ddError) {
           console.error('Error creating DoorDash delivery:', ddError);

@@ -85,9 +85,21 @@ const AppSidebar: React.FC = () => {
           className="p-1 rounded-full hover:bg-gray-200"
         >
           {isExpanded ? (
-            <img src={ChevronLeftIcon.src ?? ChevronLeftIcon} alt="Collapse sidebar" className="w-5 h-5 text-gray-600" />
+            <img
+              src={ChevronLeftIcon.src ?? ChevronLeftIcon}
+              alt="Collapse sidebar"
+              className="w-5 h-5 text-gray-600"
+              loading="lazy"
+              decoding="async"
+            />
           ) : (
-            <img src={ArrowRightIcon.src ?? ArrowRightIcon} alt="Expand sidebar" className="w-5 h-5 text-gray-600" />
+            <img
+              src={ArrowRightIcon.src ?? ArrowRightIcon}
+              alt="Expand sidebar"
+              className="w-5 h-5 text-gray-600"
+              loading="lazy"
+              decoding="async"
+            />
           )}
         </button>
       </div>
@@ -104,6 +116,8 @@ const AppSidebar: React.FC = () => {
                   src={nav.iconSrc?.src ?? nav.iconSrc}
                   alt={`${nav.name} icon`}
                   className="w-5 h-5 flex-shrink-0"
+                  loading="lazy"
+                  decoding="async"
                 />
                 <span className="font-medium">{nav.name}</span>
               </Link>
@@ -119,6 +133,8 @@ const AppSidebar: React.FC = () => {
               src={logoutItem.iconSrc?.src ?? logoutItem.iconSrc}
               alt="Logout icon"
               className="w-5 h-5 flex-shrink-0"
+              loading="lazy"
+              decoding="async"
             />
             <span className="font-medium">{logoutItem.name}</span>
           </button>

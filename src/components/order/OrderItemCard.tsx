@@ -95,7 +95,13 @@ export default function OrderItemCard({ item, handleAddToCart, index, onOpenDial
           
           {/* Order Now Button */}
           <Button 
-            onClick={() => !item.isSoldOut && onOpenDialog(item)}
+            onClick={() => {
+              if (!item.isSoldOut) {
+                const gtag = (window as any).gtag;
+                if (gtag) gtag('event','add_to_cart',{event_category:'Ecommerce',item_id:item.id,item_name:item.name,price:item.price});
+                onOpenDialog(item);
+              }
+            }}
             className={`text-xs py-1 px-3 h-8 flex items-center gap-1 ${item.isSoldOut ? 'bg-gray-300 text-gray-400 cursor-not-allowed' : 'bg-desi-orange hover:bg-desi-orange/90 text-white'}`}
             disabled={item.isSoldOut}
             aria-disabled={item.isSoldOut}

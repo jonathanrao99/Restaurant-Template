@@ -28,6 +28,9 @@ const BestsellerCard = ({
 
   const handleOrderClick = (e: React.MouseEvent) => {
     e.preventDefault();
+    // Analytics event for Order Now clicks
+    const gtag = (window as any).gtag;
+    if (gtag) gtag('event','order_now_click',{event_category:'Engagement',item_id:itemId,item_name:title});
     router.push(`/menu?itemId=${itemId}`);
   };
 

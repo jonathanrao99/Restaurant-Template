@@ -37,8 +37,8 @@ export async function POST(req: NextRequest) {
     const tax = subtotal * 0.0825;
     const total = subtotal + tax + (fulfillmentMethod === 'delivery' ? (deliveryFee || 0) : 0);
 
-    // Normalize scheduled time: use current timestamp for ASAP orders
-    const scheduledTimeValue = scheduledTime === 'ASAP' ? new Date().toISOString() : scheduledTime;
+    // Normalize scheduled time: store 'ASAP' literal for ASAP orders, otherwise use the provided ISO time
+    const scheduledTimeValue = scheduledTime === 'ASAP' ? 'ASAP' : scheduledTime;
 
     // Insert into Supabase orders table
     const insertResult = await supabase

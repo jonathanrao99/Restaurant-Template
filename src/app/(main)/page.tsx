@@ -21,7 +21,9 @@ const Index = () => {
     }
     
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      requestAnimationFrame(() => {
+        setIsScrolled(window.scrollY > 50);
+      });
     };
     
     window.addEventListener('scroll', handleScroll);
@@ -68,4 +70,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default Index; 

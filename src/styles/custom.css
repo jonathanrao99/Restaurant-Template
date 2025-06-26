@@ -150,4 +150,14 @@ gmp-place-autocomplete .dropdown > ul,
 gmp-place-autocomplete .dropdown > ul > li {
   background-color: #ffffff !important;
   opacity: 1 !important;
+}
+
+/* Global smooth image hover transition */
+img {
+  transition: transform 0.3s ease-in-out;
+  will-change: transform;
+}
+
+img:hover {
+  transform: scale(1.02);
 } 

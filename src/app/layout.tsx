@@ -1,12 +1,5 @@
 import './globals.css';
-import NavbarWrapper from '@/components/NavbarWrapper';
-import FooterWrapper from '@/components/FooterWrapper';
-import { CartProvider } from '@/context/CartContext';
-import ReactQueryProvider from '@/components/ReactQueryProvider';
-import { HeroUIProvider } from '@heroui/react';
-import { Toaster } from '@/components/ui/sonner';
 import { inter, samarkan, displayFont, butler } from './fonts';
-import Analytics from '@/components/Analytics';
 
 export const metadata = {
   title: 'Next.js',
@@ -22,23 +15,13 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${samarkan.variable} ${displayFont.variable} ${butler.variable}`}>
       <head>
         <script
-          src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places,placeswidget`}
+          src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
           async
           defer
         ></script>
       </head>
       <body>
-        <Analytics />
-        <CartProvider>
-          <ReactQueryProvider>
-            <HeroUIProvider>
-              <Toaster />
-              <NavbarWrapper />
-              {children}
-              <FooterWrapper />
-            </HeroUIProvider>
-          </ReactQueryProvider>
-        </CartProvider>
+        {children}
       </body>
     </html>
   )

@@ -39,6 +39,7 @@ interface DashboardData {
   newsletter: {
     subscribers: number;
     openRate: number;
+    signups: number;
   };
 }
 
@@ -60,20 +61,29 @@ export function MinimalisticDashboard() {
         ordersRes,
         umamiRes,
         reviewsRes,
-        newsletterRes
+        newsletterRes,
+        eventsRes
       ] = await Promise.all([
         fetch('/api/orders'),
         fetch(`/api/umami/stats?type=stats&startDate=${getStartDate()}`),
         fetch('/api/reviews'),
-        fetch('/api/newsletter?action=subscribers')
+        fetch('/api/newsletter?action=subscribers'),
+        fetch(`/api/umami/events?startAt=${new Date(getStartDate()).getTime()}&endAt=${Date.now()}`)
       ]);
 
-      const [orders, umami, reviews, newsletter] = await Promise.all([
+      const [orders, umami, reviews, newsletter, events] = await Promise.all([
         ordersRes.json(),
         umamiRes.json(),
         reviewsRes.json(),
-        newsletterRes.json()
+        newsletterRes.json(),
+        eventsRes.json()
       ]);
+
+      // Count newsletter signup events from Umami
+      const signupEvents = Array.isArray(events)
+        ? (events as any[]).filter(e => e.event === 'newsletter_signup' || e.event_name === 'newsletter_signup')
+        : [];
+      const signupCount = signupEvents.length;
 
       // Process orders data
       const today = new Date().toISOString().split('T')[0];
@@ -123,7 +133,8 @@ export function MinimalisticDashboard() {
         },
         newsletter: {
           subscribers: newsletter.count || 0,
-          openRate: 0 // This would come from email service analytics
+          openRate: 0, // Placeholder for email analytics
+          signups: signupCount
         }
       });
 
@@ -227,6 +238,13 @@ export function MinimalisticDashboard() {
     {
       label: 'Newsletter Subs',
       value: formatNumber(data.newsletter.subscribers),
+      icon: Mail,
+      color: 'text-teal-600',
+      bgColor: 'bg-teal-50'
+    },
+    {
+      label: 'Newsletter Signups',
+      value: formatNumber(data.newsletter.signups),
       icon: Mail,
       color: 'text-teal-600',
       bgColor: 'bg-teal-50'

@@ -92,7 +92,7 @@ const Cart = () => {
       </section>
 
       {/* Main Content Section */}
-      <section className="pt-8 pb-12 bg-gray-50 overflow-hidden">
+      <section className="pt-8 pb-2 bg-gray-50 overflow-hidden min-h-screen">
         <motion.div
           variants={fadeInUp}
           initial="hidden"
