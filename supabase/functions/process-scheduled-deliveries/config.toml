@@ -1,2 +1,0 @@
-schedule = "*/15 * * * *"
-timeout = 60 

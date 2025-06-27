@@ -13,6 +13,10 @@ export function SalesAnalytics() {
   const [salesData, setSalesData] = useState<SalesData[]>([]);
   const [loading, setLoading] = useState(true);
   const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d'>('7d');
+  const [deliveryOrders, setDeliveryOrders] = useState<any[]>([]);
+  const [pickupOrders, setPickupOrders] = useState<any[]>([]);
+  const [totalDeliveryFees, setTotalDeliveryFees] = useState(0);
+  const [shipdayDeliveries, setShipdayDeliveries] = useState(0);
 
   useEffect(() => {
     async function fetchSalesData() {
@@ -26,6 +30,14 @@ export function SalesAnalytics() {
           const days = timeRange === '7d' ? 7 : timeRange === '30d' ? 30 : 90;
           const processed = processOrdersForChart(orders, days);
           setSalesData(processed);
+
+          // After fetching orders, process for new metrics
+          const deliveryOrders = orders.filter((o: any) => o.order_type === 'delivery');
+          const pickupOrders = orders.filter((o: any) => o.order_type === 'pickup');
+          setDeliveryOrders(deliveryOrders);
+          setPickupOrders(pickupOrders);
+          setTotalDeliveryFees(deliveryOrders.reduce((sum: number, o: any) => sum + (o.delivery_fee || 0), 0));
+          setShipdayDeliveries(deliveryOrders.filter((o: any) => o.external_delivery_id).length);
         }
       } catch (error) {
         console.error('Error fetching sales data:', error);
@@ -180,6 +192,42 @@ export function SalesAnalytics() {
               </div>
             );
           })}
+        </div>
+      </div>
+
+      {/* New cards/sections for:
+        - Total Delivery Fees
+        - Order Type Breakdown
+        - Shipday Deliveries */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-white p-4 rounded-lg border">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Total Delivery Fees</p>
+              <p className="text-2xl font-bold">${totalDeliveryFees.toFixed(2)}</p>
+            </div>
+            <DollarSign className="h-8 w-8 text-green-600" />
+          </div>
+        </div>
+
+        <div className="bg-white p-4 rounded-lg border">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Order Type Breakdown</p>
+              <p className="text-2xl font-bold">{pickupOrders.length} pickup, {deliveryOrders.length} delivery</p>
+            </div>
+            <ShoppingCart className="h-8 w-8 text-blue-600" />
+          </div>
+        </div>
+
+        <div className="bg-white p-4 rounded-lg border">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Shipday Deliveries</p>
+              <p className="text-2xl font-bold">{shipdayDeliveries}</p>
+            </div>
+            <ShoppingCart className="h-8 w-8 text-blue-600" />
+          </div>
         </div>
       </div>
     </div>

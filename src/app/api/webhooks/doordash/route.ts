@@ -17,25 +17,6 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-// DoorDash JWT generator for potential cancels (not needed here)
-async function generateDoorDashJWT() {
-  const developer_id = process.env.DOORDASH_DRIVE_DEVELOPER_ID;
-  const key_id = process.env.DOORDASH_DRIVE_KEY_ID;
-  const signing_secret = process.env.DOORDASH_DRIVE_SIGNING_SECRET;
-  if (!developer_id || !key_id || !signing_secret) throw new Error('Missing DoorDash credentials');
-  const header = { alg: 'HS256', typ: 'JWT', 'dd-ver': 'DD-JWT-V1' };
-  const iat = Math.floor(Date.now() / 1000);
-  const exp = iat + 300;
-  const payload = { aud: 'doordash', iss: developer_id, kid: key_id, iat, exp };
-  const headerB64 = Buffer.from(JSON.stringify(header)).toString('base64url');
-  const payloadB64 = Buffer.from(JSON.stringify(payload)).toString('base64url');
-  const dataToSign = `${headerB64}.${payloadB64}`;
-  const signature = createHmac('sha256', Buffer.from(signing_secret, 'base64'))
-    .update(dataToSign)
-    .digest('base64url');
-  return `${dataToSign}.${signature}`;
-}
-
 // Map DoorDash statuses to our internal statuses
 const statusMapping: Record<string, string> = {
   'quote': 'quoted',

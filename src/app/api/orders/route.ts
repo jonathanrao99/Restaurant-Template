@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/integrations/supabase/client';
+import { calculateDistanceFee } from '@/lib/deliveryFee';
 
 export async function GET() {
   try {
@@ -60,6 +61,34 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: insertResult.error.message }, { status: 500 });
     }
     const newOrder = insertResult.data as any;
+
+    if (fulfillmentMethod === 'delivery') {
+      // Calculate delivery fee
+      const deliveryFee = await calculateDistanceFee(customerInfo.address, new Date());
+      // Call Shipday API to create delivery
+      const shipdayRes = await fetch('https://api.shipday.com/v1/deliveries', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer afS4qiuI1o.qTpHgquNGsZi4UdR3rNb',
+        },
+        body: JSON.stringify({
+          pickupAddress: '1989 North Fry Rd, Katy, TX 77449',
+          pickupPhoneNumber: '+12814010758',
+          pickupBusinessName: 'Desi Flavors Hub',
+          dropoffAddress: customerInfo.address,
+          dropoffPhoneNumber: customerInfo.phone,
+          dropoffName: customerInfo.name,
+          orderNumber: newOrder.id,
+          orderValue: total,
+          scheduledPickupTime: scheduledTimeValue || undefined,
+        }),
+      });
+      const shipdayData = await shipdayRes.json();
+      // Store Shipday delivery info in deliveries table
+      // Store delivery fee in orders table
+    }
+
     return NextResponse.json({ orderId: newOrder.id }, { status: 200 });
   } catch (error: any) {
     console.error('Error in POST /api/orders:', error);

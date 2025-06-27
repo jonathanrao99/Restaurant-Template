@@ -11,6 +11,7 @@ import dynamicComponent from 'next/dynamic';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { AddressAutocompleteProps } from '@/components/payment/AddressAutocomplete';
+import { calculateDistanceFee } from '@/lib/deliveryFee';
 
 export const dynamic = 'force-dynamic';
 
@@ -153,43 +154,28 @@ function PaymentPageContent() {
 
     // Calculate delivery fee
     setFeeLoading(true);
-    const timer = setTimeout(async () => {
+    const fee = async () => {
       try {
         console.log('Calculating delivery fee for:', { address: deliveryAddress, phone: customerPhone, isGoogleAddress });
         
-        const res = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_FUNCTION_URL}/calculate-fee`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-            'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!}`,
-          },
-          body: JSON.stringify({ 
-            address: deliveryAddress, 
-            dropoffPhoneNumber: customerPhone.replace(/\D/g, '') 
-          }),
-        });
+        const fee = await calculateDistanceFee(deliveryAddress, new Date());
+        console.log('Fee calculation response:', fee);
         
-        const data = await res.json();
-        console.log('Fee calculation response:', data);
-        
-        if (!res.ok || typeof data.fee !== 'number') {
-          throw new Error(data.error || 'Fee calculation failed');
+        if (typeof fee !== 'number') {
+          throw new Error('Fee calculation failed');
         }
         
-        setDeliveryFee(data.fee);
-        console.log('Delivery fee set to:', data.fee);
+        return fee;
       } catch (error) {
         console.error('Delivery fee calculation error:', error);
         // Apply fallback fee on error
-        setDeliveryFee(FALLBACK_DELIVERY_FEE);
-        toast.error(`We're having trouble calculating the delivery fee. Using a standard fee of $${FALLBACK_DELIVERY_FEE.toFixed(2)} for now.`);
+        return FALLBACK_DELIVERY_FEE;
       } finally {
         setFeeLoading(false);
       }
-    }, 500);
+    };
 
-    return () => clearTimeout(timer);
+    fee().then(setDeliveryFee);
   }, [deliveryAddress, customerPhone, fulfillmentMethod, isGoogleAddress, invalidToastShown]);
 
   const handleCheckout = async (e: React.FormEvent) => {
