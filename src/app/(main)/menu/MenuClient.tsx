@@ -76,6 +76,15 @@ export default function MenuClient({ initialMenuItems }: MenuClientProps) {
     toast.success(`${item.name} has been added to your cart.`);
   }, [addToCart, updateQuantity, cartItems]);
 
+  const handleSearch = (searchTerm) => {
+    logAnalyticsEvent('search_performed', { searchTerm });
+    if (typeof window !== 'undefined') {
+      window.gtag && window.gtag('event', 'search_performed', { searchTerm });
+      window.umami && window.umami('search_performed', { searchTerm });
+    }
+    // ...existing search logic...
+  };
+
   if (loading) {
       return (
         <div className="flex items-center justify-center min-h-[400px]">

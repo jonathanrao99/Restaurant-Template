@@ -124,6 +124,15 @@ export default function OrdersPage() {
     window.URL.revokeObjectURL(url);
   };
 
+  const handleOrderStatusUpdate = (orderId, status) => {
+    logAnalyticsEvent('order_status_updated', { orderId, status });
+    if (typeof window !== 'undefined') {
+      window.gtag && window.gtag('event', 'order_status_updated', { orderId, status });
+      window.umami && window.umami('order_status_updated', { orderId, status });
+    }
+    // ...existing status update logic...
+  };
+
   if (loading) {
     return (
       <div className="mt-10">

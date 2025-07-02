@@ -2,6 +2,15 @@ import { motion } from 'framer-motion';
 import Script from 'next/script';
 
 const CustomerReviewsSection = () => {
+  const handleReviewSubmit = (review) => {
+    logAnalyticsEvent('review_submitted', review);
+    if (typeof window !== 'undefined') {
+      window.gtag && window.gtag('event', 'review_submitted', review);
+      window.umami && window.umami('review_submitted', review);
+    }
+    // ...existing logic...
+  };
+
   return (
     <section className="py-16 bg-gradient-to-b from-transparent via-orange-50 to-white relative overflow-hidden">
 

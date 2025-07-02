@@ -38,6 +38,24 @@ const ContactForm = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleNewsletterSignup = (email) => {
+    logAnalyticsEvent('newsletter_signup', { email });
+    if (typeof window !== 'undefined') {
+      window.gtag && window.gtag('event', 'newsletter_signup', { email });
+      window.umami && window.umami('newsletter_signup', { email });
+    }
+    // ...existing logic...
+  };
+
+  const handleContactFormSubmit = (formData) => {
+    logAnalyticsEvent('contact_form_submitted', formData);
+    if (typeof window !== 'undefined') {
+      window.gtag && window.gtag('event', 'contact_form_submitted', formData);
+      window.umami && window.umami('contact_form_submitted', formData);
+    }
+    // ...existing logic...
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);

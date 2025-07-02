@@ -146,6 +146,51 @@ const PaymentForm = ({
     }
   }, [deliveryMethod, scriptLoaded]);
 
+  const handleCheckoutStart = () => {
+    logAnalyticsEvent('checkout_started', {});
+    if (typeof window !== 'undefined') {
+      window.gtag && window.gtag('event', 'checkout_started', {});
+      window.umami && window.umami('checkout_started', {});
+    }
+    // ...existing logic...
+  };
+
+  const handleCheckoutAbandon = () => {
+    logAnalyticsEvent('checkout_abandoned', {});
+    if (typeof window !== 'undefined') {
+      window.gtag && window.gtag('event', 'checkout_abandoned', {});
+      window.umami && window.umami('checkout_abandoned', {});
+    }
+    // ...existing logic...
+  };
+
+  const handlePaymentSuccess = (orderId) => {
+    logAnalyticsEvent('payment_success', { orderId });
+    if (typeof window !== 'undefined') {
+      window.gtag && window.gtag('event', 'payment_success', { orderId });
+      window.umami && window.umami('payment_success', { orderId });
+    }
+    // ...existing logic...
+  };
+
+  const handlePaymentFailure = (error) => {
+    logAnalyticsEvent('payment_failed', { error });
+    if (typeof window !== 'undefined') {
+      window.gtag && window.gtag('event', 'payment_failed', { error });
+      window.umami && window.umami('payment_failed', { error });
+    }
+    // ...existing logic...
+  };
+
+  const handleOrderPlaced = (orderId) => {
+    logAnalyticsEvent('order_placed', { orderId });
+    if (typeof window !== 'undefined') {
+      window.gtag && window.gtag('event', 'order_placed', { orderId });
+      window.umami && window.umami('order_placed', { orderId });
+    }
+    // ...existing logic...
+  };
+
   return (
     <div>
       {/* Disable browser autofill hack: hidden dummy fields */}

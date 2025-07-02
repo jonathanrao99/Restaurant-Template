@@ -41,6 +41,11 @@ const Cart = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
     setIsMounted(true);
+    logAnalyticsEvent('cart_view', {});
+    if (typeof window !== 'undefined') {
+      window.gtag && window.gtag('event', 'cart_view', {});
+      window.umami && window.umami('cart_view', {});
+    }
   }, []);
 
   const openEditDialog = (id: number, instructions: string = '') => {

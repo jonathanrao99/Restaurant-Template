@@ -8,6 +8,15 @@ interface MenuCategoriesProps {
 }
 
 const MenuCategories = ({ selectedCategory, categories, setSelectedCategory }: MenuCategoriesProps) => {
+  const handleCategorySelect = (category) => {
+    logAnalyticsEvent('menu_category_view', { category });
+    if (typeof window !== 'undefined') {
+      window.gtag && window.gtag('event', 'menu_category_view', { category });
+      window.umami && window.umami('menu_category_view', { category });
+    }
+    setSelectedCategory(category);
+  };
+
   return (
     <div className="sticky top-0 z-50 transition-all duration-300 bg-white shadow-md">
       <div className="container mx-auto px-4 py-2">
@@ -15,7 +24,7 @@ const MenuCategories = ({ selectedCategory, categories, setSelectedCategory }: M
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            onClick={() => setSelectedCategory('All')}
+            onClick={() => handleCategorySelect('All')}
             className={`px-4 py-1.5 rounded-full whitespace-nowrap transition-all flex items-center space-x-1 text-sm ${
               selectedCategory === 'All'
                 ? 'bg-desi-orange text-white shadow-md shadow-desi-orange/20'
@@ -30,7 +39,7 @@ const MenuCategories = ({ selectedCategory, categories, setSelectedCategory }: M
               key={category}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => setSelectedCategory(category)}
+              onClick={() => handleCategorySelect(category)}
               className={`px-4 py-1.5 rounded-full whitespace-nowrap transition-all flex items-center space-x-1 text-sm ${
                 selectedCategory === category
                   ? 'bg-desi-orange text-white shadow-md shadow-desi-orange/20'

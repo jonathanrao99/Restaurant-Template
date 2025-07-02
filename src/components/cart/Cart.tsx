@@ -8,6 +8,33 @@ export const Cart = () => {
   const itemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
   const router = useRouter();
 
+  const handleCartOpen = () => {
+    logAnalyticsEvent('cart_view', {});
+    if (typeof window !== 'undefined') {
+      window.gtag && window.gtag('event', 'cart_view', {});
+      window.umami && window.umami('cart_view', {});
+    }
+    // ...existing open logic...
+  };
+
+  const handleAddToCart = (item) => {
+    logAnalyticsEvent('add_to_cart', { itemId: item.id, name: item.name, price: item.price });
+    if (typeof window !== 'undefined') {
+      window.gtag && window.gtag('event', 'add_to_cart', { itemId: item.id, name: item.name, price: item.price });
+      window.umami && window.umami('add_to_cart', { itemId: item.id, name: item.name, price: item.price });
+    }
+    // ...existing add logic...
+  };
+
+  const handleRemoveFromCart = (item) => {
+    logAnalyticsEvent('remove_from_cart', { itemId: item.id, name: item.name, price: item.price });
+    if (typeof window !== 'undefined') {
+      window.gtag && window.gtag('event', 'remove_from_cart', { itemId: item.id, name: item.name, price: item.price });
+      window.umami && window.umami('remove_from_cart', { itemId: item.id, name: item.name, price: item.price });
+    }
+    // ...existing remove logic...
+  };
+
   return (
     <motion.button
       whileHover={{ scale: 1.05 }}

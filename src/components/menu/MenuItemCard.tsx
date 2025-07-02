@@ -37,6 +37,24 @@ export default function MenuItemCard({ item, handleAddToCart }: MenuItemCardProp
     router.push(`/menu?itemId=${item.id}`);
   }, [router, item.id]);
 
+  const handleMenuItemClick = () => {
+    logAnalyticsEvent('menu_item_view', { itemId: item.id, name: item.name, price: item.price });
+    if (typeof window !== 'undefined') {
+      window.gtag && window.gtag('event', 'menu_item_view', { itemId: item.id, name: item.name, price: item.price });
+      window.umami && window.umami('menu_item_view', { itemId: item.id, name: item.name, price: item.price });
+    }
+    setIsDialogOpen(true);
+  };
+
+  const handleAddToCart = (item: MenuItem) => {
+    logAnalyticsEvent('add_to_cart', { itemId: item.id, name: item.name, price: item.price });
+    if (typeof window !== 'undefined') {
+      window.gtag && window.gtag('event', 'add_to_cart', { itemId: item.id, name: item.name, price: item.price });
+      window.umami && window.umami('add_to_cart', { itemId: item.id, name: item.name, price: item.price });
+    }
+    handleAddToCart({ ...item, quantity: 1 });
+  };
+
   return (
     <>
       <motion.div
@@ -46,14 +64,7 @@ export default function MenuItemCard({ item, handleAddToCart }: MenuItemCardProp
         whileHover={{ scale: 1.04, boxShadow: '0 4px 32px #ffb34733' }}
         transition={{ type: 'spring', stiffness: 200 }}
         className="relative bg-white rounded-2xl overflow-hidden shadow-md h-[400px] flex flex-col cursor-pointer"
-        onClick={() => {
-          setIsDialogOpen(true);
-          logAnalyticsEvent('menu_item_viewed', { menu_item_id: item.id, name: item.name });
-          if (typeof window !== 'undefined') {
-            window.gtag && window.gtag('event', 'menu_item_viewed', { item_id: item.id, item_name: item.name });
-            window.umami && window.umami('menu_item_viewed', { item_id: item.id, item_name: item.name });
-          }
-        }}
+        onClick={handleMenuItemClick}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >

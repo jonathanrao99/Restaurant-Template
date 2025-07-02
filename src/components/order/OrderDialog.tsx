@@ -43,6 +43,15 @@ const OrderDialog = ({ item, onClose, onAddToCart }: OrderDialogProps) => {
     setImageError(true);
   };
 
+  const handleOrderCancel = (orderId) => {
+    logAnalyticsEvent('order_cancelled', { orderId });
+    if (typeof window !== 'undefined') {
+      window.gtag && window.gtag('event', 'order_cancelled', { orderId });
+      window.umami && window.umami('order_cancelled', { orderId });
+    }
+    // ...existing cancel logic...
+  };
+
   return (
     <AnimatePresence>
       <motion.div
