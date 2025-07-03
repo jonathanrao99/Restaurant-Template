@@ -7,6 +7,8 @@ interface MenuCategoriesProps {
   setSelectedCategory: (category: string) => void;
 }
 
+import { logAnalyticsEvent } from '@/utils/loyaltyAndAnalytics';
+
 const MenuCategories = ({ selectedCategory, categories, setSelectedCategory }: MenuCategoriesProps) => {
   const handleCategorySelect = (category) => {
     logAnalyticsEvent('menu_category_view', { category });

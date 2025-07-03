@@ -6,7 +6,6 @@ import { fadeInUp } from '@/utils/motion.variants';
 import MagneticButton from '@/components/MagneticButton';
 import AnimatedCardGrid, { AnimatedCard } from '@/components/AnimatedCardGrid';
 import Image from 'next/image';
-import Head from 'next/head';
 // import Script from 'next/script';
 
 // Custom X icon component
@@ -123,28 +122,6 @@ const About = () => {
   ];
 
   return (
-    <Head>
-      <title>About Us | Desi Flavors Hub</title>
-      <meta name="description" content="Learn about Desi Flavors Hub, our story, and our passion for bringing authentic Indian cuisine to Katy, TX." />
-      <meta property="og:title" content="About Us | Desi Flavors Hub" />
-      <meta property="og:description" content="Learn about Desi Flavors Hub, our story, and our passion for bringing authentic Indian cuisine to Katy, TX." />
-      <meta property="og:type" content="website" />
-      <meta property="og:url" content="https://yourdomain.com/about" />
-      <meta property="og:image" content="https://yourdomain.com/og-image.jpg" />
-      <script type="application/ld+json">{`
-        {
-          "@context": "https://schema.org",
-          "@type": "Organization",
-          "name": "Desi Flavors Hub",
-          "url": "https://yourdomain.com/about",
-          "logo": "https://yourdomain.com/og-image.jpg",
-          "sameAs": [
-            "https://www.facebook.com/yourpage",
-            "https://www.instagram.com/yourpage"
-          ]
-        }
-      `}</script>
-    </Head>
     <main className="min-h-screen">
       {/* Hero Section */}
       <section 
@@ -164,6 +141,8 @@ const About = () => {
             src="/Truck/truck-1.jpg"
             alt="Desi Flavors Food Truck"
             className="absolute inset-0 w-full h-full object-cover transform-gpu"
+            width={500}
+            height={300}
           />
         </motion.div>
         
@@ -246,6 +225,8 @@ const About = () => {
                   src="/Truck/truck-3.jpg"
                   alt="Desi Flavors Food Preparation"
                   className="w-full h-auto rounded-xl shadow-lg"
+                  width={500}
+                  height={300}
                 />
               </div>
             </div>
@@ -325,7 +306,7 @@ const About = () => {
                 <div className="p-8">
                   <div className="flex items-center mb-4">
                     <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mr-4">
-                      <Image src={value.icon} alt={value.title} className="h-6 w-6 opacity-70" />
+                      <Image src={value.icon} alt={value.title} className="h-6 w-6 opacity-70" width={20} height={20} />
                     </div>
                     <h3 className="text-xl font-bold text-gray-900">
                       {value.title}
@@ -367,6 +348,8 @@ const About = () => {
                   src="/biryani.png" 
                   alt="Signature Biryani" 
                   className="w-full h-full object-cover"
+                  width={500}
+                  height={300}
                 />
               </div>
             </div>
@@ -433,7 +416,7 @@ const About = () => {
             <div className="max-w-2xl mx-auto">
               <AnimatedCard className="bg-white rounded-xl shadow-md overflow-hidden flex flex-col items-center min-h-[600px] mb-10">
                 <div className="w-72 h-72 rounded-full overflow-hidden mt-8 mb-4 border-4 border-desi-orange/20">
-                  <Image src="/Truck/IMG-20250610-WA0005.jpg" alt="Founders" className="w-full h-full object-cover" loading="lazy" decoding="async" />
+                  <Image src="/Truck/IMG-20250610-WA0005.jpg" alt="Founders" className="w-full h-full object-cover" loading="lazy" decoding="async" width={200} height={200} />
                 </div>
                 <div className="px-6 pt-6 pb-4 text-center">
                   <h3 className="text-xl font-display font-bold text-desi-black mb-1">Jaladevi & Venu Thota</h3>
@@ -490,6 +473,8 @@ const About = () => {
                   onClick={() => setSelectedImage("/Truck/truck-1.jpg")}
                   loading="lazy"
                   decoding="async"
+                  width={500}
+                  height={300}
                 />
               </AnimatedCard>
               
@@ -502,6 +487,8 @@ const About = () => {
                   onClick={() => setSelectedImage("/Truck/truck-2.jpg")}
                   loading="lazy"
                   decoding="async"
+                  width={500}
+                  height={300}
                 />
               </AnimatedCard>
               
@@ -513,6 +500,8 @@ const About = () => {
                   onClick={() => setSelectedImage("/Truck/truck-3.jpg")}
                   loading="lazy"
                   decoding="async"
+                  width={500}
+                  height={300}
                 />
               </AnimatedCard>
               
@@ -525,6 +514,8 @@ const About = () => {
                   onClick={() => setSelectedImage("/Truck/truck-4.jpg")}
                   loading="lazy"
                   decoding="async"
+                  width={500}
+                  height={300}
                 />
               </AnimatedCard>
               
@@ -536,6 +527,8 @@ const About = () => {
                   onClick={() => setSelectedImage("/Truck/truck-5.jpg")}
                   loading="lazy"
                   decoding="async"
+                  width={500}
+                  height={300}
                 />
               </AnimatedCard>
               
@@ -547,6 +540,8 @@ const About = () => {
                   onClick={() => setSelectedImage("/Truck/truck-old.png")}
                   loading="lazy"
                   decoding="async"
+                  width={500}
+                  height={300}
                 />
               </AnimatedCard>
             </div>
@@ -580,6 +575,8 @@ const About = () => {
               className="w-full h-auto rounded-lg"
               loading="lazy"
               decoding="async"
+              width={500}
+              height={300}
             />
           </motion.div>
           </div>

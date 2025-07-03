@@ -7,6 +7,7 @@ import { Input } from "@heroui/react";
 import SquareCardContainer from '@/components/payment/SquareCardContainer';
 import usePlacesAutocomplete from 'use-places-autocomplete';
 import { createPortal } from 'react-dom';
+import { useTranslations } from 'next-intl';
 
 interface PaymentFormProps {
   // Cardholder name input
@@ -67,6 +68,7 @@ const PaymentForm = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const [dropdownStyles, setDropdownStyles] = useState<{ top: number; left: number; width: number } | null>(null);
   const [scriptLoaded, setScriptLoaded] = useState(false);
+  const t = useTranslations();
 
   const formatPhoneNumber = (value: string) => {
     const v = value.replace(/\D/g, '');
@@ -147,7 +149,7 @@ const PaymentForm = ({
   }, [deliveryMethod, scriptLoaded]);
 
   const handleCheckoutStart = () => {
-    logAnalyticsEvent('checkout_started', {});
+    // logAnalyticsEvent('checkout_started', {});
     if (typeof window !== 'undefined') {
       window.gtag && window.gtag('event', 'checkout_started', {});
       window.umami && window.umami('checkout_started', {});
@@ -156,7 +158,7 @@ const PaymentForm = ({
   };
 
   const handleCheckoutAbandon = () => {
-    logAnalyticsEvent('checkout_abandoned', {});
+    // logAnalyticsEvent('checkout_abandoned', {});
     if (typeof window !== 'undefined') {
       window.gtag && window.gtag('event', 'checkout_abandoned', {});
       window.umami && window.umami('checkout_abandoned', {});
@@ -165,7 +167,7 @@ const PaymentForm = ({
   };
 
   const handlePaymentSuccess = (orderId) => {
-    logAnalyticsEvent('payment_success', { orderId });
+    // logAnalyticsEvent('payment_success', { orderId });
     if (typeof window !== 'undefined') {
       window.gtag && window.gtag('event', 'payment_success', { orderId });
       window.umami && window.umami('payment_success', { orderId });
@@ -174,7 +176,7 @@ const PaymentForm = ({
   };
 
   const handlePaymentFailure = (error) => {
-    logAnalyticsEvent('payment_failed', { error });
+    // logAnalyticsEvent('payment_failed', { error });
     if (typeof window !== 'undefined') {
       window.gtag && window.gtag('event', 'payment_failed', { error });
       window.umami && window.umami('payment_failed', { error });
@@ -183,7 +185,7 @@ const PaymentForm = ({
   };
 
   const handleOrderPlaced = (orderId) => {
-    logAnalyticsEvent('order_placed', { orderId });
+    // logAnalyticsEvent('order_placed', { orderId });
     if (typeof window !== 'undefined') {
       window.gtag && window.gtag('event', 'order_placed', { orderId });
       window.umami && window.umami('order_placed', { orderId });
@@ -199,7 +201,7 @@ const PaymentForm = ({
         <input type="password" name="fakepasswordremembered" autoComplete="off" />
       </div>
       <div className="bg-white rounded-2xl shadow-lg overflow-visible p-6 animate-fade-in">
-        <h1 className="text-2xl font-display font-bold mb-4">Customer Information</h1>
+        <h1 className="text-2xl font-display font-bold mb-4">{t('checkout.title')}</h1>
 
         {/* Customer Info Fields */}
         <div className="space-y-4 mb-6 animate-fade-in-delay">
@@ -342,7 +344,7 @@ const PaymentForm = ({
         </div>
 
         {/* Payment Method Specific Section */}
-        <form onSubmit={handleSubmit} autoComplete="off" className="space-y-6 animate-fade-in-delay">
+        <form onSubmit={handleSubmit} autoComplete="off" className="space-y-6 animate-fade-in-delay" role="form">
             {/* Card Details */}
             <h1 className="text-2xl font-display font-bold mb-4 mt-4">Card Details</h1>
             {/* Name on Card */}
@@ -351,14 +353,16 @@ const PaymentForm = ({
               <div className="relative">
                 <Input
                   id="cardName"
-                autoComplete="off"
-                readOnly
-                onFocus={(e) => e.currentTarget.removeAttribute('readonly')}
+                  autoComplete="off"
+                  readOnly
+                  onFocus={(e) => e.currentTarget.removeAttribute('readonly')}
                   placeholder="John Smith"
                   value={cardName}
                   onChange={(e) => setCardName(e.target.value)}
                   className="pl-10 rounded-md border-gray-300 shadow-sm transition-all focus:ring-2 focus:ring-desi-orange focus:outline-none"
                   required
+                  aria-required="true"
+                  aria-label="Name on Card"
                 />
                 <User size={16} className="absolute left-3 top-3 text-gray-500" />
               </div>
@@ -367,9 +371,10 @@ const PaymentForm = ({
             <Button
               type="submit"
               disabled={!isCustomerValid || isProcessing}
+              aria-disabled={!isCustomerValid || isProcessing}
               className="w-full bg-desi-orange hover:bg-desi-orange/90 text-white py-6 text-lg rounded-xl transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isProcessing ? 'Processing…' : 'Checkout'}
+              {isProcessing ? 'Processing…' : t('button.checkout')}
             </Button>
           </form>
       </div>

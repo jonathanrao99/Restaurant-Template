@@ -127,7 +127,7 @@ export default function ReturningCustomer() {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-md p-6 mb-6 animate-fade-in">
+    <div className="bg-white rounded-2xl shadow-md p-6 mb-6">
       <h2 className="font-display font-bold text-lg mb-4 pb-2 border-b text-black">Returning customer?</h2>
       <div className="flex items-center gap-2 mb-4">
         <Input

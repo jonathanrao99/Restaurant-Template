@@ -1,3 +1,5 @@
+import { logAnalyticsEvent } from '@/utils/loyaltyAndAnalytics';
+
 const handleViewPoints = (customerId) => {
   logAnalyticsEvent('loyalty_points_viewed', { customerId });
   if (typeof window !== 'undefined') {

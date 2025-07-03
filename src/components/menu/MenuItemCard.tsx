@@ -10,6 +10,7 @@ import { fadeInUp } from '@/utils/motion.variants';
 import { SpinningText } from '@/components/magicui/spinning-text';
 import Image from 'next/image';
 import { logAnalyticsEvent } from '@/utils/loyaltyAndAnalytics';
+import { useTranslations } from 'next-intl';
 
 interface MenuItemCardProps {
   item: MenuItem;
@@ -23,6 +24,7 @@ export default function MenuItemCard({ item, handleAddToCart }: MenuItemCardProp
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const imageUrl = item.menu_img || '/placeholder.svg';
+  const t = useTranslations();
 
   const handleImageLoad = useCallback(() => {
     setImageLoading(false);
@@ -41,7 +43,9 @@ export default function MenuItemCard({ item, handleAddToCart }: MenuItemCardProp
     logAnalyticsEvent('menu_item_view', { itemId: item.id, name: item.name, price: item.price });
     if (typeof window !== 'undefined') {
       window.gtag && window.gtag('event', 'menu_item_view', { itemId: item.id, name: item.name, price: item.price });
-      window.umami && window.umami('menu_item_view', { itemId: item.id, name: item.name, price: item.price });
+      if (typeof window.umami === 'function') {
+        window.umami('menu_item_view', { itemId: item.id, name: item.name, price: item.price });
+      }
     }
     setIsDialogOpen(true);
   };
@@ -58,6 +62,15 @@ export default function MenuItemCard({ item, handleAddToCart }: MenuItemCardProp
         onClick={handleMenuItemClick}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
+        role="button"
+        aria-label={`View details for ${item.name}`}
+        tabIndex={0}
+        onKeyDown={e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleMenuItemClick();
+          }
+        }}
       >
         {(() => {
           const name = item.name.toLowerCase();
@@ -120,8 +133,8 @@ export default function MenuItemCard({ item, handleAddToCart }: MenuItemCardProp
             </div>
 
             {item.isSoldOut ? (
-              <span className="flex items-center space-x-1 text-gray-400 font-medium text-base select-none">
-                <span>Sold Out</span>
+              <span className="flex items-center space-x-1 text-gray-400 font-medium text-base select-none" aria-disabled="true">
+                <span>{t('menu.soldOut')}</span>
                 <ArrowRight className="w-4 h-4 text-gray-400" />
               </span>
             ) : (
@@ -131,8 +144,9 @@ export default function MenuItemCard({ item, handleAddToCart }: MenuItemCardProp
                   handleAddToCart({ ...item, quantity: 1 });
                 }}
                 className="bg-white text-desi-orange hover:bg-desi-orange hover:text-white text-sm"
+                aria-label={`${t('button.addToCart')} ${item.name}`}
               >
-                Add to Cart
+                {t('button.addToCart')}
               </InteractiveHoverButton>
             )}
           </div>

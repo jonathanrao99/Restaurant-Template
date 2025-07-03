@@ -11,6 +11,8 @@ interface OrderDialogProps {
   onAddToCart: (item: MenuItem) => void;
 }
 
+import { logAnalyticsEvent } from '@/utils/loyaltyAndAnalytics';
+
 const OrderDialog = ({ item, onClose, onAddToCart }: OrderDialogProps) => {
   const [quantity, setQuantity] = useState(1);
   const [specialInstructions, setSpecialInstructions] = useState('');
@@ -41,15 +43,6 @@ const OrderDialog = ({ item, onClose, onAddToCart }: OrderDialogProps) => {
 
   const handleImageError = () => {
     setImageError(true);
-  };
-
-  const handleOrderCancel = (orderId) => {
-    logAnalyticsEvent('order_cancelled', { orderId });
-    if (typeof window !== 'undefined') {
-      window.gtag && window.gtag('event', 'order_cancelled', { orderId });
-      window.umami && window.umami('order_cancelled', { orderId });
-    }
-    // ...existing cancel logic...
   };
 
   return (

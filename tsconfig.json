@@ -39,7 +39,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "next-intl.config.js"  ],
   "exclude": [
     "node_modules",
     "src/scripts"

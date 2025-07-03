@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { ArrowLeft, Lock, Calendar, Clock } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { toast } from 'sonner';
-import OrderSummary from '@/components/payment/OrderSummary';
+import OrderSummaryClean from '@/components/payment/OrderSummaryClean';
 import { Button } from '@heroui/react';
 import dynamicComponent from 'next/dynamic';
 import DatePicker from 'react-datepicker';
@@ -406,13 +406,7 @@ function PaymentPageContent() {
           
           {isClient && (
             <div className="lg:col-span-1">
-              <OrderSummary 
-                subtotal={subtotal} 
-                tax={tax} 
-                deliveryFee={deliveryFee} 
-                total={total} 
-                feeLoading={feeLoading}
-              />
+              <OrderSummaryClean />
             </div>
           )}
         </form>

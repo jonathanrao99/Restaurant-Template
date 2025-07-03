@@ -1,7 +1,6 @@
 'use client';
 
 import { ReactNode, useState, useEffect } from 'react';
-import LayoutClientWrapper from './LayoutClientWrapper';
 
 interface ClientOnlyProps {
   children: ReactNode;
@@ -19,8 +18,8 @@ export default function ClientOnly({ children }: ClientOnlyProps) {
   }
 
   return (
-    <LayoutClientWrapper>
+    <>
       {children}
-    </LayoutClientWrapper>
+    </>
   );
 } 

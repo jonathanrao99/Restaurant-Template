@@ -37,10 +37,11 @@ export default function MenuClient({ initialMenuItems }: MenuClientProps) {
         .filter(item => item.category === category)
         .filter(item => !vegetarianOnly || item.isvegetarian)
         .filter(item => !spicyOnly || item.isspicy)
-        .filter(item => !under10Only || parseFloat(
-          typeof item.price === 'string' ? item.price :
-          typeof item.price === 'number' ? item.price.toFixed(2) : String(item.price)
-        ) < 10)
+        .filter(item => !under10Only || (
+          typeof item.price === 'string'
+            ? parseFloat(item.price.replace(/[^\d.]/g, '')) < 10
+            : parseFloat(String(item.price).replace(/[^\d.]/g, '')) < 10
+        ))
         .filter(item => item.name.toLowerCase().includes(searchFilter.toLowerCase()));
       return acc;
     }, {} as { [key: string]: MenuItem[] });
@@ -77,7 +78,7 @@ export default function MenuClient({ initialMenuItems }: MenuClientProps) {
   }, [addToCart, updateQuantity, cartItems]);
 
   const handleSearch = (searchTerm) => {
-    logAnalyticsEvent('search_performed', { searchTerm });
+    // logAnalyticsEvent('search_performed', { searchTerm }); // Removed undefined function
     if (typeof window !== 'undefined') {
       window.gtag && window.gtag('event', 'search_performed', { searchTerm });
       window.umami && window.umami('search_performed', { searchTerm });

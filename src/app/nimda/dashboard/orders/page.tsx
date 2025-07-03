@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Search, Filter, Download, Eye, Clock, MapPin, Phone, User, Calendar } from 'lucide-react';
+import { logAnalyticsEvent } from '@/utils/loyaltyAndAnalytics';
 
 interface Order {
   id: number;

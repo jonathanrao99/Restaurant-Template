@@ -144,14 +144,19 @@ export default function HomeFoodCarouselSection() {
                 ) : (
                   <video
                     ref={videoRef}
-                    src={media[current].src}
                     autoPlay
                     muted={!unmutedVideos.includes(media[current].src)}
                     playsInline
                     preload="auto"
                     className="object-cover w-full h-full"
                     title={media[current].alt}
-                  />
+                    aria-label={media[current].alt}
+                    poster={media[current].src.replace('.mp4', '.jpg')}
+                  >
+                    <source src={media[current].src.replace('.mp4', '.webm')} type="video/webm" />
+                    <source src={media[current].src} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
                 )}
               </motion.div>
             </AnimatePresence>

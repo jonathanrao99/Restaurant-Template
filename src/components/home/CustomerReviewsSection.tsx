@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion';
 import Script from 'next/script';
 
+import { logAnalyticsEvent } from '@/utils/loyaltyAndAnalytics';
+
 const CustomerReviewsSection = () => {
   const handleReviewSubmit = (review) => {
     logAnalyticsEvent('review_submitted', review);

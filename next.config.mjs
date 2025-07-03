@@ -1,12 +1,17 @@
 import bundleAnalyzer from '@next/bundle-analyzer';
+import createNextIntlPlugin from 'next-intl/plugin';
 
 // Configure bundle analyzer
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
 });
 
+// Configure next-intl
+const withNextIntl = createNextIntlPlugin();
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'export', // Enables static HTML export
   experimental: {
     optimizePackageImports: ['lucide-react', '@heroui/react', 'framer-motion'],
   },
@@ -74,4 +79,4 @@ const nextConfig = {
   },
 };
 
-export default withBundleAnalyzer(nextConfig); 
+export default withBundleAnalyzer(withNextIntl(nextConfig)); 

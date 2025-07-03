@@ -133,7 +133,7 @@ const Catering = () => {
     <div className="bg-desi-cream">
       {/* Hero Section */}
       <section className="relative h-[70vh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-black/40 to-transparent z-10" />
+        <div className="absolute inset-0 bg-gradient-to-br from-black/90 to-transparent z-10" />
         <motion.div
           className="absolute inset-0 z-0"
           initial={{ scale: 1, x: 0, y: 0 }}

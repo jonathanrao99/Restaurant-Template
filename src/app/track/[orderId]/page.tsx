@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { CheckCircle, Clock, Truck, ChefHat, Package } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface Order {
   id: number;
@@ -30,6 +31,7 @@ export default function OrderTrackingPage() {
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const t = useTranslations();
 
   useEffect(() => {
     if (orderId) {
@@ -122,7 +124,7 @@ export default function OrderTrackingPage() {
           <div className="flex justify-between items-start">
             <div>
               <h1 className="text-2xl font-bold text-gray-800 mb-2">
-                Order #{order.id}
+                {t('orderTracking.title')} #{order.id}
               </h1>
               <p className="text-gray-600">
                 Placed on {new Date(order.created_at).toLocaleString()}
@@ -145,20 +147,18 @@ export default function OrderTrackingPage() {
         </div>
 
         {/* Order Status Timeline */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-6">Order Status</h2>
-          
-          <div className="relative">
+        <div className="bg-white rounded-lg shadow-md p-6 mb-6" role="status" aria-live="polite">
+          <h2 className="text-xl font-semibold text-gray-800 mb-6" tabIndex={-1} id="order-status-heading">Order Status</h2>
+          <div className="relative" aria-labelledby="order-status-heading">
             {statusSteps.map((step, index) => {
               const isCompleted = index <= currentStepIndex;
               const isCurrent = index === currentStepIndex;
               const IconComponent = step.icon;
-              
               return (
-                <div key={step.key} className="flex items-center mb-8 last:mb-0">
+                <div key={step.key} className="flex items-center mb-8 last:mb-0" aria-current={isCurrent ? 'step' : undefined} aria-label={isCurrent ? `Current step: ${step.label}` : step.label}>
                   <div className="flex items-center">
-                    <div className={`
-                      flex items-center justify-center w-12 h-12 rounded-full border-2 
+                    <div className={
+                      `flex items-center justify-center w-12 h-12 rounded-full border-2 
                       ${isCompleted 
                         ? 'bg-desi-orange border-desi-orange text-white' 
                         : 'bg-gray-100 border-gray-300 text-gray-400'

@@ -86,7 +86,7 @@ export default {
     		},
     		fontFamily: {
     			sans: ['var(--font-sans)', 'sans-serif'],
-    			serif: ['var(--font-butler)', 'serif'],
+    			serif: ['serif'],
     			display: ['var(--font-display)', 'cursive'],
     			samarkan: ['var(--font-samarkan)', 'cursive'],
     			mono: ['var(--font-geist-mono)'],

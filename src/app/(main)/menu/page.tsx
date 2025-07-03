@@ -2,7 +2,7 @@ import MenuHeader from '@/components/menu/MenuHeader';
 import MenuNotes from '@/components/menu/MenuNotes';
 import MenuClient from './MenuClient';
 import { createClient } from '@supabase/supabase-js';
-import Head from 'next/head';
+import { useTranslations } from 'next-intl';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,36 +31,12 @@ async function fetchMenuData() {
 }
 
 export default async function MenuPage() {
+  const t = useTranslations();
   const menuData = await fetchMenuData();
   return (
     <div className="min-h-screen bg-gray-50">
-      <Head>
-        <title>Menu | Desi Flavors Hub</title>
-        <meta name="description" content="Browse our menu of authentic Indian dishes, biryanis, curries, and more. Order online for pickup or delivery!" />
-        <meta property="og:title" content="Menu | Desi Flavors Hub" />
-        <meta property="og:description" content="Browse our menu of authentic Indian dishes, biryanis, curries, and more. Order online for pickup or delivery!" />
-        <meta property="og:type" content="menu" />
-        <meta property="og:url" content="https://yourdomain.com/menu" />
-        <meta property="og:image" content="https://yourdomain.com/og-image.jpg" />
-        <script type="application/ld+json">{`
-          {
-            "@context": "https://schema.org",
-            "@type": "Menu",
-            "name": "Desi Flavors Hub Menu",
-            "url": "https://yourdomain.com/menu",
-            "hasMenuSection": [
-              {
-                "@type": "MenuSection",
-                "name": "Biryani",
-                "hasMenuItem": [
-                  { "@type": "MenuItem", "name": "Chicken Biryani", "description": "Aromatic basmati rice with marinated chicken.", "offers": { "@type": "Offer", "price": "14.99", "priceCurrency": "USD" } }
-                ]
-              }
-            ]
-          }
-        `}</script>
-      </Head>
       <MenuHeader />
+      <h1 className="text-3xl font-bold mb-6">{t('menu.title')}</h1>
       <MenuClient initialMenuItems={menuData} />
       <MenuNotes />
     </div>

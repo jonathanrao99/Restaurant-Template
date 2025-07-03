@@ -1,6 +1,7 @@
 import { useState, Fragment } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Phone, User, MessageSquare, Check, AlertCircle, ArrowRight, Users, PartyPopper, ChevronDown, Download, HelpCircle } from 'lucide-react';
+import { logAnalyticsEvent } from '@/utils/loyaltyAndAnalytics';
 import { createClient } from '@supabase/supabase-js';
 import { Listbox, Transition } from '@headlessui/react';
 import Image from 'next/image';
