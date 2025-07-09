@@ -28,11 +28,7 @@ const Catering = () => {
   useScrollToTopOnNavClick();
 
   const handleQuoteClick = () => {
-    router.push('/');
-    setTimeout(() => {
-      const connect = document.getElementById('connect');
-      if (connect) connect.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 300);
+    router.push('/#connect');
   };
 
   // Carousel media and state
@@ -153,7 +149,7 @@ const Catering = () => {
             className="text-white"
           >
             <h2 className="text-3xl md:text-3xl lg:text-5xl max-w-5xl mx-auto font-display font-bold text-desi-white tracking-tight leading-tight">
-              Catering for All Your Events
+              Catering Your Events
             </h2>
             <p className="mt-4 text-base md:text-xl max-w-5xl mx-auto text-white font-bold">
             Elevate your events with Indian cuisine, crafted with passion and love. Every dish tells a story, leaving your guests with flavors they'll never forget.

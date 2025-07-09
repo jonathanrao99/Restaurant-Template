@@ -32,7 +32,7 @@ const BestsellersSection = () => {
     id: 1, // Chicken Biryani
     title: 'Chicken Biryani',
     description: 'Fragrant basmati rice cooked with tender chicken, aromatic spices, and herbs.',
-    price: '$14.99',
+    price: '$11.99',
     imageSrc: 'https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&q=80&w=600',
     isSpecial: true,
     itemId: 1 // Chicken Dum Biryani
@@ -40,14 +40,14 @@ const BestsellersSection = () => {
     id: 3, // Butter Chicken
     title: 'Butter Chicken',
     description: 'Tender chicken pieces in a creamy, tomato-based curry with a hint of butter.',
-    price: '$13.99',
+    price: '$11.99',
     imageSrc: 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?auto=format&fit=crop&q=80&w=600',
     itemId: 8 // Butter Chicken
   }, {
     id: 12, // Aloo Samosa
     title: 'Vegetable Samosas',
     description: 'Crispy pastry triangles filled with spiced potatoes, peas, and vegetables.',
-    price: '$6.99',
+    price: '$4.99',
     imageSrc: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&q=80&w=600',
     itemId: 24 // Aloo Samosa
   }];

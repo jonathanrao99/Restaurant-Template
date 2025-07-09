@@ -56,22 +56,6 @@ export function SpinningText({
   const letters = children.split("");
   letters.push(" ");
 
-  const finalTransition: Transition = {
-    ...BASE_TRANSITION,
-    duration,
-    ...transition,
-  };
-
-  const containerVariants = {
-    visible: { rotate: reverse ? -360 : 360 },
-    ...variants?.container,
-  };
-
-  const itemVariants = {
-    ...BASE_ITEM_VARIANTS,
-    ...variants?.item,
-  };
-
   return (
     <motion.div
       className={cn(
@@ -81,16 +65,13 @@ export function SpinningText({
       style={{
         ...style,
       }}
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
-      transition={finalTransition}
+      animate={{ rotate: reverse ? -360 : 360 }}
+      transition={{ repeat: Infinity, duration, ...transition }}
     >
       {letters.map((letter, index) => (
         <motion.span
           aria-hidden="true"
           key={`${index}-${letter}`}
-          variants={itemVariants}
           className="absolute left-1/2 top-1/2 inline-block"
           style={
             {
