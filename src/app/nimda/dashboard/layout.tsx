@@ -3,8 +3,7 @@
 import { ReactNode, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { FiArrowLeft } from "react-icons/fi";
-import NimdaNavbar from '../NimdaNavbar';
+import { FiLogOut } from "react-icons/fi";
 
 const PAGE_TITLES: Record<string, string> = {
   "/nimda/dashboard": "Dashboard",
@@ -40,22 +39,39 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   }
   if (!pageTitle) pageTitle = "Dashboard";
 
-                return (
+  // Logout handler
+  const handleLogout = () => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('nimda_authed');
+      router.replace('/nimda');
+    }
+  };
+
+  return (
     <div className="min-h-screen bg-desi-cream">
-      <NimdaNavbar />
-      <div className="relative mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-center gap-2 pt-10">
-        <div className="sm:absolute sm:left-4 flex items-center">
-          {pathname !== "/nimda/dashboard" && (
-            <button
-              className="flex items-center gap-2 text-black text-lg px-4 py-2 rounded transition-colors duration-200 hover:text-desi-orange active:text-desi-orange"
-              onClick={() => router.push("/nimda/dashboard")}
-            >
-              <FiArrowLeft className="inline-block w-6 h-6" />
-              <span className="font-semibold">Back</span>
-            </button>
-          )}
+      {/* Top Navbar - styled like /nimda login */}
+      <nav className="w-full flex items-center justify-between px-8 py-5 bg-white shadow-md">
+        <div className="flex items-center gap-2 select-none">
+          <span className="font-samarkan text-3xl text-desi-orange">Desi</span>
+          <span className="font-display text-2xl font-bold tracking-wide text-desi-black">Flavors Katy</span>
         </div>
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-2 px-5 py-2 bg-desi-orange text-white rounded-full font-semibold shadow hover:bg-desi-black transition-colors"
+        >
+          <FiLogOut className="w-5 h-5" />
+          <span>Logout</span>
+        </button>
+      </nav>
+      <div className="relative mb-6 flex flex-col items-center gap-2 pt-10">
         <h1 className="text-5xl font-bold font-display text-center w-full">{pageTitle}</h1>
+        {/* Navigation Buttons */}
+        <div className="flex flex-wrap justify-center gap-4 mt-6">
+          <Link href="/nimda/dashboard/orders" className="px-6 py-3 bg-desi-orange text-white rounded-lg font-semibold shadow hover:bg-desi-black transition-colors">Orders</Link>
+          <Link href="/nimda/dashboard/menu" className="px-6 py-3 bg-desi-orange text-white rounded-lg font-semibold shadow hover:bg-desi-black transition-colors">Menu</Link>
+          <Link href="/nimda/dashboard/customers" className="px-6 py-3 bg-desi-orange text-white rounded-lg font-semibold shadow hover:bg-desi-black transition-colors">Customers</Link>
+          <Link href="/nimda/dashboard/blog" className="px-6 py-3 bg-desi-orange text-white rounded-lg font-semibold shadow hover:bg-desi-black transition-colors">Blog</Link>
+        </div>
       </div>
       <div className="px-6">{children}</div>
     </div>

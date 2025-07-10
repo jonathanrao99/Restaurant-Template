@@ -58,10 +58,20 @@ export default function BlogPage() {
   }, []);
 
   const fetchPosts = async () => {
+    const supabase = createClient();
     try {
-      const response = await fetch('/api/blog');
-      const data = await response.json();
-      setPosts(data.posts || []);
+      const { data, error } = await supabase
+        .from('posts')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        throw error;
+      }
+
+      if (data) {
+        setPosts(data);
+      }
     } catch (error) {
       console.error('Error fetching blog posts:', error);
     } finally {
@@ -118,6 +128,7 @@ export default function BlogPage() {
     }
 
     setSaving(true);
+    const supabase = createClient();
     try {
       const slug = formData.slug || generateSlug(formData.title);
       const tags = formData.tags.split(',').map(tag => tag.trim()).filter(Boolean);
@@ -129,28 +140,27 @@ export default function BlogPage() {
         excerpt: formData.excerpt || formData.content.substring(0, 150) + '...'
       };
 
-      const url = editingPost ? '/api/blog' : '/api/blog';
-      const method = editingPost ? 'PUT' : 'POST';
-      
+      let response;
       if (editingPost) {
-        (postData as any).id = editingPost.id;
+        response = await supabase
+          .from('posts')
+          .update(postData)
+          .eq('id', editingPost.id);
+      } else {
+        response = await supabase
+          .from('posts')
+          .insert([postData]);
       }
 
-      const response = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(postData)
-      });
+      const { error } = response;
 
-      const result = await response.json();
-      
-      if (response.ok) {
+      if (!error) {
         alert(editingPost ? 'Post updated successfully!' : 'Post created successfully!');
         setShowEditor(false);
         resetForm();
         fetchPosts();
       } else {
-        alert(result.error || 'Failed to save post');
+        alert(error.message || 'Failed to save post');
       }
     } catch (error) {
       console.error('Error saving post:', error);
@@ -163,16 +173,18 @@ export default function BlogPage() {
   const deletePost = async (postId: string) => {
     if (!confirm('Are you sure you want to delete this post?')) return;
 
+    const supabase = createClient();
     try {
-      const response = await fetch(`/api/blog?id=${postId}`, {
-        method: 'DELETE'
-      });
+      const { error } = await supabase
+        .from('posts')
+        .delete()
+        .eq('id', postId);
 
-      if (response.ok) {
+      if (!error) {
         alert('Post deleted successfully');
         fetchPosts();
       } else {
-        alert('Failed to delete post');
+        alert(error.message || 'Failed to delete post');
       }
     } catch (error) {
       console.error('Error deleting post:', error);
@@ -195,10 +207,25 @@ export default function BlogPage() {
         <div className="relative mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-center gap-2">
           <h1 className="text-5xl font-bold font-display text-center w-full">Blog Management</h1>
         </div>
-        <div className="p-6 space-y-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="animate-pulse h-32 bg-gray-200 rounded"></div>
-          ))}
+        <div className="p-6 space-y-6 animate-pulse">
+          {/* Stats Cards Skeleton */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {[...Array(4)].map((_, i) => (
+              <Card key={i} className="h-32 bg-gray-200 rounded-lg"></Card>
+            ))}
+          </div>
+
+          {/* Posts List Skeleton */}
+          <Card>
+            <CardHeader>
+              <div className="h-6 bg-gray-200 rounded w-1/3"></div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="h-24 bg-gray-200 rounded-lg"></div>
+              ))}
+            </CardContent>
+          </Card>
         </div>
       </div>
     );

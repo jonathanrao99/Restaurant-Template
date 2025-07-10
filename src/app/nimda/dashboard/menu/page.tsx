@@ -45,12 +45,12 @@ export default function MenuPage() {
   }, []);
 
   async function saveChanges() {
+    const supabase = createClient();
     const updates = Object.entries(changedRows).map(async ([id, changes]) => {
-      await fetch('/api/menu', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: Number(id), ...changes })
-      });
+      await supabase
+        .from('menu_items')
+        .update(changes)
+        .eq('id', Number(id));
     });
     await Promise.all(updates);
     setModalOpen(false);
@@ -283,11 +283,8 @@ export default function MenuPage() {
             <div className="flex justify-end space-x-2">
               <button className="px-4 py-2 bg-gray-200 rounded" onClick={() => setDeleteModalOpen(false)}>Cancel</button>
               <button className="px-4 py-2 bg-red-500 text-white rounded" onClick={async () => {
-                await Promise.all(selectedRows.map(id => fetch('/api/menu', {
-                  method: 'DELETE',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ id })
-                })));
+                const supabase = createClient();
+                await Promise.all(selectedRows.map(id => supabase.from('menu_items').delete().eq('id', id)));
                 setRows(prev => prev.filter(r => !selectedRows.includes(r.id)));
                 setSelectedRows([]);
                 setDeleteModalOpen(false);
@@ -320,6 +317,7 @@ export default function MenuPage() {
             <div className="flex flex-col md:flex-row md:justify-between gap-2 mt-4">
               <button className="px-4 py-2 bg-gray-200 rounded" onClick={() => setAddModalOpen(false)}>Cancel</button>
               <button className="px-4 py-2 bg-desi-orange text-white rounded" onClick={async () => {
+                const supabase = createClient();
                 const urls: string[] = [];
                 for (const file of newImageFiles) {
                   const filePath = `${Date.now()}-${file.name}`;
@@ -334,14 +332,19 @@ export default function MenuPage() {
                   urls.push(urlData.publicUrl);
                 }
                 const payload = { ...newItem, images: urls, menu_img: urls[0] || '' };
-                const res = await fetch('/api/menu', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                if (!res.ok) {
-                  const err = await res.json();
-                  console.error('Create error:', err);
+                const { data: created, error } = await supabase
+                  .from('menu_items')
+                  .insert([payload])
+                  .select();
+
+                if (error) {
+                  console.error('Create error:', error);
                   return;
                 }
-                const created = await res.json();
-                setRows(prev => [...prev, created]);
+
+                if (created) {
+                  setRows(prev => [...prev, created[0]]);
+                }
                 setNewImageFiles([]);
                 setAddModalOpen(false);
                 queryClient.invalidateQueries({ queryKey: ['menuItems'] });
@@ -359,16 +362,16 @@ export default function MenuPage() {
               {modalImages.length > 0 ? modalImages.map((img, idx) => (
                 <div key={img} className="relative" onClick={() => {
                   if (deleteIndex === idx) {
+                    const supabase = createClient();
                     const newImages = modalImages.filter((_, i) => i !== idx);
                     setModalImages(newImages);
                     setDeleteIndex(null);
                     if (modalItemId) {
-                      fetch('/api/menu', {
-                        method: 'PATCH',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ id: modalItemId, images: newImages, menu_img: newImages[0] || '' })
-                      });
-                      queryClient.invalidateQueries({ queryKey: ['menuItems'] });
+                      supabase
+                        .from('menu_items')
+                        .update({ images: newImages, menu_img: newImages[0] || '' })
+                        .eq('id', modalItemId)
+                        .then(() => queryClient.invalidateQueries({ queryKey: ['menuItems'] }));
                     }
                   } else {
                     setDeleteIndex(idx);
@@ -409,6 +412,7 @@ export default function MenuPage() {
                   hidden
                   onChange={async e => {
                     if (!e.target.files || !modalItemId) return;
+                    const supabase = createClient();
                     const file = e.target.files[0];
                     const filePath = `${Date.now()}-${file.name}`;
                     const { data: uploadData, error: uploadError } = await supabase.storage.from('menu-images').upload(filePath, file);
@@ -418,11 +422,10 @@ export default function MenuPage() {
                     }
                     const { data: urlData } = supabase.storage.from('menu-images').getPublicUrl(uploadData.path);
                     const newImages = [...modalImages, urlData.publicUrl];
-                    await fetch('/api/menu', {
-                      method: 'PATCH',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ id: modalItemId, images: newImages, menu_img: newImages[0] || '' })
-                    });
+                    await supabase
+                      .from('menu_items')
+                      .update({ images: newImages, menu_img: newImages[0] || '' })
+                      .eq('id', modalItemId);
                     setModalImages(newImages);
                     setDeleteIndex(null);
                     queryClient.invalidateQueries({ queryKey: ['menuItems'] });

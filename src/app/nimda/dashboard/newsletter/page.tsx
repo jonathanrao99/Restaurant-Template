@@ -40,19 +40,18 @@ export default function NewsletterPage() {
   }, []);
 
   const fetchData = async () => {
+    const supabase = createClient();
     try {
       const [subscribersRes, campaignsRes] = await Promise.all([
-        fetch('/api/newsletter?action=subscribers'),
-        fetch('/api/newsletter?action=campaigns')
+        supabase.from('subscribers').select('*').order('subscribed_at', { ascending: false }),
+        supabase.from('campaigns').select('*').order('sent_at', { ascending: false })
       ]);
 
-      const [subscribersData, campaignsData] = await Promise.all([
-        subscribersRes.json(),
-        campaignsRes.json()
-      ]);
+      if (subscribersRes.error) throw subscribersRes.error;
+      if (campaignsRes.error) throw campaignsRes.error;
 
-      setSubscribers(subscribersData.subscribers || []);
-      setCampaigns(campaignsData.campaigns || []);
+      setSubscribers(subscribersRes.data || []);
+      setCampaigns(campaignsRes.data || []);
     } catch (error) {
       console.error('Error fetching newsletter data:', error);
     } finally {
@@ -61,6 +60,8 @@ export default function NewsletterPage() {
   };
 
   const sendNewsletter = async () => {
+    // TODO: This needs to be implemented as a Supabase Edge Function
+    // as it involves sending emails, which is a server-side action.
     if (!newNewsletter.subject.trim() || !newNewsletter.content.trim()) {
       alert('Please fill in both subject and content');
       return;
@@ -111,10 +112,40 @@ export default function NewsletterPage() {
         <div className="relative mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-center gap-2">
           <h1 className="text-5xl font-bold font-display text-center w-full">Newsletter Management</h1>
         </div>
-        <div className="p-6 space-y-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="animate-pulse h-32 bg-gray-200 rounded"></div>
-          ))}
+        <div className="p-6 space-y-6 animate-pulse">
+          {/* Stats Cards Skeleton */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {[...Array(4)].map((_, i) => (
+              <Card key={i} className="h-32 bg-gray-200 rounded-lg"></Card>
+            ))}
+          </div>
+
+          {/* Compose Newsletter Skeleton */}
+          <Card className="h-64 bg-gray-200 rounded-lg"></Card>
+
+          {/* Campaign History Skeleton */}
+          <Card>
+            <CardHeader>
+              <div className="h-6 bg-gray-200 rounded w-1/3"></div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="h-20 bg-gray-200 rounded-lg"></div>
+              ))}
+            </CardContent>
+          </Card>
+
+          {/* Subscribers List Skeleton */}
+          <Card>
+            <CardHeader>
+              <div className="h-6 bg-gray-200 rounded w-1/3"></div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="h-16 bg-gray-200 rounded-lg"></div>
+              ))}
+            </CardContent>
+          </Card>
         </div>
       </div>
     );

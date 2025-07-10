@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import AdminHeader from '@/components/admin/AdminHeader';
+import { QrCode, Eye, Download, Plus, BarChart3, TrendingUp, MousePointer } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { QrCode, Eye, Download, Plus, BarChart3, TrendingUp, MousePointer } from 'lucide-react';
@@ -24,54 +24,20 @@ export default function QrAnalyticsPage() {
 
   useEffect(() => {
     async function fetchQrData() {
+      const supabase = createClient();
       try {
-        // Mock QR data - replace with actual API calls
-        const mockData: QrCodeData[] = [
-          {
-            id: '1',
-            name: 'Table QR - Menu Access',
-            url: 'https://desiflavorskatytx.com/menu?utm_source=qr&utm_medium=table&utm_campaign=dine_in',
-            scans: 456,
-            conversions: 67,
-            created_at: '2024-12-01',
-            status: 'active',
-            type: 'menu'
-          },
-          {
-            id: '2',
-            name: 'Social Media QR',
-            url: 'https://desiflavorskatytx.com?utm_source=qr&utm_medium=social&utm_campaign=instagram',
-            scans: 324,
-            conversions: 45,
-            created_at: '2024-12-05',
-            status: 'active',
-            type: 'social'
-          },
-          {
-            id: '3',
-            name: 'Holiday Special Promotion',
-            url: 'https://desiflavorskatytx.com/menu?utm_source=qr&utm_medium=flyer&utm_campaign=holiday_special',
-            scans: 267,
-            conversions: 38,
-            created_at: '2024-12-15',
-            status: 'active',
-            type: 'promotion'
-          },
-          {
-            id: '4',
-            name: 'Customer Feedback QR',
-            url: 'https://forms.google.com/feedback?utm_source=qr&utm_medium=receipt&utm_campaign=feedback',
-            scans: 189,
-            conversions: 23,
-            created_at: '2024-12-10',
-            status: 'active',
-            type: 'feedback'
-          }
-        ];
+        const { data, error } = await supabase
+          .from('qr_codes')
+          .select('*')
+          .order('created_at', { ascending: false });
 
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        setQrCodes(mockData);
+        if (error) {
+          throw error;
+        }
+
+        if (data) {
+          setQrCodes(data);
+        }
       } catch (error) {
         console.error('Error fetching QR data:', error);
       } finally {
@@ -107,14 +73,45 @@ export default function QrAnalyticsPage() {
         <div className="relative mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-center gap-2">
           <h1 className="text-5xl font-bold font-display text-center w-full">QR Code Analytics</h1>
         </div>
-        <div className="p-6">
-          <div className="space-y-4">
+        <div className="p-6 space-y-6 animate-pulse">
+          {/* QR Analytics Summary Skeleton */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="animate-pulse">
-                <div className="h-32 bg-gray-200 rounded"></div>
-              </div>
+              <Card key={i} className="h-32 bg-gray-200 rounded-lg"></Card>
             ))}
           </div>
+
+          {/* QR Codes List Skeleton */}
+          <Card>
+            <CardHeader>
+              <div className="h-6 bg-gray-200 rounded w-1/3"></div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="h-24 bg-gray-200 rounded-lg"></div>
+              ))}
+            </CardContent>
+          </Card>
+
+          {/* QR Code Types Performance Skeleton */}
+          <Card>
+            <CardHeader>
+              <div className="h-6 bg-gray-200 rounded w-1/3"></div>
+            </CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="h-24 bg-gray-200 rounded-lg"></div>
+              ))}
+            </CardContent>
+          </Card>
+
+          {/* Integration Tips Skeleton */}
+          <Card>
+            <CardHeader>
+              <div className="h-6 bg-gray-200 rounded w-1/3"></div>
+            </CardHeader>
+            <CardContent className="h-32 bg-gray-200 rounded-lg"></Card>
+          </Card>
         </div>
       </div>
     );

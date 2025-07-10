@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import AdminHeader from '@/components/admin/AdminHeader';
+import { createClient } from '@/utils/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -31,82 +31,20 @@ export default function FeedbackPage() {
 
   useEffect(() => {
     async function fetchFeedback() {
+      const supabase = createClient();
       try {
-        // Mock feedback data - replace with actual API calls
-        const mockFeedback: FeedbackItem[] = [
-          {
-            id: '1',
-            customer: 'Sarah Martinez',
-            rating: 5,
-            comment: 'Amazing biryani! The flavors were incredible and the delivery was super fast. The portion sizes are generous and the spice level was perfect. Will definitely order again!',
-            source: 'google',
-            date: '2024-12-24T18:30:00Z',
-            responded: false,
-            sentiment: 'positive',
-            category: 'food'
-          },
-          {
-            id: '2',
-            customer: 'John Davis',
-            rating: 4,
-            comment: 'Great food truck! The chicken curry was delicious and authentic. Only wish you had more vegetarian options available. The staff was very friendly.',
-            source: 'facebook',
-            date: '2024-12-23T19:15:00Z',
-            responded: true,
-            response: 'Thank you for the feedback! We\'re adding more vegetarian options to our menu soon.',
-            sentiment: 'positive',
-            category: 'food'
-          },
-          {
-            id: '3',
-            customer: 'Maria Lopez',
-            rating: 5,
-            comment: 'Best Indian food in Katy! The spice levels are perfect and the portions are generous. Love the convenience of ordering online.',
-            source: 'google',
-            date: '2024-12-22T20:45:00Z',
-            responded: false,
-            sentiment: 'positive',
-            category: 'food'
-          },
-          {
-            id: '4',
-            customer: 'Ahmed Khan',
-            rating: 4,
-            comment: 'Authentic flavors that remind me of home. The samosas were crispy and fresh. Delivery took a bit longer than expected but worth the wait.',
-            source: 'website',
-            date: '2024-12-21T17:20:00Z',
-            responded: true,
-            response: 'Thank you for your patience! We\'re working on improving our delivery times.',
-            sentiment: 'positive',
-            category: 'delivery'
-          },
-          {
-            id: '5',
-            customer: 'Jennifer Wilson',
-            rating: 2,
-            comment: 'Food was cold when it arrived and took over an hour for delivery. The flavors were good but the experience was disappointing.',
-            source: 'google',
-            date: '2024-12-20T19:30:00Z',
-            responded: false,
-            sentiment: 'negative',
-            category: 'delivery'
-          },
-          {
-            id: '6',
-            customer: 'Robert Chen',
-            rating: 3,
-            comment: 'Food was okay, nothing special. Service was friendly but the wait time was longer than expected. Prices are reasonable.',
-            source: 'facebook',
-            date: '2024-12-19T18:10:00Z',
-            responded: false,
-            sentiment: 'neutral',
-            category: 'service'
-          }
-        ];
+        const { data, error } = await supabase
+          .from('feedback')
+          .select('*')
+          .order('date', { ascending: false });
 
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        setFeedback(mockFeedback);
+        if (error) {
+          throw error;
+        }
+
+        if (data) {
+          setFeedback(data);
+        }
       } catch (error) {
         console.error('Error fetching feedback:', error);
       } finally {
@@ -181,16 +119,24 @@ export default function FeedbackPage() {
 
   const handleRespond = async (feedbackId: string) => {
     if (!responseText.trim()) return;
-    
-    // In a real implementation, you'd make an API call here
-    setFeedback(prev => prev.map(item => 
-      item.id === feedbackId 
-        ? { ...item, responded: true, response: responseText }
-        : item
-    ));
-    
-    setResponseText('');
-    setSelectedFeedback(null);
+
+    const supabase = createClient();
+    try {
+      const { error } = await supabase
+        .from('feedback')
+        .update({ responded: true, response: responseText })
+        .eq('id', feedbackId);
+
+      if (error) {
+        throw error;
+      }
+
+      setResponseText('');
+      setSelectedFeedback(null);
+      fetchFeedback(); // Refetch feedback to update the UI
+    } catch (error) {
+      console.error('Error responding to feedback:', error);
+    }
   };
 
   if (loading) {

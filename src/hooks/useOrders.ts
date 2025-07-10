@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { createClient } from '@/utils/supabase/client';
 
 export interface Order {
   id: number;
@@ -15,10 +15,17 @@ export function useOrders() {
   const { data, isLoading, error } = useQuery<Order[], Error>({
     queryKey: ['orders'],
     queryFn: async () => {
-      const res = await fetch('/api/orders');
-      if (!res.ok) throw new Error('Failed to fetch orders');
-      const data = await res.json();
-      return data;
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from('orders')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        throw error;
+      }
+
+      return data || [];
     },
     staleTime: 1000 * 60 * 1,
   });

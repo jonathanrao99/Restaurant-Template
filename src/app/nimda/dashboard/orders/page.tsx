@@ -1,12 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import AdminHeader from '@/components/admin/AdminHeader';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Search, Filter, Download, Eye, Clock, MapPin, Phone, User, Calendar } from 'lucide-react';
-import { logAnalyticsEvent } from '@/utils/loyaltyAndAnalytics';
+import { createClient } from '@/utils/supabase/client';
 
 interface Order {
   id: number;
@@ -34,10 +33,18 @@ export default function OrdersPage() {
 
   useEffect(() => {
     async function fetchOrders() {
+      const supabase = createClient();
       try {
-        const response = await fetch('/api/orders');
-        if (response.ok) {
-          const data = await response.json();
+        const { data, error } = await supabase
+          .from('orders')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          throw error;
+        }
+
+        if (data) {
           setOrders(data);
         }
       } catch (error) {
@@ -140,14 +147,28 @@ export default function OrdersPage() {
         <div className="relative mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-center gap-2">
           <h1 className="text-5xl font-bold font-display text-center w-full">Orders Management</h1>
         </div>
-        <div className="p-6">
-          <div className="space-y-4">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="animate-pulse">
-                <div className="h-20 bg-gray-200 rounded"></div>
-              </div>
+        <div className="p-6 space-y-6 animate-pulse">
+          {/* Filters and Search Skeleton */}
+          <Card className="h-24 bg-gray-200 rounded-lg"></Card>
+
+          {/* Orders Summary Skeleton */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {[...Array(4)].map((_, i) => (
+              <Card key={i} className="h-24 bg-gray-200 rounded-lg"></Card>
             ))}
           </div>
+
+          {/* Orders List Skeleton */}
+          <Card>
+            <CardHeader>
+              <div className="h-6 bg-gray-200 rounded w-1/3"></div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="h-20 bg-gray-200 rounded-lg"></div>
+              ))}
+            </CardContent>
+          </Card>
         </div>
       </div>
     );

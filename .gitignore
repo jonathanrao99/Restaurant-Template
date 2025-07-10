@@ -33,3 +33,4 @@ dist-ssr
 .next/
 .cursor
 .next
+mcp.json

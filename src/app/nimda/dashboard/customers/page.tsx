@@ -1,7 +1,9 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Button } from '@heroui/react';
+import { createClient } from '@/utils/supabase/client';
 import { Users, Star, TrendingUp, Gift } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 interface Customer {
   name: string;
@@ -28,18 +30,16 @@ export default function CustomersPage() {
   }, []);
 
   const fetchCustomers = async () => {
+    const supabase = createClient();
     try {
-      const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-      const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-      
-      const response = await fetch(`${SUPABASE_URL}/rest/v1/orders?select=customer_name,customer_email,customer_phone,total_amount,created_at&order=created_at.desc`, {
-        headers: {
-          apikey: SERVICE_KEY,
-          authorization: `Bearer ${SERVICE_KEY}`
-        }
-      });
-      
-      const orders = await response.json();
+      const { data: orders, error } = await supabase
+        .from('orders')
+        .select('customer_name,customer_email,customer_phone,total_amount,created_at')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        throw error;
+      }
       
       // Group by customer
       const customerMap = new Map();
@@ -88,7 +88,52 @@ export default function CustomersPage() {
   };
 
   if (loading) {
-    return <div className="flex justify-center p-8">Loading customers...</div>;
+    return (
+      <div className="space-y-6 animate-pulse">
+        <div className="flex justify-between items-center">
+          <div className="h-8 bg-gray-200 rounded w-1/4"></div>
+          <div className="h-10 bg-gray-200 rounded w-32"></div>
+        </div>
+
+        {/* Stats Cards Skeleton */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {[...Array(4)].map((_, i) => (
+            <Card key={i} className="h-32 bg-gray-200 rounded-xl"></Card>
+          ))}
+        </div>
+
+        {/* Customer Table Skeleton */}
+        <div className="bg-white rounded-xl shadow border overflow-hidden">
+          <div className="p-6 border-b">
+            <div className="h-6 bg-gray-200 rounded w-1/3"></div>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="min-w-full">
+              <thead>
+                <tr className="bg-gray-50">
+                  {[...Array(6)].map((_, i) => (
+                    <th key={i} className="px-6 py-3">
+                      <div className="h-4 bg-gray-200 rounded"></div>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {[...Array(5)].map((_, i) => (
+                  <tr key={i} className="h-20">
+                    {[...Array(6)].map((_, j) => (
+                      <td key={j} className="px-6 py-4 whitespace-nowrap">
+                        <div className="h-4 bg-gray-200 rounded"></div>
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
