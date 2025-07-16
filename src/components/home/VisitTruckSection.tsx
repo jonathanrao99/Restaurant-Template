@@ -76,136 +76,27 @@ const VisitTruckSection = () => {
             Experience authentic Indian cuisine in the heart of Katy
           </p>
         </motion.div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Left Column - Contact Information */}
+        {/* Centered Map Only, no left column */}
+        <div className="flex justify-center items-center w-full">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="space-y-6"
+            transition={{ duration: 0.5 }}
+            className="bg-white rounded-lg shadow-md overflow-hidden w-full max-w-3xl"
           >
-            <h3 className="text-xl font-display font-bold mb-6 text-desi-black">Contact Information</h3>
-            <div className="flex items-start gap-3">
-              <MapPin className="w-5 h-5 text-desi-orange mt-1 flex-shrink-0" />
-              <div>
-                <p className="font-medium text-desi-black">Location</p>
-                <a 
-                  href="https://maps.app.goo.gl/nWvCh23xWfzZfnL86" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-gray-800 hover:text-desi-orange transition-colors flex items-center gap-1 group"
-                >
-                  <span>1989 North Fry Rd, Katy, TX 77449</span>
-                  <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-desi-orange" />
-                </a>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <Phone className="w-5 h-5 text-desi-orange mt-1 flex-shrink-0" />
-              <div>
-                <p className="font-medium text-desi-black">Phone</p>
-                <a 
-                  href="tel:+13468244212"
-                  className="text-gray-800 hover:text-desi-orange transition-colors flex items-center gap-1 group"
-                >
-                  <span>+1 (346) 824-4212</span>
-                  <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-desi-orange" />
-                </a>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <Mail className="w-5 h-5 text-desi-orange mt-1 flex-shrink-0" />
-              <div>
-                <p className="font-medium text-desi-black">Email</p>
-                <a 
-                  href="mailto:desiflavorskaty@gmail.com"
-                  className="text-gray-800 hover:text-desi-orange transition-colors flex items-center gap-1 group"
-                >
-                  <span>desiflavorskaty@gmail.com</span>
-                  <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-desi-orange" />
-                </a>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <Clock className="w-5 h-5 text-desi-orange mt-1 flex-shrink-0" />
-              <div>
-                <p className="font-medium text-desi-black">Hours</p>
-                <p className="text-gray-800">Monday - Sunday: </p>
-                <p className="text-gray-800">5:00 PM - 1:00 AM</p>
-              </div>
-            </div>
-            {/* Social Media Links */}
-            <div className="pt-8">
-              <h3 className="text-xl font-semibold text-desi-black mb-6">Follow Us</h3>
-              <div className="flex flex-wrap gap-8">
-                <a
-                  href="https://www.facebook.com/profile.php?id=61574761892311"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-desi-black hover:text-desi-orange transition-colors"
-                >
-                  <Facebook className="w-6 h-6" />
-                </a>
-                <a
-                  href="https://instagram.com/desiflavorskaty"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-desi-black hover:text-desi-orange transition-colors"
-                >
-                  <Instagram className="w-6 h-6" />
-                </a>
-                <a
-                  href="https://x.com/desiflavorskaty"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-desi-black hover:text-desi-orange transition-colors"
-                >
-                  <XIcon className="w-6 h-6" />
-                </a>
-                <a
-                  href="https://www.tiktok.com/@desiflavorskaty?lang=en"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-desi-black hover:text-desi-orange transition-colors"
-                >
-                  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12.53.02C13.84 0 15.14.01 16.44 0c.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>
-                  </svg>
-                </a>
-                <a
-                  href="https://www.youtube.com/@desiflavorskaty"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-desi-black hover:text-desi-orange transition-colors"
-                >
-                  <Youtube className="w-6 h-6" />
-                </a>
-              </div>
+            <div className="h-[400px] md:h-[500px] lg:h-[600px] w-full">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d891.9331375493595!2d-95.72059509999999!3d29.7958849!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8641210045d45d63%3A0x3a9eebb90dacf13b!2sDesi%20Flavors%20(Food%20Truck)!5e0!3m2!1sen!2sus!4v1711409649044!5m2!1sen!2sus"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
             </div>
           </motion.div>
-          {/* Right Column - Map */}
-          <div className="space-y-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="bg-white rounded-lg shadow-md overflow-hidden"
-            >
-              <div className="h-[400px]">
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d891.9331375493595!2d-95.72059509999999!3d29.7958849!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8641210045d45d63%3A0x3a9eebb90dacf13b!2sDesi%20Flavors%20(Food%20Truck)!5e0!3m2!1sen!2sus!4v1711409649044!5m2!1sen!2sus"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                />
-              </div>
-            </motion.div>
-          </div>
         </div>
       </div>
     </section>
