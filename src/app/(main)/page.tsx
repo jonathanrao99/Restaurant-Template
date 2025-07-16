@@ -9,6 +9,7 @@ import HomeFoodCarouselSection from '@/components/home/HomeFoodCarouselSection';
 const QualityCommitmentSection = dynamic(() => import('@/components/home/QualityCommitmentSection'));
 const CustomerReviewsSection = dynamic(() => import('@/components/home/CustomerReviewsSection'));
 const ConnectSection = dynamic(() => import('@/components/home/ConnectSection'));
+const VisitTruckSection = dynamic(() => import('@/components/home/VisitTruckSection'));
 
 const Index = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -67,6 +68,7 @@ const Index = () => {
         <BestsellersSection />
         <QualityCommitmentSection />
         <CustomerReviewsSection />
+        <VisitTruckSection />
         <ConnectSection />
       </div>
     </main>
