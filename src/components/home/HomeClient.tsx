@@ -9,6 +9,7 @@ const QualityCommitmentSection = dynamic(() => import('@/components/home/Quality
 const HomeFoodCarouselSection = dynamic(() => import('@/components/home/HomeFoodCarouselSection'), { loading: () => <div style={{ height: 400 }} /> });
 const CustomerReviewsSection = dynamic(() => import('@/components/home/CustomerReviewsSection'), { loading: () => <div style={{ height: 400 }} /> });
 const ConnectSection = dynamic(() => import('@/components/home/ConnectSection'), { loading: () => <div style={{ height: 400 }} /> });
+const VisitTruckSection = dynamic(() => import('@/components/home/VisitTruckSection'), { loading: () => <div style={{ height: 400 }} /> });
 
 export default function HomeClient() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -55,6 +56,7 @@ export default function HomeClient() {
       <QualityCommitmentSection />
       <HomeFoodCarouselSection />
       <CustomerReviewsSection />
+      <VisitTruckSection />
       <ConnectSection />
     </main>
   );
