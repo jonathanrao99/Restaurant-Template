@@ -60,12 +60,15 @@ const Index = () => {
         </svg>
       </motion.button>
 
-      <HeroSection />
-      <HomeFoodCarouselSection />
-      <BestsellersSection />
-      <QualityCommitmentSection />
-      <CustomerReviewsSection />
-      <ConnectSection />
+      {/* Ensure all top-level sections have relative positioning for scroll/animation */}
+      <div className="relative">
+        <HeroSection />
+        <HomeFoodCarouselSection />
+        <BestsellersSection />
+        <QualityCommitmentSection />
+        <CustomerReviewsSection />
+        <ConnectSection />
+      </div>
     </main>
   );
 };

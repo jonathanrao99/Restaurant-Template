@@ -21,14 +21,12 @@ export default function MenuItemCard({ item, handleAddToCart }: MenuItemCardProp
   const [imageError, setImageError] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  // Improved image fallback logic
-  const imageUrl =
-    item.menu_img ||
-    (item.name
+  // Improved image fallback logic with URL normalization
+  const imageUrl = item.menu_img
+    ? item.menu_img.replace(/([^:]\/)\/+/, '$1')
+    : (item.name
       ? `/Menu_Images/${item.name.toLowerCase().replace(/ /g, '-').replace(/[^a-z0-9-]/g, '')}.jpg`
       : '/placeholder.svg');
-
-  console.log('MenuItemCard imageUrl:', imageUrl);
 
   const handleImageLoad = useCallback(() => {
     setImageLoading(false);

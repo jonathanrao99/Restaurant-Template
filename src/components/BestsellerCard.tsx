@@ -25,8 +25,6 @@ const BestsellerCard = ({
   const [imageLoaded, setImageLoaded] = useState(false);
   const router = useRouter();
 
-  console.log('BestsellerCard imageSrc:', imageSrc);
-
   const handleOrderClick = (e: React.MouseEvent) => {
     e.preventDefault();
     // Analytics event for Order Now clicks

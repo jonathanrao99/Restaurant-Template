@@ -29,7 +29,12 @@ serve(async (req) => {
           name: item.name,
           quantity: item.quantity.toString(),
           base_price_money: {
-            amount: Math.round(parseFloat(item.price.replace(/[^0-9.-]+/g, "")) * 100),
+            amount: Math.round(
+              typeof item.price === "string"
+                ? parseFloat(item.price.replace(/[^0-9.-]+/g, ""))
+                : Number(item.price)
+              * 100
+            ),
             currency: "USD"
           },
           note: item.specialInstructions || undefined

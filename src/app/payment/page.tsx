@@ -13,6 +13,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { AddressAutocompleteProps } from '@/components/payment/AddressAutocomplete';
 import { calculateDistanceFee } from '@/lib/deliveryFee';
 import { ordersApi, paymentApi } from '@/lib/supabaseFunctions';
+import { supabase } from '@/integrations/supabase/client';
 
 export const dynamic = 'force-dynamic';
 
@@ -157,10 +158,8 @@ function PaymentPageContent() {
     setFeeLoading(true);
     const fee = async () => {
       try {
-        console.log('Calculating delivery fee for:', { address: deliveryAddress, phone: customerPhone, isGoogleAddress });
         
         const fee = await calculateDistanceFee(deliveryAddress, customerPhone, new Date());
-        console.log('Fee calculation response:', fee);
         
         if (typeof fee !== 'number') {
           throw new Error('Fee calculation failed');
@@ -168,7 +167,6 @@ function PaymentPageContent() {
         
         return fee;
       } catch (error) {
-        console.error('Delivery fee calculation error:', error);
         // Apply fallback fee on error
         return FALLBACK_DELIVERY_FEE;
       } finally {
@@ -199,27 +197,29 @@ function PaymentPageContent() {
     try {
       const finalScheduledTime = scheduleType === 'ASAP' ? 'ASAP' : scheduledTime.toISOString();
       
-      // Create order first using Supabase Edge Function
+      // Prepare order data for Supabase
       const orderData = {
-        cartItems,
-        fulfillmentMethod,
-        scheduledTime: finalScheduledTime,
-        deliveryFee,
-        customerInfo: { 
-          name: customerName, 
-          email: customerEmail, 
-          phone: customerPhone, 
-          address: deliveryAddress 
-        }
+        items: cartItems,
+        order_type: fulfillmentMethod,
+        scheduled_time: finalScheduledTime,
+        delivery_fee: deliveryFee,
+        customer_name: customerName,
+        customer_email: customerEmail,
+        customer_phone: customerPhone,
+        delivery_address: deliveryAddress,
+        status: 'pending',
+        total_amount: subtotal + tax + (fulfillmentMethod === 'delivery' && deliveryFee ? deliveryFee : 0),
+        // special_instructions is handled per item or in the cart, not here
       };
-      
-      const orderRes = await fetch('/api/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(orderData),
-      });
-      const { orderId, error: orderError } = await orderRes.json();
-      if (orderError) throw new Error(orderError);
+
+      // Insert order directly into Supabase
+      const { data, error: orderError } = await supabase
+        .from('orders')
+        .insert([orderData])
+        .select();
+      const orderRow = Array.isArray(data) && data.length > 0 ? data[0] : null;
+      if (orderError || !orderRow) throw new Error(orderError?.message || 'Order creation failed');
+      const orderId = (orderRow as any).id;
       
       // Create payment link using Supabase Edge Function
       const paymentLinkData = {
@@ -236,17 +236,13 @@ function PaymentPageContent() {
         orderId
       };
       
-      console.log('Creating payment link with data:', paymentLinkData);
-      
       const { url, error: linkError } = await paymentApi.createPaymentLink(paymentLinkData);
       if (linkError) throw new Error(linkError);
       
       if (url) {
-        console.log('Redirecting to payment URL:', url);
-        router.push(url);
+        window.location.href = url;
       }
     } catch (error) { 
-      console.error('Checkout error:', error);
       toast.error('Could not proceed to checkout. Please try again.'); 
       setIsProcessing(false); 
     }

@@ -2,13 +2,8 @@ import { useState, Fragment } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Phone, User, MessageSquare, Check, AlertCircle, ArrowRight, Users, PartyPopper, ChevronDown, Download, HelpCircle } from 'lucide-react';
 import { logAnalyticsEvent } from '@/utils/loyaltyAndAnalytics';
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '@/integrations/supabase/client';
 import { Listbox, Transition } from '@headlessui/react';
-
-// Initialize Supabase client
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const supabase = createClient(supabaseUrl, supabaseKey);
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({

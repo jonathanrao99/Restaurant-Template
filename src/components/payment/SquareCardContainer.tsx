@@ -21,14 +21,12 @@ export default function SquareCardContainer({ onCardReady, method, onWalletReady
         try {
           cardInstance.destroy();
         } catch (e) {
-          console.warn('Error destroying card instance:', e);
         }
       }
       if (walletInstance?.destroy) {
         try {
           walletInstance.destroy();
         } catch (e) {
-          console.warn('Error destroying wallet instance:', e);
         }
       }
       // Clear container contents
@@ -57,14 +55,11 @@ export default function SquareCardContainer({ onCardReady, method, onWalletReady
         try {
           await loadSquare();
         } catch (err) {
-          console.error('Failed to load Square.js:', err);
-          return;
         }
       }
       
       const { Square } = window as any;
       if (!Square || !Square.payments) {
-        console.error('Square payments not available');
         return;
       }
       
@@ -74,7 +69,6 @@ export default function SquareCardContainer({ onCardReady, method, onWalletReady
       );
       
       if (!payments) {
-        console.error('Failed to initialize Square payments');
         return;
       }
 

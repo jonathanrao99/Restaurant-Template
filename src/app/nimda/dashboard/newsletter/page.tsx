@@ -53,7 +53,7 @@ export default function NewsletterPage() {
       setSubscribers(subscribersRes.data || []);
       setCampaigns(campaignsRes.data || []);
     } catch (error) {
-      console.error('Error fetching newsletter data:', error);
+      // console.error('Error fetching newsletter data:', error);
     } finally {
       setLoading(false);
     }
@@ -62,11 +62,6 @@ export default function NewsletterPage() {
   const sendNewsletter = async () => {
     // TODO: This needs to be implemented as a Supabase Edge Function
     // as it involves sending emails, which is a server-side action.
-    if (!newNewsletter.subject.trim() || !newNewsletter.content.trim()) {
-      alert('Please fill in both subject and content');
-      return;
-    }
-
     setSending(true);
     try {
       const response = await fetch('/api/newsletter', {
@@ -82,16 +77,14 @@ export default function NewsletterPage() {
       const result = await response.json();
       
       if (response.ok) {
-        alert(result.message);
         setNewNewsletter({ subject: '', content: '' });
         setShowComposer(false);
         fetchData(); // Refresh data
       } else {
-        alert(result.error || 'Failed to send newsletter');
+        // alert(result.error || 'Failed to send newsletter');
       }
     } catch (error) {
-      console.error('Error sending newsletter:', error);
-      alert('Failed to send newsletter');
+      // console.error('Error sending newsletter:', error);
     } finally {
       setSending(false);
     }

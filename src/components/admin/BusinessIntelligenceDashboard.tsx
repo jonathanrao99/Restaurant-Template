@@ -128,7 +128,6 @@ export default function BusinessIntelligenceDashboard() {
         dailySalesTrends: trendsResponse.data || []
       });
     } catch (error) {
-      console.error('Error fetching dashboard data:', error);
     }
     setLoading(false);
   };
@@ -153,7 +152,6 @@ export default function BusinessIntelligenceDashboard() {
         window.URL.revokeObjectURL(url);
       }
     } catch (error) {
-      console.error('Error exporting data:', error);
     }
   };
 

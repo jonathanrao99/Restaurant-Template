@@ -43,7 +43,7 @@ const socialLinks = [
 
 const ConnectSection = () => {
   return (
-    <section id="connect" className="py-12 bg-desi-black">
+    <section id="connect" className="py-12 bg-desi-black relative">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Left Grid - Content */}

@@ -55,8 +55,6 @@ export function CustomerFeedbackWidget() {
         // Simulate API delay
         await new Promise(resolve => setTimeout(resolve, 1000));
         setFeedback(mockFeedback);
-      } catch (error) {
-        console.error('Error fetching feedback:', error);
       } finally {
         setLoading(false);
       }

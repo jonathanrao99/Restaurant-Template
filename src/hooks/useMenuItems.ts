@@ -76,7 +76,6 @@ export function useMenuItems(initialData?: MenuItemRow[]) {
         }
         return [];
       } catch (error) {
-        console.error('Error fetching menu items:', error);
         return [];
       }
     },

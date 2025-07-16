@@ -1,8 +1,14 @@
 'use client';
 import { CheckCircle } from 'lucide-react';
 import Link from 'next/link';
+import { useCart } from '@/context/CartContext';
+import { useEffect } from 'react';
 
 export default function PaymentSuccessPage() {
+  const { clearCart } = useCart();
+  useEffect(() => {
+    clearCart();
+  }, [clearCart]);
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 text-center p-4">
       <div className="bg-white p-10 rounded-lg shadow-lg max-w-md w-full">

@@ -14,8 +14,6 @@ const media = [
   { type: 'video', src: '/HomeCarousel/VID-20250609-WA0014.mp4', alt: 'Cooking Video 4' },
 ];
 
-console.log('HomeFoodCarouselSection media:', media.map(m => m.src));
-
 export default function HomeFoodCarouselSection() {
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(0); // -1 for left, 1 for right
@@ -69,9 +67,8 @@ export default function HomeFoodCarouselSection() {
       video.currentTime = 0;
       const playPromise = video.play();
       if (playPromise !== undefined) {
-        playPromise.catch((error) => {
-          console.warn('Video autoplay failed:', error);
-        });
+        // Silently ignore autoplay errors (browser policy)
+        playPromise.catch(() => {});
       }
       const onEnded = () => {
         setDirection(1);
@@ -85,18 +82,12 @@ export default function HomeFoodCarouselSection() {
     return () => clearTimeout(timeout);
   }, [current]);
 
-  // Preload all carousel images and videos
+  // Preload all carousel images only (not videos)
   useEffect(() => {
     media.forEach(item => {
       if (item.type === 'image') {
         const img = new window.Image();
         img.src = item.src;
-      } else if (item.type === 'video') {
-        const link = document.createElement('link');
-        link.rel = 'preload';
-        link.as = 'video';
-        link.href = item.src;
-        document.head.appendChild(link);
       }
     });
   }, []);
@@ -149,11 +140,10 @@ export default function HomeFoodCarouselSection() {
                     className="object-cover w-full h-full"
                     title={media[current].alt}
                     aria-label={media[current].alt}
-                    poster={media[current].src.replace('.mp4', '.jpg')}
+                    // Only set poster if you have a real .jpg, otherwise remove this line
                   >
-                    <source src={media[current].src.replace('.mp4', '.webm')} type="video/webm" />
+                    {/* Only add .webm source if it exists, otherwise fallback to .mp4 */}
                     <source src={media[current].src} type="video/mp4" />
-                    Your browser does not support the video tag.
                   </video>
                 )}
               </motion.div>
