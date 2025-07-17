@@ -60,7 +60,9 @@ const VisitTruckSection = () => {
         transition={{ duration: 4, repeat: hasAnimated ? 0 : Infinity, ease: "easeInOut", delay: 1 }}
         viewport={{ once: true }}
       />
-      <div className="container mx-auto px-4 max-w-6xl relative">
+      {/* Decorative background accent */}
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-desi-orange/10 via-yellow-100/10 to-orange-100/0 blur-2xl opacity-40 z-0 pointer-events-none" />
+      <div className="container mx-auto px-4 max-w-6xl relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -76,27 +78,33 @@ const VisitTruckSection = () => {
             Experience authentic Indian cuisine in the heart of Katy
           </p>
         </motion.div>
-        {/* Centered Map Only, no left column */}
+        {/* Centered Map Card with Pin Overlay */}
         <div className="flex justify-center items-center w-full">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="bg-white rounded-lg shadow-md overflow-hidden w-full max-w-3xl"
-          >
-            <div className="h-[400px] md:h-[500px] lg:h-[600px] w-full">
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d891.9331375493595!2d-95.72059509999999!3d29.7958849!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8641210045d45d63%3A0x3a9eebb90dacf13b!2sDesi%20Flavors%20(Food%20Truck)!5e0!3m2!1sen!2sus!4v1711409649044!5m2!1sen!2sus"
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
+          <div className="relative w-full max-w-3xl">
+            {/* Location pin overlay - move to top-right */}
+            <div className="absolute -top-6 right-6 z-20 bg-white rounded-full shadow p-2 border-2 border-desi-orange">
+              <MapPin className="w-7 h-7 text-desi-orange" />
             </div>
-          </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="bg-white rounded-2xl shadow-2xl border border-desi-orange/30 overflow-hidden w-full"
+            >
+              <div className="h-[300px] md:h-[400px] lg:h-[500px] w-full">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d891.9331375493595!2d-95.72059509999999!3d29.7958849!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8641210045d45d63%3A0x3a9eebb90dacf13b!2sDesi%20Flavors%20(Food%20Truck)!5e0!3m2!1sen!2sus!4v1711409649044!5m2!1sen!2sus"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </div>
+            </motion.div>
+          </div>
         </div>
       </div>
     </section>
