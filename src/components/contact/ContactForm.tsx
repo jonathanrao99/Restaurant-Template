@@ -88,8 +88,20 @@ const ContactForm = () => {
             <li><strong>Subscribed to Newsletter:</strong> ${formData.subscribe_newsletter ? 'Yes' : 'No'}</li>
             <li><strong>Message:</strong><br/>${formData.message}</li>
           </ul>
-        `
+        `,
+        // Add user details for confirmation email
+        userEmail: formData.email,
+        userName: formData.name,
+        userPhone: formData.phone,
+        eventType: eventLabel,
+        userMessage: formData.message
       };
+      
+      console.log('Request body:', body);
+      console.log('Request headers:', { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`
+      });
       
       const res = await fetch(url, {
         method: 'POST',
@@ -147,6 +159,9 @@ const ContactForm = () => {
       });
     } catch (error) {
       console.error('Error submitting form:', error);
+      console.error('Error name:', error.name);
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
       setSubmitStatus({
         type: 'error',
         message: 'There was an error submitting your message. Please try again later.'
