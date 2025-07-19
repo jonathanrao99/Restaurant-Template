@@ -1,6 +1,8 @@
 'use client';
 import Link from 'next/link';
 import { Facebook, Instagram, Youtube, Mail, MapPin, Clock, Send } from 'lucide-react';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 // Custom X icon component
 const XIcon = ({ size = 20 }: { size?: number }) => (
@@ -22,6 +24,61 @@ const XIcon = ({ size = 20 }: { size?: number }) => (
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const [email, setEmail] = useState('');
+  const [isSubscribing, setIsSubscribing] = useState(false);
+
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email.trim()) {
+      toast.error('Please enter your email address');
+      return;
+    }
+
+    if (!email.includes('@')) {
+      toast.error('Please enter a valid email address');
+      return;
+    }
+
+    setIsSubscribing(true);
+
+    try {
+      const response = await fetch(
+        `https://tpncxlxsggpsiswoownv.supabase.co/functions/v1/add-newsletter-subscriber?t=${Date.now()}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`
+          },
+          body: JSON.stringify({
+            email: email.trim(),
+            name: email.split('@')[0] // Use email prefix as name
+          })
+        }
+      );
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        toast.success('Successfully subscribed to our newsletter!');
+        setEmail(''); // Clear the input
+      } else {
+        console.error('Newsletter subscription failed:', result);
+        if (result.error?.includes('already subscribed')) {
+          toast.info('You are already subscribed to our newsletter!');
+        } else {
+          toast.error('Failed to subscribe. Please try again.');
+        }
+      }
+    } catch (error) {
+      console.error('Newsletter subscription error:', error);
+      toast.error('Failed to subscribe. Please try again.');
+    } finally {
+      setIsSubscribing(false);
+    }
+  };
+
   return <footer className="bg-desi-black text-white pt-12 pb-2">
       <div className="container mx-auto px-4 md:px-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
@@ -31,18 +88,26 @@ const Footer = () => {
               <p className="text-gray-300">
                 Join our newsletter for the latest updates and exclusive offers.
               </p>
-              <form className="mt-2">
+              <form onSubmit={handleNewsletterSubmit} className="mt-2">
                 <div className="relative w-64">
                   <input
                     type="email"
                     placeholder="Enter your email"
-                    className="w-full px-4 py-2 pr-12 bg-transparent border border-white-500 rounded-xl text-white placeholder-white-400 focus:outline-none"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={isSubscribing}
+                    className="w-full px-4 py-2 pr-12 bg-transparent border border-white-500 rounded-xl text-white placeholder-white-400 focus:outline-none focus:border-desi-orange disabled:opacity-50"
                   />
                   <button
                     type="submit"
-                    className="absolute inset-y-0 right-3 flex items-center justify-center text-white-400 hover:text-desi-orange focus:outline-none"
+                    disabled={isSubscribing}
+                    className="absolute inset-y-0 right-3 flex items-center justify-center text-white-400 hover:text-desi-orange focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <Send size={20} />
+                    {isSubscribing ? (
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-desi-orange"></div>
+                    ) : (
+                      <Send size={20} />
+                    )}
                   </button>
                 </div>
               </form>
