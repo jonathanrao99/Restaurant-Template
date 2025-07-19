@@ -6,6 +6,11 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type"
 };
 
+// Helper function to add delay
+function delay(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 async function addToResendContacts(email: string, name: string) {
   const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
   if (!RESEND_API_KEY) throw new Error('Missing RESEND_API_KEY');
@@ -69,19 +74,44 @@ async function addToResendContacts(email: string, name: string) {
       const newAudience = await createRes.json();
       audienceId = newAudience.id;
       console.log('Created audience with ID:', audienceId);
+      
+      // Add delay to respect rate limits
+      await delay(600);
     }
     
-    // Check if user is already subscribed
+    // Check if user is already subscribed with retry logic
     console.log('Checking if user is already subscribed...');
-    const checkRes = await fetch(`https://api.resend.com/audiences/${audienceId}/contacts?email=${encodeURIComponent(email)}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${RESEND_API_KEY}`,
-        'Content-Type': 'application/json'
-      }
-    });
+    let checkRes;
+    let retryCount = 0;
+    const maxRetries = 3;
     
-    if (checkRes.ok) {
+    while (retryCount < maxRetries) {
+      try {
+        checkRes = await fetch(`https://api.resend.com/audiences/${audienceId}/contacts?email=${encodeURIComponent(email)}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${RESEND_API_KEY}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (checkRes.status === 429) {
+          console.log(`Rate limited, retrying in ${(retryCount + 1) * 1000}ms...`);
+          await delay((retryCount + 1) * 1000);
+          retryCount++;
+          continue;
+        }
+        
+        break; // Success, exit retry loop
+      } catch (error) {
+        console.log(`Check attempt ${retryCount + 1} failed:`, error);
+        retryCount++;
+        if (retryCount >= maxRetries) throw error;
+        await delay(1000);
+      }
+    }
+    
+    if (checkRes && checkRes.ok) {
       const existingContacts = await checkRes.json();
       if (existingContacts.data && existingContacts.data.length > 0) {
         console.log('User is already subscribed:', existingContacts.data[0]);
@@ -93,6 +123,9 @@ async function addToResendContacts(email: string, name: string) {
         };
       }
     }
+    
+    // Add delay before adding new contact
+    await delay(600);
     
     // User is not subscribed, add them using the correct API
     const firstName = name.split(' ')[0] || name;
@@ -108,14 +141,36 @@ async function addToResendContacts(email: string, name: string) {
     
     console.log('Adding new contact with data:', contactData);
     
-    const contactRes = await fetch(`https://api.resend.com/audiences/${audienceId}/contacts`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${RESEND_API_KEY}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(contactData)
-    });
+    // Add contact with retry logic for rate limits
+    let contactRes;
+    retryCount = 0;
+    
+    while (retryCount < maxRetries) {
+      try {
+        contactRes = await fetch(`https://api.resend.com/audiences/${audienceId}/contacts`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${RESEND_API_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(contactData)
+        });
+        
+        if (contactRes.status === 429) {
+          console.log(`Rate limited, retrying in ${(retryCount + 1) * 1000}ms...`);
+          await delay((retryCount + 1) * 1000);
+          retryCount++;
+          continue;
+        }
+        
+        break; // Success, exit retry loop
+      } catch (error) {
+        console.log(`Add contact attempt ${retryCount + 1} failed:`, error);
+        retryCount++;
+        if (retryCount >= maxRetries) throw error;
+        await delay(1000);
+      }
+    }
     
     console.log('Contact response status:', contactRes.status);
     
