@@ -10,77 +10,106 @@ async function addToResendContacts(email: string, name: string) {
   const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
   if (!RESEND_API_KEY) throw new Error('Missing RESEND_API_KEY');
   
-  // First, get or create the audience
-  const audienceName = 'Desi Flavors Newsletter';
+  console.log('Starting newsletter subscription for:', { email, name });
   
-  // List existing audiences to find ours
-  const listRes = await fetch('https://api.resend.com/audiences', {
-    method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${RESEND_API_KEY}`,
-      'Content-Type': 'application/json'
-    }
-  });
-  
-  if (!listRes.ok) {
-    throw new Error(`Failed to list audiences: ${await listRes.text()}`);
-  }
-  
-  const audiences = await listRes.json();
-  let audienceId = null;
-  
-  // Find our audience
-  for (const audience of audiences.data || []) {
-    if (audience.name === audienceName) {
-      audienceId = audience.id;
-      break;
-    }
-  }
-  
-  // Create audience if it doesn't exist
-  if (!audienceId) {
-    const createRes = await fetch('https://api.resend.com/audiences', {
-      method: 'POST',
+  try {
+    // First, let's test if we can access the Resend API at all
+    const testRes = await fetch('https://api.resend.com/audiences', {
+      method: 'GET',
       headers: {
         'Authorization': `Bearer ${RESEND_API_KEY}`,
         'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ name: audienceName })
+      }
     });
     
-    if (!createRes.ok) {
-      throw new Error(`Failed to create audience: ${await createRes.text()}`);
+    console.log('Test API response status:', testRes.status);
+    
+    if (!testRes.ok) {
+      const errorText = await testRes.text();
+      console.log('API test error:', errorText);
+      throw new Error(`Resend API test failed: ${errorText}`);
     }
     
-    const newAudience = await createRes.json();
-    audienceId = newAudience.id;
-  }
-  
-  // Add contact to the audience
-  const firstName = name.split(' ')[0] || name;
-  const lastName = name.split(' ').slice(1).join(' ') || '';
-  
-  const contactRes = await fetch('https://api.resend.com/contacts', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${RESEND_API_KEY}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
+    const audiences = await testRes.json();
+    console.log('Available audiences:', audiences);
+    
+    // Find or create our audience
+    const audienceName = 'Desi Flavors Newsletter';
+    let audienceId = null;
+    
+    // Look for existing audience
+    for (const audience of audiences.data || []) {
+      if (audience.name === audienceName) {
+        audienceId = audience.id;
+        console.log('Found existing audience:', audienceId);
+        break;
+      }
+    }
+    
+    // Create audience if not found
+    if (!audienceId) {
+      console.log('Creating new audience:', audienceName);
+      const createRes = await fetch('https://api.resend.com/audiences', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${RESEND_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name: audienceName })
+      });
+      
+      console.log('Create audience status:', createRes.status);
+      
+      if (!createRes.ok) {
+        const errorText = await createRes.text();
+        console.log('Create audience error:', errorText);
+        throw new Error(`Failed to create audience: ${errorText}`);
+      }
+      
+      const newAudience = await createRes.json();
+      audienceId = newAudience.id;
+      console.log('Created audience with ID:', audienceId);
+    }
+    
+    // Now add the contact
+    const firstName = name.split(' ')[0] || name;
+    const lastName = name.split(' ').slice(1).join(' ') || '';
+    
+    const contactData = {
       email: email,
       firstName: firstName,
       lastName: lastName,
       unsubscribed: false,
       audienceId: audienceId
-    })
-  });
-  
-  if (!contactRes.ok) {
-    const error = await contactRes.text();
-    throw new Error(`Failed to add contact: ${error}`);
+    };
+    
+    console.log('Adding contact with data:', contactData);
+    
+    const contactRes = await fetch('https://api.resend.com/contacts', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${RESEND_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(contactData)
+    });
+    
+    console.log('Contact response status:', contactRes.status);
+    
+    if (!contactRes.ok) {
+      const error = await contactRes.text();
+      console.log('Contact error:', error);
+      throw new Error(`Failed to add contact: ${error}`);
+    }
+    
+    const result = await contactRes.json();
+    console.log('Success! Contact added:', result);
+    return result;
+    
+  } catch (error) {
+    console.error('Error in addToResendContacts:', error);
+    throw error;
   }
-  
-  return await contactRes.json();
 }
 
 serve(async (req) => {
@@ -97,6 +126,8 @@ serve(async (req) => {
     }
     
     const body = await req.json();
+    console.log('Received request:', body);
+    
     if (!body.email || !body.name) {
       return new Response(JSON.stringify({ error: 'Missing email or name' }), { 
         headers: corsHeaders, 
@@ -109,8 +140,11 @@ serve(async (req) => {
       headers: corsHeaders 
     });
   } catch (error) {
-    console.error('Newsletter subscription error:', error);
-    return new Response(JSON.stringify({ error: error.message }), { 
+    console.error('Function error:', error);
+    return new Response(JSON.stringify({ 
+      error: error.message,
+      details: error.toString()
+    }), { 
       headers: corsHeaders, 
       status: 500 
     });

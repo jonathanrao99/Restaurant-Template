@@ -135,7 +135,8 @@ const ContactForm = () => {
           });
           
           if (!newsletterRes.ok) {
-            console.error('Newsletter subscription failed:', newsletterRes.status);
+            const errorText = await newsletterRes.text();
+            console.error('Newsletter subscription failed:', newsletterRes.status, errorText);
           } else {
             console.log('Newsletter subscription successful');
           }
