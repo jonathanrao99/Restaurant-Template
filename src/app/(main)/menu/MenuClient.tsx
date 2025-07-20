@@ -102,9 +102,6 @@ export default function MenuClient({ initialMenuItems }: MenuClientProps) {
       return acc;
     }, {} as { [key: string]: MenuItem[] });
     
-    // Debug logging
-    console.log('Filtered menu items by category:', Object.keys(filtered).map(cat => `${cat}: ${filtered[cat].length} items`));
-    
     return filtered;
   }, [menuItems, categories, vegetarianOnly, spicyOnly, under10Only, searchFilter]);
 

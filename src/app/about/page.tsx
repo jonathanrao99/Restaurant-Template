@@ -157,7 +157,7 @@ const About = () => {
                 Our Food Truck
               </span>
             </h1>
-            <p className="text-lg md:text-xl max-w-2xl mb-8 text-gray-100">
+            <p className="text-lg md:text-xl lg:text-2xl font-merriweather text-white leading-relaxed max-w-10xl mb-8">
               A culinary journey bringing authentic Indian flavors to Katy, with a focus on tradition, quality, and exceptional taste.
             </p>
             <div className="flex items-center space-x-4">

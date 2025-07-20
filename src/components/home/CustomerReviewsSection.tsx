@@ -29,7 +29,7 @@ const CustomerReviewsSection = () => {
             What Our Customers Say
           </h2>
           <p className="text-gray-700 max-w-2xl mx-auto">
-            Don't just take our word for it - hear what our satisfied customers have to say about their <br /> <span className="font-semibold font-display text-desi-orange">Desi Flavors</span> experience.
+            Don't just take our word for it - hear what our satisfied customers have to say about their <br /> <span className="font-samarkan font-bold text-2xl text-desi-orange">Desi</span> <span className="font-semibold text-desi-black">Flavors Katy</span> experience.
           </p>
         </motion.div>
         

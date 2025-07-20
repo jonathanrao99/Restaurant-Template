@@ -29,26 +29,29 @@ const BestsellersSection = () => {
   // Sample bestsellers data with itemIds
   const bestsellers = [{
     id: 1, // Chicken Biryani
-    title: 'Chicken Biryani',
+    title: 'Chicken Dum Biryani',
     description: 'Fragrant basmati rice cooked with tender chicken, aromatic spices, and herbs.',
     price: '$11.99',
     imageSrc: '/Menu_Images/chicken-dum-biryani.jpg',
     isSpecial: true,
-    itemId: 1 // Chicken Dum Biryani
+    itemId: 1, // Chicken Dum Biryani
+    isBold: true
   }, {
     id: 3, // Butter Chicken
     title: 'Butter Chicken',
     description: 'Tender chicken pieces in a creamy, tomato-based curry with a hint of butter.',
     price: '$11.99',
     imageSrc: '/Menu_Images/butter-chicken.jpg',
-    itemId: 8 // Butter Chicken
+    itemId: 8, // Butter Chicken
+    isBold: true
   }, {
     id: 12, // Aloo Samosa
-    title: 'Vegetable Samosas',
+    title: 'Aloo Samosa',
     description: 'Crispy pastry triangles filled with spiced potatoes, peas, and vegetables.',
     price: '$4.99',
     imageSrc: '/Menu_Images/aloo-samosa.jpeg',
-    itemId: 24 // Aloo Samosa
+    itemId: 24, // Aloo Samosa
+    isBold: true
   }];
 
   return (
@@ -148,7 +151,7 @@ const BestsellersSection = () => {
             whileInView="visible"
             viewport={{ once: true }}
             transition={{ duration: 0.8, type: "spring" }}
-            className="mt-8 md:mt-12"
+            className="mt-8 md:mt-4"
           >
             <AnimatedCardGrid columns={{ sm: 1, md: 2, lg: 3 }} gap={8} staggerDelay={0.15}>
               {bestsellers.map((item, index) => (

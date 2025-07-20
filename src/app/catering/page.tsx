@@ -125,34 +125,60 @@ const Catering = () => {
   return (
     <div className="bg-desi-cream">
       {/* Hero Section */}
-      <section className="relative h-[70vh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-black/90 to-transparent z-10" />
+      <section className="relative min-h-[70svh] flex items-center justify-center overflow-hidden bg-desi-black">
         <motion.div
-          className="absolute inset-0 z-0"
+          className="absolute inset-0 z-0 will-change-transform"
           initial={{ scale: 1, x: 0, y: 0 }}
           animate={{ scale: 1.05, x: 20, y: -10 }}
           transition={{ duration: 10, ease: 'easeInOut', repeat: Infinity, repeatType: 'reverse' }}
         >
+          <div className="absolute inset-0 bg-black/40 z-10"></div>
           <img
             src="/Truck/IMG-20250603-WA0005.jpg"
             alt="Premium Catering"
-            className="w-full h-full object-cover dark:shadow-black/70"
+            className="transform-gpu object-cover absolute inset-0 w-full h-full"
+            style={{ objectFit: 'cover', width: '100%', height: '100%' }}
           />
         </motion.div>
-        <div className="relative z-20 text-center px-4 max-w-3xl">
-          <motion.div
-            initial={{ opacity: 0, y: 30, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.3 }}
-            className="text-white"
-          >
-            <h2 className="text-3xl md:text-3xl lg:text-5xl max-w-5xl mx-auto font-display font-bold text-desi-white tracking-tight leading-tight">
-              Catering Your Events
-            </h2>
-            <p className="mt-4 text-base md:text-xl max-w-5xl mx-auto text-white font-bold">
-            Elevate your events with Indian cuisine, crafted with passion and love. Every dish tells a story, leaving your guests with flavors they'll never forget.
-            </p>
-          </motion.div>
+
+        <div className="absolute inset-0 z-[1] opacity-10">
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0)',
+              backgroundSize: '40px 40px',
+            }}
+          ></div>
+        </div>
+
+        <div className="container relative z-10 px-4 sm:px-6 max-w-7xl mx-auto">
+          <div className="w-full text-center">
+            <motion.div
+              variants={fadeInUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.5 }}
+              className="mb-6 md:mb-8"
+            >
+              <h1 className="text-4xl md:text-4xl lg:text-7xl font-display font-bold tracking-tight leading-tight">
+                <span className="text-desi-orange block">Catering Your Events</span>
+              </h1>
+            </motion.div>
+
+            <motion.p
+              variants={fadeInUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.8 }}
+              className="text-lg md:text-xl lg:text-2xl text-white font-merriweather leading-relaxed max-w-10xl mx-auto mb-4"
+            >
+              Every gathering deserves a feast worth remembering — let our dishes elevate your event into a grand and unforgettable experience with spice and soul.
+            </motion.p>
+
+          </div>
         </div>
       </section>                                      
 
@@ -176,7 +202,10 @@ const Catering = () => {
               </h3>
 
               <p className="text-lg md:text-xl text-desi-black mb-4 font-medium">
-                Experience the warmth of Indian hospitality with our premium, handcrafted cuisine — perfect for every kind of gathering. We go beyond just food — we bring the full Desi Flavors Katy experience right to you.
+              Bring the vibrant taste of India to your next event with <span className="font-samarkan font-bold text-2xl text-desi-orange">Desi</span> <span className="font-semibold text-desi-black">Flavors Katy</span>. Our handcrafted dishes and heartfelt hospitality make every celebration unforgettable — whether it’s an intimate gathering or a grand occasion.
+              </p>
+              <p className="text-lg md:text-xl text-desi-black mb-4 font-medium">
+              We don’t just cater meals — we deliver an experience.
               </p>
 
               <motion.ul
@@ -189,13 +218,13 @@ const Catering = () => {
                   📋 Customizable menus for weddings, corporate events, festivals, and private celebrations.
                 </motion.li>
                 <motion.li variants={listItem}>
-                  🍽️ Made-from-scratch dishes featuring bold spices and traditional flavors.
+                  🍽️ Homemade dishes cooked with bold spices and traditional flavors.
                 </motion.li>
                 <motion.li variants={listItem}>
-                  🚚 Our food truck comes directly to your event venue — fully equipped to serve hot, fresh meals on-site.
+                  🚚 On-site food truck catering — fully equipped to serve hot, fresh meals at your party.
                 </motion.li>
                 <motion.li variants={listItem}>
-                  👨‍🍳 Friendly staff and chefs to deliver a smooth and flavorful experience.
+                  👨‍🍳 Professional & Friendly Team that ensures smooth service, from setup to the last bite.
                 </motion.li>
               </motion.ul>
             </motion.div>

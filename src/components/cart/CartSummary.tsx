@@ -28,7 +28,7 @@ const CartSummary = ({ items, deliveryMethod, setDeliveryMethod }: CartSummaryPr
 
   return (
     <div className="bg-white rounded-xl shadow-md p-6 sticky top-0">
-      <h2 className="font-display font-bold text-lg mb-4">Order Summary</h2>
+      <h2 className="font-display font-bold text-lg mb-4">Cart Summary</h2>
       
       <div className="flex justify-between items-center mb-4">
         <div className="flex w-full border rounded-xl overflow-hidden">
@@ -74,10 +74,6 @@ const CartSummary = ({ items, deliveryMethod, setDeliveryMethod }: CartSummaryPr
       >
         Proceed to Checkout
       </Button>
-      
-      <p className="text-xs text-gray-500 mt-4 text-center">
-        To set your delivery location and phone number, continue to the payment page.
-      </p>
     </div>
   );
 };

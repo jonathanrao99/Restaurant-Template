@@ -11,6 +11,7 @@ interface BestsellerCardProps {
   isSpecial?: boolean;
   delay?: number;
   itemId?: number;
+  isBold?: boolean;
 }
 
 const BestsellerCard = ({ 
@@ -20,7 +21,8 @@ const BestsellerCard = ({
   imageSrc, 
   isSpecial = false,
   delay = 0,
-  itemId 
+  itemId,
+  isBold = false
 }: BestsellerCardProps) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const router = useRouter();
@@ -60,7 +62,7 @@ const BestsellerCard = ({
       </div>
       
       <div className="p-4">
-        <h3 className="font-display font-medium text-xl mb-2 group-hover:text-desi-orange transition-colors duration-300">{title}</h3>
+        <h3 className={`text-lg font-semibold text-gray-900 mb-2 group-hover:text-desi-orange transition-colors duration-300 ${isBold ? 'font-bold' : 'font-semibold'}`}>{title}</h3>
         <p className="text-gray-600 text-sm line-clamp-2 mb-4 group-hover:text-gray-700 transition-colors duration-300">{description}</p>
         
         <div className="flex items-center justify-between">

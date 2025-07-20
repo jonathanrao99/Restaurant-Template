@@ -89,6 +89,7 @@ export default {
     			serif: ['serif'],
     			display: ['var(--font-display)', 'cursive'],
     			samarkan: ['var(--font-samarkan)', 'cursive'],
+    			merriweather: ['var(--font-merriweather)', 'serif'],
     			mono: ['var(--font-geist-mono)'],
     		},
     		keyframes: {

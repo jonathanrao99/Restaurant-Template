@@ -1,5 +1,5 @@
 import './globals.css';
-import { inter, samarkan, displayFont } from './fonts';
+import { inter, samarkan, displayFont, merriweather } from './fonts';
 import LayoutClientWrapper from '@/components/LayoutClientWrapper';
 
 export const metadata = {
@@ -28,7 +28,7 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${samarkan.variable} ${displayFont.variable}`}> 
+    <html lang="en" className={`${inter.variable} ${samarkan.variable} ${displayFont.variable} ${merriweather.variable}`}> 
       <head>
         <meta name="description" content="Desi Flavors Katy - Authentic Indian street food served daily from our food truck in Katy, TX. Order online or find us at our next location!" />
         <meta property="og:title" content="Desi Flavors Katy | Authentic Indian Street Food" />

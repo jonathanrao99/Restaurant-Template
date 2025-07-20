@@ -61,7 +61,7 @@ const HeroSection = () => {
       
       {/* Main Content */}
       <div className="container relative z-10 px-4 sm:px-6 max-w-7xl mx-auto">
-        <div className="max-w-4xl mx-auto text-center">
+        <div className="w-full text-center">
           {/* Hero Title */}
           <motion.div
             variants={fadeSlide}
@@ -87,7 +87,7 @@ const HeroSection = () => {
             transition={{ delay: 0.15 }}
             className="mb-8 md:mb-10"
           >
-            <p className="text-xl md:text-2xl font-inter text-white leading-relaxed max-w-3xl mx-auto">
+            <p className="text-lg md:text-xl lg:text-2xl font-inter font-merriweather font-semibold text-white leading-relaxed max-w-6xl mx-auto">
               Experience homestyle Indian cuisine with our specialty biryanis and traditional favorites, crafted with authentic recipes.
             </p>
           </motion.div>

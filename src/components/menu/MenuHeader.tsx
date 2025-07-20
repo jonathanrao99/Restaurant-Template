@@ -62,17 +62,17 @@ const MenuHeader = () => {
             </h1>
           </motion.div>
 
-          <motion.p
-            variants={fadeInUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.8 }}
-            className="text-lg md:text-xl lg:text-2xl text-white font-display leading-relaxed max-w-10xl mx-auto mb-4 font-sans"
-          >
-            Our menu celebrates traditional desi flavors, crafted with the finest ingredients and now available to enjoy wherever you are — dine in or have it delivered fresh to your door.
+                      <motion.p
+              variants={fadeInUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.8 }}
+              className="text-lg md:text-xl lg:text-2xl text-white font-merriweather leading-relaxed max-w-10xl mx-auto mb-4"
+            >
+              Our menu celebrates traditional desi flavors, crafted with the finest ingredients and now available to enjoy wherever you are — dine in or have it delivered fresh to your door.
 
-          </motion.p>
+            </motion.p>
 
           <motion.p
             variants={fadeInUp}
