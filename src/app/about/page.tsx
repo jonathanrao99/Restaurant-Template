@@ -158,7 +158,7 @@ const About = () => {
               </span>
             </h1>
             <p className="text-lg md:text-xl lg:text-2xl font-merriweather text-white leading-relaxed max-w-10xl mb-8">
-              A culinary journey bringing authentic Indian flavors to Katy, with a focus on tradition, quality, and exceptional taste.
+            Katy’s home for bold Indian flavors and timeless recipes.
             </p>
             <div className="flex items-center space-x-4">
               

@@ -70,7 +70,7 @@ const MenuHeader = () => {
               transition={{ duration: 0.7, delay: 0.8 }}
               className="text-lg md:text-xl lg:text-2xl text-white font-merriweather leading-relaxed max-w-10xl mx-auto mb-4"
             >
-              Our menu celebrates traditional desi flavors, crafted with the finest ingredients and now available to enjoy wherever you are — dine in or have it delivered fresh to your door.
+              Traditional desi flavors, now available to dine in or delivered fresh to your door.
 
             </motion.p>
 

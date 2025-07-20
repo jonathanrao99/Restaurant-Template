@@ -175,7 +175,7 @@ const Catering = () => {
               transition={{ duration: 0.7, delay: 0.8 }}
               className="text-lg md:text-xl lg:text-2xl text-white font-merriweather leading-relaxed max-w-10xl mx-auto mb-4"
             >
-              Every gathering deserves a feast worth remembering — let our dishes elevate your event into a grand and unforgettable experience with spice and soul.
+              Flavors that bring people together — crafted for unforgettable gatherings.
             </motion.p>
 
           </div>

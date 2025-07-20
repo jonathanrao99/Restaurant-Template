@@ -88,7 +88,7 @@ const HeroSection = () => {
             className="mb-8 md:mb-10"
           >
             <p className="text-lg md:text-xl lg:text-2xl font-inter font-merriweather font-semibold text-white leading-relaxed max-w-6xl mx-auto">
-              Experience homestyle Indian cuisine with our specialty biryanis and traditional favorites, crafted with authentic recipes.
+            Homestyle Indian cuisine and Dum Biryanis made with authentic recipes.
             </p>
           </motion.div>
 
