@@ -11,6 +11,11 @@ import { calculateDistanceFee } from '@/lib/deliveryFee';
 import { ordersApi, paymentApi } from '@/lib/supabaseFunctions';
 import { supabase } from '@/integrations/supabase/client';
 import { AddressAutocomplete } from '@/components/payment/AddressAutocomplete';
+<<<<<<< HEAD
+=======
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+>>>>>>> b5f7315 (Reset)
 
 export const dynamic = 'force-dynamic';
 
@@ -609,6 +614,7 @@ function PaymentPageContent() {
               
               {scheduleType === 'scheduled' && (
                 <div className="relative">
+<<<<<<< HEAD
                   <input 
                     type="datetime-local" 
                     id="scheduledTime" 
@@ -619,6 +625,59 @@ function PaymentPageContent() {
                     placeholder="Select a date and time"
                   />
                   <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+=======
+                  <DatePicker
+                    selected={scheduledTime}
+                    onChange={(date: Date) => setScheduledTime(date)}
+                    showTimeSelect
+                    showTimeSelectOnly={false}
+                    timeIntervals={30}
+                    minDate={new Date()}
+                    minTime={(() => {
+                      const d = new Date(scheduledTime);
+                      d.setHours(17, 30, 0, 0); // 5:30 PM
+                      return d;
+                    })()}
+                    maxTime={(() => {
+                      const d = new Date(scheduledTime);
+                      if (d.getHours() < 12) {
+                        d.setHours(0, 30, 0, 0); // 12:30 AM
+                      } else {
+                        d.setHours(23, 59, 59, 999); // End of day for PM
+                      }
+                      return d;
+                    })()}
+                    dateFormat="MMMM d, yyyy h:mm aa"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-desi-orange focus:ring-0 focus:outline-none sm:text-sm pl-10 cursor-pointer"
+                    placeholderText="Select a date and time"
+                    onCalendarOpen={() => {}}
+                    onCalendarClose={() => {}}
+                    wrapperClassName="w-full"
+                    popperPlacement="bottom"
+                    shouldCloseOnSelect={true}
+                    filterTime={(date) => {
+                      const hour = date.getHours();
+                      const minute = date.getMinutes();
+                      // Allow 5:30 PM to 12:30 AM
+                      return (
+                        (hour === 17 && minute >= 30) ||
+                        (hour >= 18 && hour <= 23) ||
+                        (hour === 0 && minute <= 30)
+                      );
+                    }}
+                    customInput={
+                      <div className="relative w-full">
+                        <input
+                          readOnly
+                          value={scheduledTime ? scheduledTime.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) : ''}
+                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-desi-orange focus:ring-0 focus:outline-none sm:text-sm pl-10 cursor-pointer"
+                          placeholder="Select a date and time"
+                        />
+                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                      </div>
+                    }
+                  />
+>>>>>>> b5f7315 (Reset)
                 </div>
               )}
             </div>

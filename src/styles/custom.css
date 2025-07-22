@@ -148,10 +148,28 @@ html {
 gmp-place-autocomplete .dropdown,
 gmp-place-autocomplete .dropdown > ul,
 gmp-place-autocomplete .dropdown > ul > li {
+<<<<<<< HEAD
   background-color: #ffffff !important;
   opacity: 1 !important;
 }
 
+=======
+  background-color: #fff !important;
+  color: #111 !important;
+  opacity: 1 !important;
+}
+
+gmp-place-autocomplete .dropdown > ul > li {
+  border-bottom: 1px solid #eee !important;
+}
+
+gmp-place-autocomplete .dropdown > ul > li[aria-selected="true"],
+gmp-place-autocomplete .dropdown > ul > li:hover {
+  background-color: #f3f4f6 !important;
+  color: #111 !important;
+}
+
+>>>>>>> b5f7315 (Reset)
 /* Global smooth image hover transition */
 img {
   transition: transform 0.3s ease-in-out;
