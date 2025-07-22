@@ -1,24 +1,18 @@
 'use client';
 
-import { useEffect, useState, Suspense } from 'react';
+import { useEffect, useState, Suspense, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ArrowLeft, Lock, Calendar, Clock } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { toast } from 'sonner';
 import OrderSummaryClean from '@/components/payment/OrderSummaryClean';
 import { Button } from '@/components/ui/button';
-import dynamicComponent from 'next/dynamic';
-import { AddressAutocompleteProps } from '@/components/payment/AddressAutocomplete';
 import { calculateDistanceFee } from '@/lib/deliveryFee';
 import { ordersApi, paymentApi } from '@/lib/supabaseFunctions';
 import { supabase } from '@/integrations/supabase/client';
+import { AddressAutocomplete } from '@/components/payment/AddressAutocomplete';
 
 export const dynamic = 'force-dynamic';
-
-const AddressAutocomplete = dynamicComponent<AddressAutocompleteProps>(
-  () => import('@/components/payment/AddressAutocomplete').then(mod => mod.AddressAutocomplete),
-  { ssr: false }
-);
 
 const isWithinOperatingHours = () => {
   const now = new Date();
@@ -44,8 +38,8 @@ function PaymentPageContent() {
   const [isClient, setIsClient] = useState(false);
   const [canOrderASAP, setCanOrderASAP] = useState(false);
   const [scheduleType, setScheduleType] = useState<'ASAP' | 'scheduled'>('scheduled');
-  const [isGoogleAddress, setIsGoogleAddress] = useState(false);
-  const [invalidToastShown, setInvalidToastShown] = useState(false);
+  const invalidToastShownRef = useRef(false);
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const getInitialStartTime = () => {
     const now = new Date();
@@ -119,11 +113,23 @@ function PaymentPageContent() {
   const total = subtotal + tax + (fulfillmentMethod === 'delivery' && deliveryFee ? deliveryFee : 0);
 
   // Fallback delivery fee (in USD) when calculation fails
-  const FALLBACK_DELIVERY_FEE = 5;
+
+
+  // State for tracking if user has triggered validation
+  const [addressValidationTriggered, setAddressValidationTriggered] = useState(false);
+  const [lastValidatedAddress, setLastValidatedAddress] = useState('');
 
   useEffect(() => {
     // Reset invalid toast when address changes
-    setInvalidToastShown(false);
+    invalidToastShownRef.current = false;
+    
+    console.log('Fulfillment method:', fulfillmentMethod);
+    
+    // Auto-set to delivery if there's a delivery address
+    if (deliveryAddress.trim() && fulfillmentMethod === 'pickup') {
+      setFulfillmentMethod('delivery');
+      return;
+    }
     
     // Only calculate fee for delivery orders
     if (fulfillmentMethod !== 'delivery') {
@@ -137,27 +143,49 @@ function PaymentPageContent() {
       return;
     }
 
-    // Validate address format - either from Google suggestions or manually entered with basic validation
-    const isValidAddressFormat = isGoogleAddress || 
-      (deliveryAddress.includes(',') && 
-       deliveryAddress.toLowerCase().includes('tx') && 
-       deliveryAddress.length > 20);
+    // Only proceed if validation was triggered by user action
+    if (!addressValidationTriggered) {
+      return;
+    }
+
+    // Clear the trigger flag
+    setAddressValidationTriggered(false);
+
+    // Validate address format - manually entered with basic validation
+    const isValidAddressFormat = deliveryAddress.length > 10 && 
+      (deliveryAddress.toLowerCase().includes('tx') || 
+       deliveryAddress.toLowerCase().includes('texas') || 
+       deliveryAddress.toLowerCase().includes('katy') ||
+       deliveryAddress.toLowerCase().includes('houston'));
+
+    console.log('Address validation:', {
+      deliveryAddress,
+      hasTx: deliveryAddress.toLowerCase().includes('tx'),
+      hasTexas: deliveryAddress.toLowerCase().includes('texas'),
+      hasKaty: deliveryAddress.toLowerCase().includes('katy'),
+      hasHouston: deliveryAddress.toLowerCase().includes('houston'),
+      length: deliveryAddress.length,
+      isValidAddressFormat
+    });
 
     if (!isValidAddressFormat) {
       setDeliveryFee(null);
-      if (!invalidToastShown) {
+      if (!invalidToastShownRef.current) {
         toast.error('Please enter a complete address including city and state, or select from Google suggestions.');
-        setInvalidToastShown(true);
+        invalidToastShownRef.current = true;
       }
       return;
     }
 
     // Calculate delivery fee
     setFeeLoading(true);
+    console.log('Starting delivery fee calculation for:', { deliveryAddress, customerPhone });
+    
     const fee = async () => {
       try {
         
         const fee = await calculateDistanceFee(deliveryAddress, customerPhone, new Date());
+        console.log('Delivery fee calculation result:', fee);
         
         if (typeof fee !== 'number') {
           throw new Error('Fee calculation failed');
@@ -165,15 +193,25 @@ function PaymentPageContent() {
         
         return fee;
       } catch (error) {
-        // Apply fallback fee on error
-        return FALLBACK_DELIVERY_FEE;
+        console.error('Delivery fee calculation failed:', error);
+        // Show user-friendly error message
+        toast.error('Oops! There seems to be a problem calculating your delivery fee. Please try again later.');
+        throw error; // Re-throw to prevent setting any fee
       } finally {
         setFeeLoading(false);
       }
     };
 
-    fee().then(setDeliveryFee);
-  }, [deliveryAddress, customerPhone, fulfillmentMethod, isGoogleAddress, invalidToastShown]);
+    fee().then((result) => {
+      console.log('Setting delivery fee to:', result);
+      setDeliveryFee(result);
+      setLastValidatedAddress(deliveryAddress);
+    }).catch((error) => {
+      console.error('Error in fee promise:', error);
+      setDeliveryFee(null); // Don't set any fee on error
+      setFeeLoading(false);
+    });
+  }, [deliveryAddress, customerPhone, fulfillmentMethod, addressValidationTriggered]);
 
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -186,7 +224,11 @@ function PaymentPageContent() {
     }
     
     if ((fulfillmentMethod === 'delivery' && (!deliveryAddress || deliveryFee === null)) || !customerName || !customerEmail || !customerPhone) { 
+      if (fulfillmentMethod === 'delivery' && deliveryFee === null) {
+        toast.error('Please enter your delivery address and press Enter or select from Google suggestions to calculate the delivery fee.'); 
+      } else {
       toast.error('Please fill in all required fields, including a valid delivery address and phone number.'); 
+      }
       return; 
     }
     
@@ -220,6 +262,9 @@ function PaymentPageContent() {
       const orderId = (orderRow as any).id;
       
       // Create payment link using Supabase Edge Function
+      console.log('Sending cart items to payment link:', cartItems);
+      console.log('Delivery fee being sent:', deliveryFee);
+      console.log('Fulfillment method:', fulfillmentMethod);
       const paymentLinkData = {
         cartItems,
         fulfillmentMethod,
@@ -248,13 +293,218 @@ function PaymentPageContent() {
 
   const handleDeliveryAddressChange = (val: string) => {
     setDeliveryAddress(val);
-    setIsGoogleAddress(false);
+    
+    // Auto-switch to delivery if there's a meaningful address
+    if (val.trim().length > 5 && fulfillmentMethod === 'pickup') {
+      setFulfillmentMethod('delivery');
+    }
+    
+    // Clear any existing timeout
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+    }
+    
+    // Trigger calculation immediately when user types a complete address
+    if (val.trim().length > 15 && !feeLoading) {
+      // Debounce the calculation to avoid too many API calls
+      debounceTimeoutRef.current = setTimeout(async () => {
+        console.log('Auto-triggering calculation for typed address:', val);
+        setFeeLoading(true);
+        
+        try {
+          // Use a placeholder phone number for calculation if customer hasn't entered one yet
+          const phoneForCalculation = customerPhone.replace(/\D/g, '').length >= 10 
+            ? customerPhone 
+            : '+13468244212'; // Use store phone as placeholder
+          
+          const fee = await calculateDistanceFee(val, phoneForCalculation, new Date());
+          console.log('Auto-triggered delivery fee calculation result:', fee);
+          
+          if (typeof fee === 'number') {
+            setDeliveryFee(fee);
+            setLastValidatedAddress(val);
+          } else {
+            throw new Error('Invalid fee result');
+          }
+        } catch (error) {
+          console.error('Auto-triggered delivery fee calculation failed:', error);
+          // Don't show error toast for auto-triggered calculations
+        } finally {
+          setFeeLoading(false);
+        }
+      }, 1000); // 1 second debounce
+    }
   };
 
-  const handleGoogleAddressSelect = (val: string) => {
+  const handleDeliveryAddressBlur = async () => {
+    // Start calculation immediately when user finishes typing (on blur) (no phone requirement)
+    if (deliveryAddress.trim().length > 10) {
+      setFeeLoading(true);
+      console.log('Starting immediate delivery fee calculation for blur:', deliveryAddress);
+      
+      try {
+        // Use a placeholder phone number for calculation if customer hasn't entered one yet
+        const phoneForCalculation = customerPhone.replace(/\D/g, '').length >= 10 
+          ? customerPhone 
+          : '+13468244212'; // Use store phone as placeholder
+        
+        const fee = await calculateDistanceFee(deliveryAddress, phoneForCalculation, new Date());
+        console.log('Blur delivery fee calculation result:', fee);
+        
+        if (typeof fee === 'number') {
+          setDeliveryFee(fee);
+          setLastValidatedAddress(deliveryAddress);
+        } else {
+          throw new Error('Invalid fee result');
+        }
+      } catch (error) {
+        console.error('Blur delivery fee calculation failed:', error);
+        toast.error('Oops! There seems to be a problem calculating your delivery fee. Please try again later.');
+        setDeliveryFee(null);
+      } finally {
+        setFeeLoading(false);
+      }
+    }
+  };
+
+  const handleDeliveryAddressClick = async () => {
+    // Trigger calculation when user clicks on the address field (backup method)
+    if (deliveryAddress.trim().length > 10 && !feeLoading) {
+      console.log('Address field clicked, triggering calculation for:', deliveryAddress);
+      setFeeLoading(true);
+      
+      try {
+        // Use a placeholder phone number for calculation if customer hasn't entered one yet
+        const phoneForCalculation = customerPhone.replace(/\D/g, '').length >= 10 
+          ? customerPhone 
+          : '+13468244212'; // Use store phone as placeholder
+        
+        const fee = await calculateDistanceFee(deliveryAddress, phoneForCalculation, new Date());
+        console.log('Click delivery fee calculation result:', fee);
+        
+        if (typeof fee === 'number') {
+          setDeliveryFee(fee);
+          setLastValidatedAddress(deliveryAddress);
+        } else {
+          throw new Error('Invalid fee result');
+        }
+      } catch (error) {
+        console.error('Click delivery fee calculation failed:', error);
+        toast.error('Oops! There seems to be a problem calculating your delivery fee. Please try again later.');
+        setDeliveryFee(null);
+      } finally {
+        setFeeLoading(false);
+      }
+    }
+  };
+
+  const handleDeliveryAddressFocus = async () => {
+    // Trigger calculation when user focuses on the address field (another backup method)
+    if (deliveryAddress.trim().length > 10 && !feeLoading) {
+      console.log('Address field focused, triggering calculation for:', deliveryAddress);
+      setFeeLoading(true);
+      
+      try {
+        // Use a placeholder phone number for calculation if customer hasn't entered one yet
+        const phoneForCalculation = customerPhone.replace(/\D/g, '').length >= 10 
+          ? customerPhone 
+          : '+13468244212'; // Use store phone as placeholder
+        
+        const fee = await calculateDistanceFee(deliveryAddress, phoneForCalculation, new Date());
+        console.log('Focus delivery fee calculation result:', fee);
+        
+        if (typeof fee === 'number') {
+          setDeliveryFee(fee);
+          setLastValidatedAddress(deliveryAddress);
+        } else {
+          throw new Error('Invalid fee result');
+        }
+      } catch (error) {
+        console.error('Focus delivery fee calculation failed:', error);
+        toast.error('Oops! There seems to be a problem calculating your delivery fee. Please try again later.');
+        setDeliveryFee(null);
+      } finally {
+        setFeeLoading(false);
+      }
+    }
+  };
+
+  const handleGoogleAddressSelect = async (val: string) => {
     setDeliveryAddress(val);
-    setIsGoogleAddress(true);
-    setInvalidToastShown(false);
+    invalidToastShownRef.current = false;
+
+    // Auto-switch to delivery for Google addresses
+    if (fulfillmentMethod === 'pickup') {
+      setFulfillmentMethod('delivery');
+    }
+
+    // Start calculation immediately for Google suggestions (no phone requirement)
+    setFeeLoading(true);
+    console.log('Starting immediate delivery fee calculation for Google address:', val);
+
+    try {
+      // Use a placeholder phone number for calculation if customer hasn't entered one yet
+      const phoneForCalculation = customerPhone.replace(/\D/g, '').length >= 10 
+        ? customerPhone 
+        : '+13468244212'; // Use store phone as placeholder
+
+      const fee = await calculateDistanceFee(val, phoneForCalculation, new Date());
+      console.log('Google address delivery fee calculation result:', fee);
+
+      if (typeof fee === 'number') {
+        setDeliveryFee(fee);
+        setLastValidatedAddress(val);
+      } else {
+        throw new Error('Invalid fee result');
+      }
+    } catch (error) {
+      console.error('Google address delivery fee calculation failed:', error);
+
+      // If it's a timeout error, show a more specific message
+      if (error.message.includes('timed out')) {
+        toast.error('Delivery fee calculation is taking longer than expected. Please try again.');
+      } else {
+        toast.error('Oops! There seems to be a problem calculating your delivery fee. Please try again later.');
+      }
+      setDeliveryFee(null);
+    } finally {
+      setFeeLoading(false);
+    }
+  };
+
+  const handleAddressKeyPress = async (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      
+      // Start calculation immediately for Enter key (no phone requirement)
+      if (deliveryAddress.trim()) {
+        setFeeLoading(true);
+        console.log('Starting immediate delivery fee calculation for Enter key:', deliveryAddress);
+        
+        try {
+          // Use a placeholder phone number for calculation if customer hasn't entered one yet
+          const phoneForCalculation = customerPhone.replace(/\D/g, '').length >= 10 
+            ? customerPhone 
+            : '+13468244212'; // Use store phone as placeholder
+          
+          const fee = await calculateDistanceFee(deliveryAddress, phoneForCalculation, new Date());
+          console.log('Enter key delivery fee calculation result:', fee);
+          
+          if (typeof fee === 'number') {
+            setDeliveryFee(fee);
+            setLastValidatedAddress(deliveryAddress);
+          } else {
+            throw new Error('Invalid fee result');
+          }
+        } catch (error) {
+          console.error('Enter key delivery fee calculation failed:', error);
+          toast.error('Oops! There seems to be a problem calculating your delivery fee. Please try again later.');
+          setDeliveryFee(null);
+        } finally {
+          setFeeLoading(false);
+        }
+      }
+    }
   };
 
   return (
@@ -291,6 +541,10 @@ function PaymentPageContent() {
                   value={deliveryAddress} 
                   onValueChange={handleDeliveryAddressChange} 
                   onAddressSelect={handleGoogleAddressSelect}
+                  onKeyPress={handleAddressKeyPress}
+                  onBlur={handleDeliveryAddressBlur}
+                  onClick={handleDeliveryAddressClick}
+                  onFocus={handleDeliveryAddressFocus}
                 />
               </div>
             )}
@@ -393,7 +647,7 @@ function PaymentPageContent() {
           
           {isClient && (
             <div className="lg:col-span-1">
-              <OrderSummaryClean />
+              <OrderSummaryClean deliveryFee={deliveryFee} feeLoading={feeLoading} />
             </div>
           )}
         </form>

@@ -7,6 +7,10 @@ const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 async function callSupabaseFunction(functionName: string, options: RequestInit = {}) {
   const url = `${SUPABASE_URL}/functions/v1/${functionName}`;
   
+  console.log(`Calling Supabase function: ${functionName}`);
+  console.log('Request URL:', url);
+  console.log('Request options:', options);
+  
   const response = await fetch(url, {
     ...options,
     headers: {
@@ -16,12 +20,18 @@ async function callSupabaseFunction(functionName: string, options: RequestInit =
     },
   });
 
+  console.log(`Supabase function ${functionName} response status:`, response.status);
+  console.log(`Supabase function ${functionName} response headers:`, Object.fromEntries(response.headers.entries()));
+
   if (!response.ok) {
     const error = await response.text();
+    console.error(`Supabase function ${functionName} error:`, error);
     throw new Error(`Supabase function error: ${error}`);
   }
 
-  return response.json();
+  const result = await response.json();
+  console.log(`Supabase function ${functionName} result:`, result);
+  return result;
 }
 
 // Orders API functions

@@ -3,7 +3,12 @@
 import { useCart } from '@/context/CartContext';
 import { useState } from 'react';
 
-const OrderSummaryClean = () => {
+interface OrderSummaryCleanProps {
+  deliveryFee?: number | null;
+  feeLoading?: boolean;
+}
+
+const OrderSummaryClean = ({ deliveryFee = null, feeLoading = false }: OrderSummaryCleanProps) => {
   const { cartItems, getCartTotal, fulfillmentMethod } = useCart();
   const [discountCode, setDiscountCode] = useState('');
   const [appliedCode, setAppliedCode] = useState('');
@@ -11,9 +16,9 @@ const OrderSummaryClean = () => {
 
   const subtotal = getCartTotal();
   const tax = subtotal * 0.0825;
-  // For now, delivery fee is a placeholder. In real use, pass as prop or get from context.
-  const deliveryFee = fulfillmentMethod === 'delivery' ? 5 : 0;
-  const total = subtotal + tax + deliveryFee - discount;
+  // Use the passed delivery fee, no fallback
+  const finalDeliveryFee = fulfillmentMethod === 'delivery' ? (deliveryFee ?? 0) : 0;
+  const total = subtotal + tax + finalDeliveryFee - discount;
 
   const handleApplyDiscount = () => {
     // Placeholder: apply a $2 discount for DEMO2024 code
@@ -38,7 +43,17 @@ const OrderSummaryClean = () => {
               <span className="font-medium text-gray-800">
                 {item.name} <span className="text-xs text-gray-500">x{item.quantity}</span>
               </span>
-              <span className="text-gray-700">${(Number(item.price) * item.quantity).toFixed(2)}</span>
+              <span className="text-gray-700">${(() => {
+                let price = 0;
+                if (typeof item.price === 'string') {
+                  price = parseFloat(item.price.replace('$', ''));
+                } else if (typeof item.price === 'number') {
+                  price = item.price;
+                } else {
+                  price = parseFloat(String(item.price));
+                }
+                return (price * item.quantity).toFixed(2);
+              })()}</span>
             </div>
           ))
         )}
@@ -52,10 +67,24 @@ const OrderSummaryClean = () => {
           <span>Taxes (8.25%)</span>
           <span>${tax.toFixed(2)}</span>
         </div>
-        {deliveryFee > 0 && (
+        {fulfillmentMethod === 'delivery' && (
           <div className="flex justify-between text-sm">
             <span>Delivery Fee</span>
-            <span>${deliveryFee.toFixed(2)}</span>
+            <span className="flex items-center">
+              {feeLoading ? (
+                <>
+                  <svg className="animate-spin h-3 w-3 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+                  </svg>
+                  Calculating...
+                </>
+              ) : deliveryFee !== null ? (
+                `$${deliveryFee.toFixed(2)}`
+              ) : (
+                <span className="text-gray-400 text-xs">-</span>
+              )}
+            </span>
           </div>
         )}
       </div>

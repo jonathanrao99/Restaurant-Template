@@ -170,7 +170,7 @@ export default function HomeFoodCarouselSection() {
           <div className="absolute -left-10 -top-10 w-32 h-32 bg-gradient-to-br from-yellow-100/40 via-orange-100/20 to-white/0 rounded-full blur-2xl opacity-60 -z-10" />
           <h3 className="text-3xl md:text-4xl font-display font-bold text-desi-black mb-4 drop-shadow-sm">Made Fresh, From our Heart to your Plate</h3>
           <p className="text-lg md:text-xl text-gray-700 mb-4 font-medium">
-          Experience the essence of Indian cooking with every bite. At <span className="font-samarkan font-bold text-2xl text-desi-orange">Desi</span> <span className="font-semibold text-desi-black">Flavors Katy</span>, we bring together time-honored traditions and a spark of creativity—using only the freshest ingredients and authentic, hand-ground spices. From the first sizzle in the pan to the comforting aroma that fills the air, every dish is a warm reminder of home, crafted with love and served with pride.
+          Experience the essence of Indian cooking with every bite. At <span className="font-samarkan font-bold text-2xl text-desi-orange">Desi</span> <span className="font-semibold text-desi-black">Flavors Katy</span>, we bring together time-honored traditions and a spark of creativity—using only the freshest ingredients and authentic, hand-ground spices. <br />From the first sizzle in the pan to the comforting aroma that fills the air, every dish is a warm reminder of home, crafted with love and served with pride.
           </p>
         </motion.div>
       </div>

@@ -1,48 +1,73 @@
-# Desi Flavors Hub – Application Revamp Progress
+# Progress Log
 
-## Current State
-- All unnecessary Supabase Edge Functions (analytics, reviews, newsletter, inventory) have been removed.
-- All Next.js API routes have been deleted for a cleaner, more secure codebase.
-- The Nimda admin login page is functional and routes authenticated users to the dashboard.
-- Old dashboard and analytics code is being replaced.
+## Latest Updates
 
-## What We Have Done So Far
-- **Removed legacy/unnecessary Supabase functions**: reviews, inventory, analytics, newsletter.
-- **Deleted all Next.js API routes** to simplify backend logic and improve security.
-- **Cleaned up dashboard navigation** to focus on menu, blog, orders, and customers.
-- **Confirmed passcode login flow**: users are routed to the dashboard after successful authentication.
+### ShipDay API Issue (Current)
+- **Issue**: ShipDay API is returning 500 errors, likely due to invalid API key or API changes
+- **Temporary Solution**: Implemented fallback delivery fee calculation based on address location
+- **Fallback Fees**:
+  - Katy, TX: $4.50
+  - Houston: $6.50
+  - Cypress/Spring: $5.50
+  - Sugar Land/Missouri City: $5.75
+  - Default: $5.00
+- **Next Steps**: Debug ShipDay API key or find alternative delivery fee service
 
-## What We Are Doing Right Now
-- **Revamping the Nimda dashboard** to be professional and premium.
-- **Building a new analytics/statistics section** with:
-  - Total orders, sales, unique and returning customers
-  - Top-selling menu items
-  - Recent orders
-  - Customer growth and sales trends
-  - Modern, responsive charts and summary cards
-- **Ensuring all data is fetched directly from Supabase** (no API routes).
+### Google Places Autocomplete (Fixed)
+- ✅ **Restored Google Places autocomplete** with double-click fix
+- ✅ **Added `isProcessing` state** to prevent multiple rapid calls
+- ✅ **Improved event handling** with proper delays
+- ✅ **Multiple trigger methods** for calculation
 
-## End Goal for the Application
-- Deliver a modern, professional admin dashboard for Desi Flavors Katy.
-- Focus on actionable business metrics: orders, sales, menu performance, and customer insights.
-- Ensure a secure, maintainable, and scalable codebase.
-- Provide a seamless online ordering experience for users.
-- Ensure all integrations (e.g., Shipday, payment, delivery) work as expected.
-- Loyalty points and rewards should function reliably for customers.
-- All core business and customer features should work as intended, with a focus on reliability and user satisfaction.
+### Phone Number Updates (Fixed)
+- ✅ **Updated store phone** to `+13468244212`
+- ✅ **Updated all fallback phone numbers** in frontend and Edge Function
+- ✅ **Redeployed Edge Function** with correct phone numbers
 
-## Nice-to-Have Features (Future Enhancements)
-- Role-based admin access (multiple admin levels)
-- Real-time order notifications and updates
-- Advanced customer segmentation and marketing tools
-- Exportable reports (CSV, PDF)
-- Customizable dashboard widgets
-- Integration with third-party analytics (Google Analytics, etc.)
-- Mobile-optimized admin dashboard
-- Dark mode/theme customization
-- Automated anomaly detection and alerts
-- Loyalty program management and analytics
+## Previous Issues Resolved
 
----
+### Delivery Fee Calculation
+- ✅ **Fixed Edge Function timeouts** (reduced from 15s to 8s)
+- ✅ **Added better error handling** with specific error messages
+- ✅ **Removed hardcoded $5.00 fallback** from frontend
+- ✅ **Added loading states** and user-friendly error messages
 
-*This file will be updated as progress continues. Last updated: [today's date]* 
+### Google Places Integration
+- ✅ **Fixed double-click issue** with improved event handling
+- ✅ **Added multiple fallback triggers** (click, focus, blur, enter)
+- ✅ **Auto-calculation on typing** with 1-second debounce
+- ✅ **Immediate calculation** on Google suggestion selection
+
+### UI/UX Improvements
+- ✅ **Removed helper text** below delivery address
+- ✅ **Fixed NaN price display** in order summary
+- ✅ **Added loading spinner** for delivery fee calculation
+- ✅ **Better error messages** for users
+
+## Technical Details
+
+### Edge Function (`calculate-fee`)
+- **Location**: `supabase/functions/calculate-fee/index.ts`
+- **Current**: Uses fallback calculation (no ShipDay API)
+- **Environment Variables**: 
+  - `SHIPDAY_API_KEY` (currently not used)
+  - `STORE_ADDRESS` (set to "1989 North Fry Rd, Katy, TX 77449")
+  - `STORE_PHONE_NUMBER` (set to "+13468244212")
+
+### Frontend Components
+- **AddressAutocomplete**: Fixed Google Places integration
+- **Payment Page**: Multiple calculation triggers
+- **Order Summary**: Shows actual calculated fees
+
+### API Endpoints
+- **Calculate Fee**: `POST /functions/v1/calculate-fee`
+- **Status**: Working with fallback calculation
+- **Create Payment Link**: `POST /functions/v1/create-payment-link`
+- **Status**: Fixed price parsing, added taxes, delivery fees, and tip options
+
+### Latest Fixes (Current)
+- ✅ **Fixed Square checkout prices** - Corrected price parsing in Edge Function
+- ✅ **Added taxes to Square checkout** - 8.25% sales tax now included
+- ✅ **Added delivery fees to Square checkout** - Delivery fees now appear in Square
+- ✅ **Added tip options to Square checkout** - 15%, 18%, 20%, 25% + custom tip
+- ✅ **Fixed phone number consistency** - All functions now use `+13468244212` 

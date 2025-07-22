@@ -3,12 +3,12 @@ import { supabase } from '@/integrations/supabase/client';
 export async function logAnalyticsEvent(event_name: string, event_data: any) {
   try {
     await supabase.from('analytics_events').insert({
-      event_name,
+      event_type: event_name,
       event_data,
       created_at: new Date().toISOString()
     });
   } catch (e) {
-    // Optionally log error
+    console.error('Analytics event logging failed:', e);
   }
 }
 
