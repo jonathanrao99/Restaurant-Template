@@ -50,13 +50,19 @@ const MenuNotes = () => {
               <div className="flex flex-col items-center gap-1">
                 <h3 className="text-xl font-display font-bold text-desi-black flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-desi-orange/10 flex items-center justify-center flex-shrink-0">
-                    <img 
-                      src="/Delivery.png" 
-                      alt="Delivery" 
-                      className="w-5 h-5 object-contain"
-                      width="20"
-                      height="20"
-                    />
+                    <svg 
+                      className="w-5 h-5 text-desi-orange" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                    >
+                      <path 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round" 
+                        strokeWidth={2} 
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" 
+                      />
+                    </svg>
                   </div>
                   Online Ordering
                 </h3>

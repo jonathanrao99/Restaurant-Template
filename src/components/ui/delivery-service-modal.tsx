@@ -13,19 +13,20 @@ export function DeliveryServiceModal({ isOpen, onClose }: DeliveryServiceModalPr
     {
       name: 'DoorDash',
       logo: '/Doordash.webp',
-      url: 'https://www.doordash.com',
+      url: 'https://order.online/business/desi-flavors-katy-14145277',
       description: 'Fast delivery from your favorite restaurants'
+
     },
     {
       name: 'Grubhub',
       logo: '/Grubhub.webp',
-      url: 'https://www.grubhub.com',
+      url: 'http://menus.fyi/10883320',
       description: 'Food delivery from the best local restaurants'
     },
     {
       name: 'Uber Eats',
       logo: '/ubereats.png',
-      url: 'https://www.ubereats.com',
+      url: 'https://www.order.store/store/desi-flavors-katy-1989-fry-road/drrAdlMVTTin4O0Bdvzo2g',
       description: 'Delicious food delivered to your door'
     }
   ];

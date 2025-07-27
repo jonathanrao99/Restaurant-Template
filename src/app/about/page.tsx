@@ -340,9 +340,9 @@ const About = () => {
               {/* Image Column */}
               <div className="md:w-1/2 relative">
                 <img 
-                  src="/biryani.png" 
+                  src="/Menu_Images/chicken-dum-biryani.jpg" 
                   alt="Signature Biryani" 
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover rounded-2xl"
                 />
               </div>
             </div>

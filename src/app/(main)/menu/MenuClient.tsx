@@ -9,6 +9,7 @@ import type { ReadonlyURLSearchParams } from 'next/navigation';
 import MenuItemCard from '@/components/menu/MenuItemCard';
 import { toast } from 'sonner';
 import { Search, ChevronDown } from 'lucide-react';
+import { createClient } from '@supabase/supabase-js';
 
 const OrderDialog = dynamic(() => import('@/components/order/OrderDialog'));
 
@@ -33,8 +34,64 @@ type MenuClientProps = {
 };
 
 export default function MenuClient({ initialMenuItems }: MenuClientProps) {
-  // Simple static menu data - in a real app this would come from an API
-  const menuItems: MenuItem[] = initialMenuItems || [];
+  const [menuItems, setMenuItems] = useState<MenuItem[]>(initialMenuItems || []);
+  const [loading, setLoading] = useState(!initialMenuItems);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch menu data on client side
+  useEffect(() => {
+    if (initialMenuItems && initialMenuItems.length > 0) {
+      setMenuItems(initialMenuItems);
+      setLoading(false);
+      return;
+    }
+
+    const fetchMenuData = async () => {
+      try {
+        const supabase = createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+        );
+        const { data: items, error } = await supabase
+          .from('menu_items')
+          .select('id, name, description, price, isvegetarian, isspicy, category, menu_img, sold_out, square_variation_id, images');
+        
+        if (error) {
+          setError(error.message);
+          setLoading(false);
+          return;
+        }
+
+        if (!items) {
+          setMenuItems([]);
+          setLoading(false);
+          return;
+        }
+
+        const processedItems = items.map((item: any) => {
+          let images = item.images;
+          if ((!images || images.length === 0) && item.menu_img) {
+            images = [item.menu_img];
+          } else if (images && item.menu_img && !images.includes(item.menu_img)) {
+            images = [item.menu_img, ...images];
+          }
+          return {
+            ...item,
+            images,
+            isSoldOut: !!item.sold_out
+          };
+        });
+
+        setMenuItems(processedItems);
+        setLoading(false);
+      } catch (err) {
+        setError('Failed to load menu items');
+        setLoading(false);
+      }
+    };
+
+    fetchMenuData();
+  }, [initialMenuItems]);
   
   // Dynamically get categories from menu items in custom order
   const categories = useMemo(() => {
@@ -72,9 +129,6 @@ export default function MenuClient({ initialMenuItems }: MenuClientProps) {
       return a.localeCompare(b);
     });
   }, [menuItems]);
-  
-  const loading = false;
-  const error = null;
 
   const [vegetarianOnly, setVegetarianOnly] = useState(false);
   const [spicyOnly, setSpicyOnly] = useState(false);

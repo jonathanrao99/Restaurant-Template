@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ChevronRight } from 'lucide-react';
 
@@ -25,7 +25,19 @@ const BestsellerCard = ({
   isBold = false
 }: BestsellerCardProps) => {
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const router = useRouter();
+
+  // Fallback to show image after a timeout if onLoad doesn't fire
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!imageLoaded && !imageError) {
+        setImageLoaded(true);
+      }
+    }, 1000); // Reduced to 1 second for better UX
+
+    return () => clearTimeout(timer);
+  }, [imageLoaded, imageError]);
 
   const handleOrderClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -33,6 +45,16 @@ const BestsellerCard = ({
     const gtag = (window as any).gtag;
     if (gtag) gtag('event','order_now_click',{event_category:'Engagement',item_id:itemId,item_name:title});
     router.push(`/menu?itemId=${itemId}`);
+  };
+
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+    setImageError(false);
+  };
+
+  const handleImageError = () => {
+    setImageError(true);
+    setImageLoaded(false);
   };
 
   return (
@@ -45,17 +67,24 @@ const BestsellerCard = ({
       }}
     >
       <div className="relative h-48 overflow-hidden">
-        {!imageLoaded && (
+        {!imageLoaded && !imageError && (
           <div className="absolute inset-0 bg-gray-200 animate-pulse" />
         )}
-        <img
-          src={imageSrc}
-          alt={title}
-          className={`object-cover transition-all duration-500 group-hover:scale-110 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-          onLoad={() => setImageLoaded(true)}
-          loading="lazy"
-          style={{ width: '100%', height: '100%' }}
-        />
+        {imageError ? (
+          <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
+            <div className="text-gray-400 text-sm">Image not available</div>
+          </div>
+        ) : (
+          <img
+            src={imageSrc}
+            alt={title}
+            className={`object-cover transition-all duration-500 group-hover:scale-110 rounded-t-xl ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+            onLoad={handleImageLoad}
+            onError={handleImageError}
+            loading="lazy"
+            style={{ width: '100%', height: '100%' }}
+          />
+        )}
         {/* Hover Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         

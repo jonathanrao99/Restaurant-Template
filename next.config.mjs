@@ -7,8 +7,8 @@ const withBundleAnalyzer = bundleAnalyzer({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
-  trailingSlash: true,
+  output: 'export', // Re-enabled for static hosting
+  trailingSlash: false, // Set to false for better Hostinger compatibility
   env: {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
@@ -40,7 +40,6 @@ const nextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
   compress: true,
-  trailingSlash: false,
   webpack(config, { dev, isServer }) {
     // Exclude supabase functions from compilation
     config.resolve.fallback = {
