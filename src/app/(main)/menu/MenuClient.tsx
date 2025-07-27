@@ -29,41 +29,116 @@ interface MenuItem {
   square_variation_id?: string | null;
 }
 
+// Static menu data as fallback
+const staticMenuItems: MenuItem[] = [
+  {
+    id: 1,
+    name: "Chicken Dum Biryani",
+    description: "Slow-cooked biryani with tender chicken pieces. Aromatic rice dish packed with traditional spices and flavors.",
+    price: "11.99",
+    isvegetarian: false,
+    isspicy: true,
+    category: "Biryani",
+    menu_img: "/Menu_Images/chicken-dum-biryani.jpg",
+    sold_out: false,
+    square_variation_id: null
+  },
+  {
+    id: 8,
+    name: "Butter Chicken",
+    description: "Creamy, mildly spiced chicken in a luxurious tomato-based sauce. Beloved North Indian comfort dish.",
+    price: "11.99",
+    isvegetarian: false,
+    isspicy: false,
+    category: "Non-Veg Curry",
+    menu_img: "/Menu_Images/butter-chicken.jpg",
+    sold_out: false,
+    square_variation_id: null
+  },
+  {
+    id: 24,
+    name: "Aloo Samosa",
+    description: "Classic potato-filled pastry triangles. Iconic Indian street food with a crispy exterior.",
+    price: "4.99",
+    isvegetarian: true,
+    isspicy: false,
+    category: "Snacks",
+    menu_img: "/Menu_Images/aloo-samosa.jpeg",
+    sold_out: false,
+    square_variation_id: null
+  },
+  {
+    id: 5,
+    name: "Veg Biryani",
+    description: "Aromatic rice dish loaded with mixed vegetables. Flavorful and satisfying vegetarian biryani preparation.",
+    price: "9.99",
+    isvegetarian: true,
+    isspicy: false,
+    category: "Biryani",
+    menu_img: "/Menu_Images/veg-biryani.jpg",
+    sold_out: false,
+    square_variation_id: null
+  },
+  {
+    id: 15,
+    name: "Parotta",
+    description: "Thin, flaky layers of soft, golden-brown flatbread with a delightful chewiness.",
+    price: "3.99",
+    isvegetarian: true,
+    isspicy: false,
+    category: "Indian Breads",
+    menu_img: "/Menu_Images/parotta.jpg",
+    sold_out: false,
+    square_variation_id: null
+  }
+];
+
 type MenuClientProps = {
   initialMenuItems?: MenuItem[];
 };
 
 export default function MenuClient({ initialMenuItems }: MenuClientProps) {
-  const [menuItems, setMenuItems] = useState<MenuItem[]>(initialMenuItems || []);
-  const [loading, setLoading] = useState(!initialMenuItems);
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Fetch menu data on client side
   useEffect(() => {
-    if (initialMenuItems && initialMenuItems.length > 0) {
-      setMenuItems(initialMenuItems);
-      setLoading(false);
-      return;
-    }
-
     const fetchMenuData = async () => {
       try {
+        console.log('Starting to fetch menu data from Supabase...');
+        setLoading(true);
+        
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+        const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+        
+        console.log('Supabase URL:', supabaseUrl ? 'Set' : 'Missing');
+        console.log('Supabase Key:', supabaseKey ? 'Set' : 'Missing');
+        
         const supabase = createClient(
           process.env.NEXT_PUBLIC_SUPABASE_URL!,
           process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
         );
+        
+        console.log('Supabase client created, fetching menu_items...');
         const { data: items, error } = await supabase
           .from('menu_items')
           .select('id, name, description, price, isvegetarian, isspicy, category, menu_img, sold_out, square_variation_id, images');
         
         if (error) {
-          setError(error.message);
+          console.error('Supabase error:', error);
+          console.warn('Using static data as fallback');
+          setMenuItems(staticMenuItems);
           setLoading(false);
           return;
         }
 
-        if (!items) {
-          setMenuItems([]);
+        console.log('Supabase response - items count:', items?.length || 0);
+        console.log('Supabase response - items:', items);
+
+        if (!items || items.length === 0) {
+          console.warn('No menu items from Supabase, using static data');
+          setMenuItems(staticMenuItems);
           setLoading(false);
           return;
         }
@@ -82,16 +157,20 @@ export default function MenuClient({ initialMenuItems }: MenuClientProps) {
           };
         });
 
+        console.log('Processed menu items:', processedItems.length);
+        console.log('Categories found:', [...new Set(processedItems.map(item => item.category))]);
         setMenuItems(processedItems);
         setLoading(false);
       } catch (err) {
-        setError('Failed to load menu items');
+        console.error('Error fetching menu data:', err);
+        console.warn('Using static data as fallback');
+        setMenuItems(staticMenuItems);
         setLoading(false);
       }
     };
 
     fetchMenuData();
-  }, [initialMenuItems]);
+  }, []);
   
   // Dynamically get categories from menu items in custom order
   const categories = useMemo(() => {
@@ -138,7 +217,14 @@ export default function MenuClient({ initialMenuItems }: MenuClientProps) {
   const searchParams: ReadonlyURLSearchParams = useSearchParams();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
-  const [openCategories, setOpenCategories] = useState<Set<string>>(new Set(categories));
+  const [openCategories, setOpenCategories] = useState<Set<string>>(new Set());
+
+  // Initialize openCategories when categories are available
+  useEffect(() => {
+    if (categories.length > 0 && openCategories.size === 0) {
+      setOpenCategories(new Set(categories));
+    }
+  }, [categories, openCategories.size]);
 
   const filteredMenuItems = useMemo(() => {
     if (!menuItems) return {};
