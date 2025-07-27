@@ -153,7 +153,7 @@ const BestsellersSection = () => {
             transition={{ duration: 0.8, type: "spring" }}
             className="mt-8 md:mt-4"
           >
-            <AnimatedCardGrid columns={{ sm: 1, md: 2, lg: 3 }} gap={8} staggerDelay={0.15}>
+            <AnimatedCardGrid columns={{ sm: 1, md: 3, lg: 3 }} gap={8} staggerDelay={0.15}>
               {bestsellers.map((item, index) => (
                 <AnimatedCard key={index}>
                   <motion.div

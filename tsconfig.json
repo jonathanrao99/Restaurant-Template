@@ -6,10 +6,7 @@
         "./src/*"
       ]
     },
-    "types": [
-      "vitest",
-      "@testing-library/jest-dom"
-    ],
+    "types": [],
     "noImplicitAny": false,
     "noUnusedParameters": false,
     "skipLibCheck": true,

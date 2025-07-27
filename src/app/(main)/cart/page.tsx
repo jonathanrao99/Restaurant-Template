@@ -1,69 +1,32 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Trash2, Plus, Minus, ArrowLeft, ShoppingBag, Edit } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogFooter,
-  DialogTitle
-} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import { motion } from 'framer-motion';
 import { fadeInUp } from '@/utils/motion.variants';
-import CartSummary from '@/components/cart/CartSummary';
-import CartItems from '@/components/cart/CartItems';
-import ReturningCustomer from '@/components/cart/ReturningCustomer';
-import { logAnalyticsEvent } from '@/utils/loyaltyAndAnalytics';
+import { DeliveryServiceModal } from '@/components/ui/delivery-service-modal';
 
 const Cart = () => {
-  const { 
-    cartItems, 
-    removeFromCart, 
-    updateQuantity, 
-    updateSpecialInstructions, 
-    getCartTotal,
-    fulfillmentMethod,
-    setFulfillmentMethod,
-    scheduledTime,
-    setScheduledTime
-  } = useCart();
-  
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [editItem, setEditItem] = useState<{id: number, instructions: string} | null>(null);
+  const { cartItems } = useCart();
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(true);
 
   useEffect(() => {
     window.scrollTo(0, 0);
     setIsMounted(true);
-    logAnalyticsEvent('cart_view', {});
     if (typeof window !== 'undefined') {
       if (typeof window.gtag === 'function') window.gtag('event', 'cart_view', {});
       if (typeof window.umami === 'function') window.umami('cart_view', {});
     }
   }, []);
 
-  const openEditDialog = (id: number, instructions: string = '') => {
-    setEditItem({ id, instructions });
-    setIsEditDialogOpen(true);
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    router.push('/menu');
   };
-
-  const handleSaveInstructions = () => {
-    if (editItem) {
-      updateSpecialInstructions(editItem.id, editItem.instructions);
-      setIsEditDialogOpen(false);
-      setEditItem(null);
-    }
-  };
-
-  const deliveryFee = fulfillmentMethod === 'delivery' ? 3.99 : 0;
-  const subtotal = getCartTotal();
-  const tax = subtotal * 0.0825;
-  const total = subtotal + tax + deliveryFee;
 
   return (
     <>
@@ -104,66 +67,26 @@ const Cart = () => {
           viewport={{ once: true }}
           className="container mx-auto px-4 sm:px-6 max-w-7xl"
         >
-          {/* Loyalty Banner always visible, less vertical padding */}
-          <div className="flex justify-center mb-8">
-            <span className="inline-block bg-orange-100 text-orange-800 text-base px-4 py-1 rounded-xl font-medium">
-              Earn 1 loyalty point for every $1 spent. Accumulate 100 points to redeem $10 off your order!
-            </span>
+          <div className="text-center py-12">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-2">Ordering Temporarily Unavailable</h2>
+            <p className="text-gray-600 mb-6">
+              We're working on our own delivery partner to serve you better! 
+              Please order through our trusted third-party delivery partners.
+            </p>
+            <Button
+              onClick={() => setIsModalOpen(true)}
+              className="bg-desi-orange hover:bg-desi-orange/90"
+            >
+              Order Through Our Partners
+            </Button>
           </div>
-          {isMounted && (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-              {/* Cart Items and Returning Customer */}
-              <div className="lg:col-span-2">
-                <CartItems 
-                  items={cartItems}
-                  onRemove={removeFromCart}
-                  onUpdateQuantity={updateQuantity}
-                  onUpdateInstructions={updateSpecialInstructions}
-                />
-              </div>
-
-              {/* Order Summary and Checkout */}
-              <div className="mt-0">
-                <CartSummary
-                  items={cartItems}
-                  deliveryMethod={fulfillmentMethod}
-                  setDeliveryMethod={setFulfillmentMethod}
-                />
-                <ReturningCustomer />
-              </div>
-            </div>
-          )}
         </motion.div>
       </section>
 
-      {/* Edit Instructions Modal */}
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="sm:max-w-md rounded-xl">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-display">Special Instructions</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-2">
-            <div className="space-y-2">
-              <label htmlFor="instructions" className="block text-sm font-medium text-gray-700">Add special preparation instructions:</label>
-              <Textarea
-                id="instructions"
-                placeholder="Any special preparation instructions? (e.g., less spicy, no cilantro)"
-                value={editItem?.instructions || ''}
-                onChange={(e) => editItem && setEditItem({ ...editItem, instructions: e.target.value })}
-                className="min-h-[80px] rounded-xl border border-gray-300 focus:border-desi-orange focus:ring-2 focus:ring-desi-orange/20"
-              />
-            </div>
-            <DialogFooter className="pt-4 flex justify-end space-x-2">
-              <Button variant="outline" onClick={() => setIsEditDialogOpen(false)} className="rounded-xl">
-                Cancel
-              </Button>
-              <Button onClick={handleSaveInstructions} className="bg-desi-orange hover:bg-desi-orange/90 text-white rounded-xl">
-                Save Instructions
-              </Button>
-            </DialogFooter>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <DeliveryServiceModal 
+        isOpen={isModalOpen} 
+        onClose={handleCloseModal} 
+      />
     </>
   );
 };

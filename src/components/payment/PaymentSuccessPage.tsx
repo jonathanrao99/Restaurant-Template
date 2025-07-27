@@ -106,27 +106,27 @@ export default function PaymentSuccessPage() {
 
         if (fulfillmentMethod === 'delivery') {
           // Create Shipday order for delivery
-          const orderData = {
-            orderId: orderId,
-            customerName: customerName,
-            customerPhone: customerPhone,
-            customerEmail: customerEmail,
-            deliveryAddress: deliveryAddress,
-            pickupTime: pickupTimeFormatted,
-            deliveryTime: deliveryTimeFormatted,
-            orderItems: cartItems,
-            totalAmount: totalAmount,
-            deliveryFee: deliveryFee,
-            paymentId: `payment-${Date.now()}`
-          };
+        const orderData = {
+          orderId: orderId,
+          customerName: customerName,
+          customerPhone: customerPhone,
+          customerEmail: customerEmail,
+          deliveryAddress: deliveryAddress,
+          pickupTime: pickupTimeFormatted,
+          deliveryTime: deliveryTimeFormatted,
+          orderItems: cartItems,
+          totalAmount: totalAmount,
+          deliveryFee: deliveryFee,
+          paymentId: `payment-${Date.now()}`
+        };
 
           console.log('Sending delivery order data to Shipday:', orderData);
-          
-          const result = await deliveryApi.createShipdayOrder(orderData);
-          console.log('Shipday order creation result:', result);
-          
-          if (result.success) {
-            console.log('✅ Shipday order created successfully:', result.shipdayOrderId);
+        
+        const result = await deliveryApi.createShipdayOrder(orderData);
+        console.log('Shipday order creation result:', result);
+        
+        if (result.success) {
+          console.log('✅ Shipday order created successfully:', result.shipdayOrderId);
             toast.success('Order confirmed! Your food will be ready in 25 minutes.');
           } else {
             console.error('❌ Failed to create Shipday order:', result.error);
@@ -191,14 +191,14 @@ export default function PaymentSuccessPage() {
         }
         
         // Clear localStorage after successful order processing
-        localStorage.removeItem('customerName');
-        localStorage.removeItem('customerPhone');
-        localStorage.removeItem('customerEmail');
-        localStorage.removeItem('deliveryAddress');
-        localStorage.removeItem('deliveryFee');
-        localStorage.removeItem('totalAmount');
-        localStorage.removeItem('orderId');
-        localStorage.removeItem('fulfillmentMethod');
+          localStorage.removeItem('customerName');
+          localStorage.removeItem('customerPhone');
+          localStorage.removeItem('customerEmail');
+          localStorage.removeItem('deliveryAddress');
+          localStorage.removeItem('deliveryFee');
+          localStorage.removeItem('totalAmount');
+          localStorage.removeItem('orderId');
+          localStorage.removeItem('fulfillmentMethod');
         localStorage.removeItem('subtotal');
         localStorage.removeItem('taxAmount');
         localStorage.removeItem('scheduledTime');

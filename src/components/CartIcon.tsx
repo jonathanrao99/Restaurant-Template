@@ -1,16 +1,25 @@
 import { ShoppingCart } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '@/context/CartContext';
+import { useState } from 'react';
+import { DeliveryServiceModal } from '@/components/ui/delivery-service-modal';
 
 const CartIcon = () => {
   const { cartItems } = useCart();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const itemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
+  const handleCartClick = () => {
+    setIsModalOpen(true);
+  };
+
   return (
+    <>
     <motion.div
-      className="relative"
+        className="relative cursor-pointer"
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.95 }}
+        onClick={handleCartClick}
     >
       <div className="relative">
         <motion.div
@@ -52,6 +61,12 @@ const CartIcon = () => {
         )}
       </AnimatePresence>
     </motion.div>
+
+      <DeliveryServiceModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
+    </>
   );
 };
 
