@@ -20,11 +20,11 @@ export default function LayoutClientWrapper({ children }: { children: React.Reac
     <>
       <Analytics />
       <CartProvider>
-        <Toaster />
+          <Toaster />
         <Navbar />
-        <PageTransitionWrapper>
-          {children}
-        </PageTransitionWrapper>
+          <PageTransitionWrapper>
+            {children}
+          </PageTransitionWrapper>
         <Footer />
       </CartProvider>
     </>

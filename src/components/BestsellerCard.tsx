@@ -16,10 +16,10 @@ interface BestsellerCardProps {
 }
 
 export default function BestsellerCard({
-  title,
-  description,
-  price,
-  imageSrc,
+  title, 
+  description, 
+  price, 
+  imageSrc, 
   isVegetarian = false,
   isSpicy = false,
   category = ''
@@ -76,17 +76,17 @@ export default function BestsellerCard({
             <div className="text-gray-400 text-sm">Image not available</div>
           </div>
         ) : (
-          <img
-            src={imageSrc}
-            alt={title}
+        <img
+          src={imageSrc}
+          alt={title}
             className={`object-cover transition-all duration-500 group-hover:scale-110 rounded-t-xl ${
               imageLoaded ? 'opacity-100' : 'opacity-0'
             }`}
             onLoad={handleImageLoad}
             onError={handleImageError}
-            loading="lazy"
-            style={{ width: '100%', height: '100%' }}
-          />
+          loading="lazy"
+          style={{ width: '100%', height: '100%' }}
+        />
         )}
         <div className="absolute top-2 left-2 flex gap-1">
           {isVegetarian && (
