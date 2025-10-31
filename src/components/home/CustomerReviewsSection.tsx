@@ -7,8 +7,8 @@ const CustomerReviewsSection = () => {
   const handleReviewSubmit = (review) => {
     logAnalyticsEvent('review_submitted', review);
     if (typeof window !== 'undefined') {
-      window.gtag && window.gtag('event', 'review_submitted', review);
-      window.umami && window.umami('review_submitted', review);
+      (window as any).gtag && (window as any).gtag('event', 'review_submitted', review);
+      (window as any).umami && (window as any).umami('review_submitted', review);
     }
     // ...existing logic...
   };

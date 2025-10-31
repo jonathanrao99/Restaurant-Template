@@ -2,32 +2,12 @@
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { useSearchParams } from 'next/navigation';
-import type { ReadonlyURLSearchParams } from 'next/navigation';
 import MenuItemCard from '@/components/menu/MenuItemCard';
-import { Search, ChevronDown, RefreshCw } from 'lucide-react';
-import { createClient } from '@supabase/supabase-js';
-
-// Simple MenuItem interface
-interface MenuItem {
-  id: number;
-  name: string;
-  description: string;
-  price: string;
-  isvegetarian: boolean;
-  isspicy: boolean;
-  category: string;
-  menu_img?: string;
-  quantity?: number;
-  specialInstructions?: string;
-  sold_out: boolean;
-  square_variation_id?: string | null;
-}
+import { Search, ChevronDown } from 'lucide-react';
+import { menuItems } from '@/data/menuData';
+import type { MenuItem } from '@/data/menuData';
 
 export default function MenuClient() {
-  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [openCategories, setOpenCategories] = useState<Set<string>>(new Set());
   
@@ -35,71 +15,8 @@ export default function MenuClient() {
   const [vegetarianOnly, setVegetarianOnly] = useState(false);
   const [spicyOnly, setSpicyOnly] = useState(false);
   const [under10Only, setUnder10Only] = useState(false);
-  const searchParams = useSearchParams();
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Memoized Supabase client to prevent recreation
-  const supabaseClient = useMemo(() => {
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    
-    if (!url || !key) {
-      console.warn('Supabase credentials not found');
-      return null;
-    }
-    
-    return createClient(url, key);
-  }, []);
-
-  // Fetch menu data from Supabase
-  const fetchMenuData = useCallback(async () => {
-    if (!supabaseClient) {
-      console.error('No Supabase client available');
-      setError('Database connection not available');
-      setLoading(false);
-      return;
-    }
-
-    try {
-      console.log('Fetching menu data from Supabase...');
-      setError(null);
-      setLoading(true);
-      
-      const { data: items, error: supabaseError } = await supabaseClient
-        .from('menu_items')
-        .select('id, name, description, price, isvegetarian, isspicy, category, menu_img, sold_out, square_variation_id, images')
-        .order('category', { ascending: true })
-        .order('name', { ascending: true });
-
-      if (supabaseError) {
-        console.error('Supabase error:', supabaseError);
-        setError('Failed to load menu from database');
-        setLoading(false);
-        return;
-      }
-
-      if (items && items.length > 0) {
-        console.log(`Successfully loaded ${items.length} menu items from Supabase`);
-        setMenuItems(items);
-        setError(null);
-      } else {
-        console.log('No menu items found in database');
-        setMenuItems([]);
-        setError('No menu items available');
-      }
-    } catch (error) {
-      console.error('Error fetching menu data:', error);
-      setError('Failed to load menu data');
-    } finally {
-      setLoading(false);
-    }
-  }, [supabaseClient]);
-
-  // Initial data fetch
-  useEffect(() => {
-    fetchMenuData();
-  }, [fetchMenuData]);
-  
   // Dynamically get categories from menu items in custom order
   const categories = useMemo(() => {
     if (!menuItems || menuItems.length === 0) return [];
@@ -128,7 +45,7 @@ export default function MenuClient() {
       if (bIndex === -1) return -1;
       return aIndex - bIndex;
     });
-  }, [menuItems]);
+  }, []);
 
   // Filter menu items based on search and special filters
   const filteredMenuItems = useMemo(() => {
@@ -163,7 +80,7 @@ export default function MenuClient() {
     }
     
     return filtered;
-  }, [menuItems, searchTerm, vegetarianOnly, spicyOnly, under10Only]);
+  }, [searchTerm, vegetarianOnly, spicyOnly, under10Only]);
 
   // Initialize open categories when categories are available
   useEffect(() => {
@@ -171,7 +88,6 @@ export default function MenuClient() {
       setOpenCategories(new Set(categories));
     }
   }, [categories, openCategories.size]);
-
 
   const handleSearch = useCallback((searchTerm: string) => {
     setSearchTerm(searchTerm);
@@ -189,40 +105,10 @@ export default function MenuClient() {
     });
   }, []);
 
-  const handleCategoryFilter = useCallback((category: string | null) => {
-    // This function is no longer used for category filtering,
-    // but keeping it as it might be used elsewhere or for future features.
-    // setSelectedCategory(category); 
-  }, []);
-
-
-  const handleRefresh = useCallback(() => {
-    fetchMenuData();
-  }, [fetchMenuData]);
-
-
   // Memoized search input handler
   const handleSearchInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     handleSearch(e.target.value);
   }, [handleSearch]);
-
-  // Memoized category filter handler
-  const handleCategoryClick = useCallback((category: string) => {
-    // This function is no longer used for category filtering,
-    // but keeping it as it might be used elsewhere or for future features.
-    // handleCategoryFilter(selectedCategory === category ? null : category);
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-desi-cream flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-desi-orange mx-auto mb-4"></div>
-          <p className="text-desi-gray">Loading menu...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-desi-cream overflow-x-hidden">
@@ -322,7 +208,7 @@ export default function MenuClient() {
         </div>
 
         {/* No Results Message */}
-        {filteredMenuItems.length === 0 && !loading && (
+        {filteredMenuItems.length === 0 && (
           <div className="text-center py-12">
             <p className="text-gray-500 text-lg">No items found matching your search.</p>
             <button
@@ -339,7 +225,6 @@ export default function MenuClient() {
           </div>
         )}
       </div>
-
     </div>
   );
-} 
+}

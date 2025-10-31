@@ -4,23 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { fadeInUp } from '@/utils/motion.variants';
 import { PulsatingButton } from '@/components/magicui/pulsating-button';
-import AnimatedCardGrid, { AnimatedCard } from '@/components/AnimatedCardGrid';
-import { Phone, Mail, MapPin, Calendar, Users, PartyPopper, Utensils, Download } from 'lucide-react';
-import GradientText from '@/components/GradientText';
-
-// Define your services here
-const services = [
-  { title: 'Corporate Events', icon: '/Ingredients/clove-removebg-preview.png', description: 'Tailored menus for conferences, meetings, and corporate gatherings.' },
-  { title: 'Weddings', icon: '/Ingredients/pngtree-onion-slice-transparent-background-5727009.png', description: 'Elegant wedding catering with customizable buffet and plated options.' },
-  { title: 'Private Parties', icon: '/Ingredients/mint-removebg-preview.png', description: 'Personalized menus for birthday parties, anniversaries, and special celebrations.' },
-];
-
-// Define your gallery items here (type: 'image' or 'video')
-const galleryItems = [
-  { type: 'image', src: '/Truck/IMG-20250603-WA0005.jpg', alt: 'Corporate Event Setup' },
-  { type: 'video', src: '/videos/event-highlight.mp4' },
-  { type: 'image', src: '/Truck/IMG-20250610-WA0011.jpg', alt: 'Wedding Reception' },
-];
+import { Phone, Mail, MapPin } from 'lucide-react';
 
 const Catering = () => {
   const router = useRouter();
@@ -270,26 +254,16 @@ const Catering = () => {
             </motion.span>
             <br />
           </p>
-          <p className="text-gray-600 text-lg font-medium max-w-7xl mx-auto">
+          <p className="text-gray-600 text-lg font-medium max-w-7xl mx-auto mb-4">
             We've got you covered. You can still enjoy our delicious, handcrafted dishes through our convenient tray ordering service<br /> — perfect for home parties, office lunches, and small gatherings.
           </p>  
 
-          <a
-            href="/tray-prices.pdf"
-            download
-            className="inline-flex mt-4 mb-2 items-center justify-center bg-desi-black text-white px-6 py-3 rounded-full hover:bg-opacity-90 transition"
-            aria-label="Download Tray Prices PDF"
-          >
-            <Download className="w-5 h-5" />
-             <span className="ml-2">Tray Prices</span>
-          </a>
-
-          <p className="text-sm text-gray-500 mt-3">
-            Once you've decided what trays you want, just fill out the{' '}
-            <a href="/#connect" className="text-desi-orange underline hover:opacity-80">
+          <p className="text-gray-600 text-lg font-medium max-w-3xl mx-auto">
+            Fill out the{' '}
+            <a href="/#connect" className="text-desi-orange underline hover:opacity-80 font-semibold">
               Connect With Us
             </a>{' '}
-            form to place your order.
+            form below to inquire about tray pricing and place your order.
           </p>
         </section>
 

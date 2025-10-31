@@ -1,12 +1,13 @@
-import { supabase } from '@/integrations/supabase/client';
+// Analytics and loyalty functions - now using console logging
+// Since Supabase has been removed, these functions just log to console
 
 export async function logAnalyticsEvent(event_name: string, event_data: any) {
   try {
-    await supabase.from('analytics_events').insert({
-      event_type: event_name,
-      event_data,
-      created_at: new Date().toISOString()
-    });
+    console.log('Analytics Event:', event_name, event_data);
+    // You can integrate with Google Analytics or other analytics services here
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', event_name, event_data);
+    }
   } catch (e) {
     console.error('Analytics event logging failed:', e);
   }
@@ -15,40 +16,18 @@ export async function logAnalyticsEvent(event_name: string, event_data: any) {
 export async function awardLoyaltyPoints(orderId: number, customerId: number, totalAmount: number) {
   try {
     const points = Math.floor(totalAmount);
-    await supabase.from('loyalty_events').insert({
-      customer_id: customerId,
-      event_type: 'earn',
-      points,
-      order_id: orderId,
-      description: `Earned ${points} points for order #${orderId}`
-    });
+    console.log('Loyalty Points Awarded:', { customer_id: customerId, order_id: orderId, points });
     await logAnalyticsEvent('loyalty_points_earned', { customer_id: customerId, order_id: orderId, points });
   } catch (e) {
-    // Optionally log error
+    console.error('Loyalty points award failed:', e);
   }
 }
 
 export async function redeemLoyaltyPointsIfEligible(orderId: number, customerId: number) {
   try {
-    // Fetch current points balance from the summary view
-    const { data: summary } = await supabase
-      .from('customer_loyalty_summary')
-      .select('points_balance')
-      .eq('customer_id', customerId)
-      .single();
-    const points = (summary as any)?.points_balance || 0;
-    if (points >= 100) {
-      await supabase.from('loyalty_events').insert({
-        customer_id: customerId,
-        event_type: 'redeem',
-        points: -100,
-        order_id: orderId,
-        description: 'Redeemed 100 points for $10 off'
-      });
-      await logAnalyticsEvent('loyalty_points_redeemed', { customer_id: customerId, order_id: orderId, points: 100 });
-      // TODO: Apply $10 discount to the order in your order logic
-    }
+    console.log('Loyalty Points Redemption Attempted:', { customer_id: customerId, order_id: orderId });
+    // Loyalty tracking is now handled through Square
   } catch (e) {
-    // Optionally log error
+    console.error('Loyalty points redemption failed:', e);
   }
-} 
+}

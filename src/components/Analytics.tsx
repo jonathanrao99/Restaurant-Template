@@ -1,9 +1,15 @@
 'use client';
 
 import { useEffect } from 'react';
+import { initScrollTracking, initTimeTracking, initAutomaticTracking } from '@/utils/conversionTracking';
 
 export default function Analytics() {
   useEffect(() => {
+    // Initialize conversion tracking
+    const cleanupScroll = initScrollTracking();
+    const cleanupTime = initTimeTracking();
+    initAutomaticTracking();
+
     // Performance monitoring
     if (typeof window !== 'undefined') {
       // Monitor Core Web Vitals
@@ -15,8 +21,8 @@ export default function Analytics() {
             const lastEntry = entries[entries.length - 1];
             if (lastEntry) {
               console.log('LCP:', lastEntry.startTime);
-              if (typeof window.gtag !== 'undefined') {
-                window.gtag('event', 'web_vitals', {
+              if (typeof (window as any).gtag !== 'undefined') {
+                (window as any).gtag('event', 'web_vitals', {
                   event_category: 'Web Vitals',
                   event_label: 'LCP',
                   value: Math.round(lastEntry.startTime),
@@ -33,8 +39,8 @@ export default function Analytics() {
               const fidEntry = entry as PerformanceEventTiming;
               const fid = fidEntry.processingStart - fidEntry.startTime;
               console.log('FID:', fid);
-              if (typeof window.gtag !== 'undefined') {
-                window.gtag('event', 'web_vitals', {
+              if (typeof (window as any).gtag !== 'undefined') {
+                (window as any).gtag('event', 'web_vitals', {
                   event_category: 'Web Vitals',
                   event_label: 'FID',
                   value: Math.round(fid),
@@ -52,8 +58,8 @@ export default function Analytics() {
               if (!entry.hadRecentInput) {
                 clsValue += entry.value;
                 console.log('CLS:', clsValue);
-                if (typeof window.gtag !== 'undefined') {
-                  window.gtag('event', 'web_vitals', {
+                if (typeof (window as any).gtag !== 'undefined') {
+                  (window as any).gtag('event', 'web_vitals', {
                     event_category: 'Web Vitals',
                     event_label: 'CLS',
                     value: Math.round(clsValue * 1000) / 1000,
@@ -79,8 +85,8 @@ export default function Analytics() {
             console.log('Page Load Time:', loadTime);
             console.log('DOM Content Loaded:', domContentLoaded);
             
-            if (typeof window.gtag !== 'undefined') {
-              window.gtag('event', 'timing_complete', {
+            if (typeof (window as any).gtag !== 'undefined') {
+              (window as any).gtag('event', 'timing_complete', {
                 name: 'load',
                 value: Math.round(loadTime),
               });
@@ -89,6 +95,12 @@ export default function Analytics() {
         }, 0);
       });
     }
+
+    // Cleanup functions
+    return () => {
+      if (cleanupScroll) cleanupScroll();
+      if (cleanupTime) cleanupTime();
+    };
   }, []);
 
   return null;

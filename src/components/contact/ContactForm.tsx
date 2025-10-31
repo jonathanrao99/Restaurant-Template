@@ -2,7 +2,6 @@ import { useState, Fragment } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Phone, User, MessageSquare, Check, AlertCircle, ArrowRight, Users, PartyPopper, ChevronDown, Download, HelpCircle } from 'lucide-react';
 import { logAnalyticsEvent } from '@/utils/loyaltyAndAnalytics';
-import { supabase } from '@/integrations/supabase/client';
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
@@ -36,8 +35,8 @@ const ContactForm = () => {
   const handleNewsletterSignup = (email) => {
     logAnalyticsEvent('newsletter_signup', { email });
     if (typeof window !== 'undefined') {
-      window.gtag && window.gtag('event', 'newsletter_signup', { email });
-      window.umami && window.umami('newsletter_signup', { email });
+      (window as any).gtag && (window as any).gtag('event', 'newsletter_signup', { email });
+      (window as any).umami && (window as any).umami('newsletter_signup', { email });
     }
     // ...existing logic...
   };
@@ -45,8 +44,8 @@ const ContactForm = () => {
   const handleContactFormSubmit = (formData) => {
     logAnalyticsEvent('contact_form_submitted', formData);
     if (typeof window !== 'undefined') {
-      window.gtag && window.gtag('event', 'contact_form_submitted', formData);
-      window.umami && window.umami('contact_form_submitted', formData);
+      (window as any).gtag && (window as any).gtag('event', 'contact_form_submitted', formData);
+      (window as any).umami && (window as any).umami('contact_form_submitted', formData);
     }
     // ...existing logic...
   };
@@ -57,105 +56,35 @@ const ContactForm = () => {
     setSubmitStatus({ type: null, message: '' });
 
     try {
-      // Send email via Supabase Edge Function (Resend)
+      // Open email client with contact form details
       const now = new Date().toLocaleString();
       const eventLabel = selectedEvent.label;
       
-      // Get the correct Supabase URL - use hardcoded URL since we know it
-      const supabaseUrl = 'https://tpncxlxsggpsiswoownv.supabase.co';
-      const timestamp = Date.now();
-      const url = `${supabaseUrl}/functions/v1/send-email?t=${timestamp}`;
+      const subject = encodeURIComponent(`Contact Form Submission from ${formData.name}`);
+      const body = encodeURIComponent(`
+Contact Form Submission
+${'-'.repeat(50)}
+
+Submission Date: ${now}
+Name: ${formData.name}
+Email: ${formData.email}
+Phone: ${formData.phone || 'N/A'}
+Event Type: ${eventLabel}
+Subscribe to Newsletter: ${formData.subscribe_newsletter ? 'Yes' : 'No'}
+
+Message:
+${formData.message}
+      `.trim());
       
-      console.log('Environment check:');
-      console.log('- NEXT_PUBLIC_SUPABASE_URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
-      console.log('- Using hardcoded URL:', supabaseUrl);
-      console.log('Full URL:', url);
-      console.log('Making fetch request to:', url);
+      window.location.href = `mailto:desiflavorskaty@gmail.com?subject=${subject}&body=${body}`;
       
-      const body = {
-        to: 'desiflavorskaty@gmail.com',
-        subject: 'New Submission by ' + formData.name,
-        html: `
-          <p>Hello Desi Flavors Katy Team,</p>
-          <p>You've just received a new response from the contact form on your website. Details are as follows:</p>
-          <ul>
-            <li><strong>Submission Date:</strong> ${now}</li>
-            <li><strong>Name:</strong> ${formData.name}</li>
-            <li><strong>Email:</strong> ${formData.email}</li>
-            <li><strong>Phone:</strong> ${formData.phone || 'N/A'}</li>
-            <li><strong>Event Type:</strong> ${eventLabel}</li>
-            <li><strong>Subscribed to Newsletter:</strong> ${formData.subscribe_newsletter ? 'Yes' : 'No'}</li>
-            <li><strong>Message:</strong><br/>${formData.message}</li>
-          </ul>
-        `,
-        // Add user details for confirmation email
-        userEmail: formData.email,
-        userName: formData.name,
-        userPhone: formData.phone,
-        eventType: eventLabel,
-        userMessage: formData.message
-      };
-      
-      console.log('Request body:', body);
-      console.log('Request headers:', { 
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`
-      });
-      
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`
-        },
-        body: JSON.stringify(body)
-      });
-      
-      if (!res.ok) {
-        const errorText = await res.text();
-        console.error('Email send failed:', res.status, errorText);
-        throw new Error(`Failed to send email: ${res.status} ${errorText}`);
-      }
-      
-      // If user subscribed to newsletter, add them to Resend
-      if (formData.subscribe_newsletter) {
-        try {
-          const newsletterUrl = `${supabaseUrl}/functions/v1/add-newsletter-subscriber?t=${timestamp}`;
-          const newsletterRes = await fetch(newsletterUrl, {
-            method: 'POST',
-            headers: { 
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`
-            },
-            body: JSON.stringify({
-              email: formData.email,
-              name: formData.name
-            })
-          });
-          
-          if (!newsletterRes.ok) {
-            const errorText = await newsletterRes.text();
-            console.error('Newsletter subscription failed:', newsletterRes.status, errorText);
-          } else {
-            const newsletterResult = await newsletterRes.json();
-            console.log('Newsletter subscription result:', newsletterResult);
-            
-            if (newsletterResult.alreadySubscribed) {
-              console.log('User was already subscribed to newsletter');
-            } else {
-              console.log('Newsletter subscription successful');
-            }
-          }
-        } catch (newsletterError) {
-          console.error('Newsletter subscription error:', newsletterError);
-          // Don't fail the main form submission if newsletter fails
-        }
-      }
-      
+      // Show success message
       setSubmitStatus({
         type: 'success',
-        message: 'Thank you for your message! We will get back to you soon.'
+        message: 'Opening your email client. Please send the email to complete your submission!'
       });
+      
+      // Clear form
       setFormData({
         name: '',
         email: '',
@@ -164,6 +93,13 @@ const ContactForm = () => {
         event_type: 'general',
         subscribe_newsletter: false
       });
+      
+      // If user subscribed to newsletter, show a reminder
+      if (formData.subscribe_newsletter) {
+        setTimeout(() => {
+          alert('Please mention in your email that you\'d like to subscribe to the newsletter!');
+        }, 1000);
+      }
     } catch (error) {
       console.error('Error submitting form:', error);
       console.error('Error name:', error.name);

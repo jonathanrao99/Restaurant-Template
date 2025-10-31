@@ -47,10 +47,8 @@ const Navbar = () => {
     setIsMobileMenuOpen(false);
   }, [pathname]);
 
-  // On payment pages, always use white bg and desi-black text, even before hydration or scroll
-  const isPaymentPage = pathname === '/payment';
-  const forceDesiBlack = isPaymentPage;
-  const useDarkText = forceDesiBlack || isScrolled;
+  // Removed payment page check since we no longer have payment pages
+  const useDarkText = isScrolled;
   
   return <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${useDarkText ? 'bg-white/90 backdrop-blur-md shadow-sm py-3' : 'bg-transparent py-5'}`}>
       <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
@@ -58,7 +56,7 @@ const Navbar = () => {
         <nav className="hidden md:flex items-center space-x-8 flex-1 justify-start">
           <Link 
             href="/menu" 
-            className={`font-display font-semibold uppercase tracking-wider text-md px-2 py-1 rounded transition-colors duration-300 ${forceDesiBlack ? 'text-desi-black hover:text-desi-orange' : useDarkText ? 'text-gray-900 hover:text-desi-orange' : 'text-white hover:text-desi-orange'} ${forceDesiBlack ? '!text-desi-black !hover:text-desi-orange' : ''}`}
+            className={`font-display font-semibold uppercase tracking-wider text-md px-2 py-1 rounded transition-colors duration-300 ${false ? 'text-desi-black hover:text-desi-orange' : useDarkText ? 'text-gray-900 hover:text-desi-orange' : 'text-white hover:text-desi-orange'} ${false ? '!text-desi-black !hover:text-desi-orange' : ''}`}
             onClick={(e) => {
               e.preventDefault();
               handleNavClick('/menu');
@@ -68,7 +66,7 @@ const Navbar = () => {
           </Link>
           <Link 
             href="/catering" 
-            className={`font-display font-semibold uppercase tracking-wider text-md px-2 py-1 rounded transition-colors duration-300 ${forceDesiBlack ? 'text-desi-black hover:text-desi-orange' : useDarkText ? 'text-gray-900 hover:text-desi-orange' : 'text-white hover:text-desi-orange'} ${forceDesiBlack ? '!text-desi-black !hover:text-desi-orange' : ''}`}
+            className={`font-display font-semibold uppercase tracking-wider text-md px-2 py-1 rounded transition-colors duration-300 ${false ? 'text-desi-black hover:text-desi-orange' : useDarkText ? 'text-gray-900 hover:text-desi-orange' : 'text-white hover:text-desi-orange'} ${false ? '!text-desi-black !hover:text-desi-orange' : ''}`}
             onClick={(e) => {
               e.preventDefault();
               handleNavClick('/catering');
@@ -89,7 +87,7 @@ const Navbar = () => {
             }}
           >
             <span className="font-samarkan text-4xl text-desi-orange">Desi</span>
-            <span className={`font-display text-2xl font-bold ml-2 tracking-wide transition-colors duration-300 ${forceDesiBlack ? 'text-desi-black' : useDarkText ? 'text-gray-900' : 'text-white'} ${forceDesiBlack ? '!text-desi-black' : ''}`}>FlavorsKaty</span>
+            <span className={`font-display text-2xl font-bold ml-2 tracking-wide transition-colors duration-300 ${false ? 'text-desi-black' : useDarkText ? 'text-gray-900' : 'text-white'} ${false ? '!text-desi-black' : ''}`}>FlavorsKaty</span>
           </Link>
         </div>
 
@@ -97,7 +95,7 @@ const Navbar = () => {
         <nav className="hidden md:flex items-center space-x-8 flex-1 justify-end">
           <Link 
             href="/about" 
-            className={`font-display font-semibold uppercase tracking-wider text-md px-2 py-1 rounded transition-colors duration-300 ${forceDesiBlack ? 'text-desi-black hover:text-desi-orange' : useDarkText ? 'text-gray-900 hover:text-desi-orange' : 'text-white hover:text-desi-orange'} ${forceDesiBlack ? '!text-desi-black !hover:text-desi-orange' : ''}`}
+            className={`font-display font-semibold uppercase tracking-wider text-md px-2 py-1 rounded transition-colors duration-300 ${false ? 'text-desi-black hover:text-desi-orange' : useDarkText ? 'text-gray-900 hover:text-desi-orange' : 'text-white hover:text-desi-orange'} ${false ? '!text-desi-black !hover:text-desi-orange' : ''}`}
             onClick={(e) => {
               e.preventDefault();
               handleNavClick('/about');
@@ -110,7 +108,7 @@ const Navbar = () => {
         {/* Mobile Menu Button */}
         <div className="md:hidden flex items-center">
           <button 
-            className={`transition-colors duration-300 ${forceDesiBlack ? 'text-desi-black hover:text-desi-orange' : useDarkText ? 'text-gray-900 hover:text-desi-orange' : 'text-white hover:text-desi-orange'} ${forceDesiBlack ? '!text-desi-black !hover:text-desi-orange' : ''}`} 
+            className={`transition-colors duration-300 ${false ? 'text-desi-black hover:text-desi-orange' : useDarkText ? 'text-gray-900 hover:text-desi-orange' : 'text-white hover:text-desi-orange'} ${false ? '!text-desi-black !hover:text-desi-orange' : ''}`} 
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
             aria-label="Toggle menu"
           >

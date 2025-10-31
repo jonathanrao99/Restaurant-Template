@@ -106,7 +106,7 @@ export default function BestsellerCard({
           <h3 className="font-display font-bold text-lg text-desi-black group-hover:text-desi-orange transition-colors">
             {title}
           </h3>
-          <span className="font-display font-bold text-desi-orange">${price}</span>
+          <span className="font-display font-bold text-desi-orange">{price}</span>
         </div>
         <p className="text-gray-600 text-sm mb-3 line-clamp-2">{description}</p>
         <div className="flex items-center justify-between">

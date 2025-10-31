@@ -1,5 +1,5 @@
 'use client';
-import { ImageIcon, Star, ArrowRight, Clock, Utensils, ExternalLink } from 'lucide-react';
+import { ImageIcon, Star, ArrowRight, Clock, Utensils, ExternalLink, ShoppingBag, Leaf, Flame } from 'lucide-react';
 import { MenuItem } from '@/types/menu';
 import { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
@@ -19,6 +19,7 @@ export default function MenuItemCard({ item }: MenuItemCardProps) {
   const [imageError, setImageError] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
   // Improved image fallback logic with URL normalization
   const imageUrl = item.menu_img
     ? item.menu_img.replace(/([^:]\/)\/+/, '$1')
@@ -140,154 +141,213 @@ export default function MenuItemCard({ item }: MenuItemCardProps) {
         </div>
       </motion.div>
 
-      {/* Enhanced Modal */}
+      {/* Modern Professional Modal - Side by Side Layout */}
       {isModalOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
+          className="fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4 backdrop-blur-md"
           onClick={() => setIsModalOpen(false)}
         >
           <motion.div 
-            className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+            className="bg-white rounded-2xl max-w-6xl w-full max-h-[72vh] overflow-hidden shadow-2xl flex flex-col lg:flex-row"
             onClick={(e) => e.stopPropagation()}
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
           >
-            {/* Header with gradient background */}
-            <div className="bg-gradient-to-r from-orange-50 to-red-50 px-8 py-6 rounded-t-3xl">
-              <div className="flex justify-between items-center">
-                <div>
-                  <h2 className="text-3xl font-bold text-gray-900 mb-2">{item.name}</h2>
-                  <div className="flex items-center gap-4">
-                    <span className="text-2xl font-bold text-desi-orange">
-                      ${item.price}
-                    </span>
-                    <div className="flex gap-2">
+            {/* Left Side - Image */}
+            <div className="lg:w-2/5 relative bg-gray-100">
+              <div className="sticky top-0 h-full min-h-[300px] lg:min-h-full">
+                {!imageError ? (
+                  <div className="relative h-full">
+                    <img
+                      src={imageUrl}
+                      alt={item.name}
+                      className="w-full h-full object-cover"
+                      onError={handleImageError}
+                    />
+                    {/* Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-black/20 via-transparent to-black/40"></div>
+                    
+                    {/* Floating Price Badge */}
+                    <div className="absolute top-6 left-6">
+                      <motion.div 
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ delay: 0.2 }}
+                        className="bg-white/95 backdrop-blur-md px-4 py-2 rounded-xl shadow-2xl border border-white/40"
+                      >
+                        <div className="text-xs text-gray-600 font-medium uppercase tracking-wide">Price</div>
+                        <div className="text-2xl font-bold text-desi-orange mt-0.5">${item.price}</div>
+                      </motion.div>
+                    </div>
+
+                    {/* Badges Bottom */}
+                    <div className="absolute bottom-6 left-6 right-6 flex flex-wrap gap-2">
+                      <span className="px-4 py-2 bg-white/90 backdrop-blur-md text-gray-900 text-sm font-semibold rounded-xl shadow-lg border border-white/40">
+                        {item.category}
+                      </span>
                       {item.isvegetarian && (
-                        <span className="px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-full">
+                        <span className="px-4 py-2 bg-green-500/90 backdrop-blur-md text-white text-sm font-semibold rounded-xl shadow-lg border border-white/40 flex items-center gap-1.5">
+                          <Leaf className="w-4 h-4" />
                           Vegetarian
                         </span>
                       )}
                       {item.isspicy && (
-                        <span className="px-3 py-1 bg-red-100 text-red-800 text-sm font-medium rounded-full">
+                        <span className="px-4 py-2 bg-red-500/90 backdrop-blur-md text-white text-sm font-semibold rounded-xl shadow-lg border border-white/40 flex items-center gap-1.5">
+                          <Flame className="w-4 h-4" />
                           Spicy
                         </span>
                       )}
                     </div>
                   </div>
-                </div>
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="text-gray-400 hover:text-gray-600 text-3xl transition-colors"
-                  aria-label="Close modal"
-                >
-                  ×
-                </button>
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <div className="text-center">
+                      <ImageIcon className="w-20 h-20 text-gray-400 mx-auto mb-3" />
+                      <p className="text-gray-500">Image not available</p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
-            <div className="p-8">
-              {/* Item Image */}
-              <div className="mb-8">
-                {imageLoading && (
-                  <div className="w-full h-80 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl animate-pulse flex items-center justify-center">
-                    <ImageIcon className="w-20 h-20 text-gray-400" />
+            {/* Right Side - Content */}
+            <div className="lg:w-3/5 flex flex-col max-h-[72vh]">
+              {/* Header */}
+              <div className="p-3 pb-2 border-b border-gray-100">
+                <div className="flex justify-between items-start mb-1">
+                  <div className="flex-1">
+                    <h2 className="text-2xl lg:text-3xl font-display font-bold text-gray-900 mb-1 leading-tight">
+                      {item.name}
+                    </h2>
+                    <div className="h-1 w-12 bg-gradient-to-r from-desi-orange to-yellow-500 rounded-full mb-1"></div>
                   </div>
-                )}
-                {!imageError ? (
-                  <img
-                    src={imageUrl}
-                    alt={item.name}
-                    className={`w-full h-80 object-cover rounded-2xl shadow-lg ${imageLoading ? 'hidden' : ''}`}
-                    onLoad={handleImageLoad}
-                    onError={handleImageError}
-                  />
-                ) : (
-                  <div className="w-full h-80 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center">
-                    <ImageIcon className="w-20 h-20 text-gray-400" />
-                  </div>
-                )}
-              </div>
-
-              {/* Description */}
-              <div className="mb-8">
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">Description</h3>
-                <p className="text-gray-600 leading-relaxed text-lg">{item.description}</p>
-              </div>
-
-              {/* Delivery Partners Section */}
-              <div className="bg-gradient-to-r from-orange-50 to-red-50 rounded-2xl p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">
-                  Order from our delivery partners
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <a
-                    href="https://order.online/business/desi-flavors-katy-14145277"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
+                  
+                  {/* Close Button */}
+                  <button
+                    onClick={() => setIsModalOpen(false)}
+                    className="flex-shrink-0 ml-4 w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-900 transition-all"
+                    aria-label="Close modal"
                   >
-                    <div className="flex items-center justify-center mb-3">
-                      <img
-                        src="/Doordash.webp"
-                        alt="DoorDash"
-                        className="h-8 w-auto object-contain"
-                      />
-                    </div>
-                    <p className="text-center text-sm text-gray-600 group-hover:text-desi-orange transition-colors">
-                      Order on DoorDash
-                    </p>
-                    <ExternalLink className="w-4 h-4 mx-auto mt-2 text-gray-400 group-hover:text-desi-orange transition-colors" />
-                  </a>
-
-                  <a
-                    href="http://menus.fyi/10883320"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
-                  >
-                    <div className="flex items-center justify-center mb-3">
-                      <img
-                        src="/Grubhub.webp"
-                        alt="Grubhub"
-                        className="h-8 w-auto object-contain"
-                      />
-                    </div>
-                    <p className="text-center text-sm text-gray-600 group-hover:text-desi-orange transition-colors">
-                      Order on Grubhub
-                    </p>
-                    <ExternalLink className="w-4 h-4 mx-auto mt-2 text-gray-400 group-hover:text-desi-orange transition-colors" />
-                  </a>
-
-                  <a
-                    href="https://www.order.store/store/desi-flavors-katy-1989-fry-road/drrAdlMVTTin4O0Bdvzo2g"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
-                  >
-                    <div className="flex items-center justify-center mb-3">
-                      <img
-                        src="/ubereats.png"
-                        alt="Uber Eats"
-                        className="h-8 w-auto object-contain"
-                      />
-                    </div>
-                    <p className="text-center text-sm text-gray-600 group-hover:text-desi-orange transition-colors">
-                      Order on Uber Eats
-                    </p>
-                    <ExternalLink className="w-4 h-4 mx-auto mt-2 text-gray-400 group-hover:text-desi-orange transition-colors" />
-                  </a>
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
                 </div>
               </div>
 
-              {/* Close Button */}
-              <div className="mt-6 text-center">
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-8 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors font-medium"
-                >
-                  Close
-                </button>
+              {/* Description Section */}
+              <div className="p-3 pb-2 flex-1">
+                <div className="mb-3">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <div className="w-7 h-7 bg-desi-orange/10 rounded-lg flex items-center justify-center">
+                      <Utensils className="w-3.5 h-3.5 text-desi-orange" />
+                    </div>
+                    <h3 className="text-base font-bold text-gray-900">About This Dish</h3>
+                  </div>
+                  <p className="text-gray-700 leading-relaxed text-sm">
+                    {item.description}
+                  </p>
+                </div>
+
+                {/* Order Now - Primary CTA */}
+                <div className="mb-3">
+                  <div className="bg-gradient-to-br from-desi-orange via-orange-500 to-orange-600 rounded-lg p-3 text-center relative overflow-hidden group">
+                    {/* Animated Background Pattern */}
+                    <div className="absolute inset-0 opacity-10">
+                      <div className="absolute inset-0" style={{
+                        backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
+                        backgroundSize: '40px 40px'
+                      }}></div>
+                    </div>
+                    
+                    <div className="relative z-10">
+                      <h3 className="text-base font-bold text-white mb-1">Ready to Order?</h3>
+                      <p className="text-white/95 mb-2 text-xs">Place your order now through our secure Square ordering system</p>
+                      
+                      <a
+                        href="https://desiflavorskaty.square.site/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="inline-flex items-center gap-2 bg-white text-desi-orange px-4 py-2 rounded-lg font-bold text-sm shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300"
+                      >
+                        Order on Square
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Delivery Partners */}
+                <div>
+                  <h3 className="text-xs font-semibold text-gray-900 mb-1.5 text-center">Also Available on Delivery Apps</h3>
+                  <div className="grid grid-cols-3 gap-1.5">
+                    <a
+                      href="https://order.online/business/desi-flavors-katy-14145277"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="group bg-gray-50 hover:bg-white rounded-lg p-1.5 transition-all duration-300 hover:shadow-md border border-gray-100 hover:border-desi-orange/30"
+                    >
+                      <div className="flex flex-col items-center gap-0.5">
+                        <div className="h-6 flex items-center justify-center">
+                          <img
+                            src="/Doordash.webp"
+                            alt="DoorDash"
+                            className="h-5 w-auto object-contain group-hover:scale-110 transition-transform"
+                          />
+                        </div>
+                        <p className="text-[10px] text-gray-600 group-hover:text-desi-orange transition-colors font-medium">DoorDash</p>
+                      </div>
+                    </a>
+
+                    <a
+                      href="http://menus.fyi/10883320"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="group bg-gray-50 hover:bg-white rounded-lg p-1.5 transition-all duration-300 hover:shadow-md border border-gray-100 hover:border-desi-orange/30"
+                    >
+                      <div className="flex flex-col items-center gap-0.5">
+                        <div className="h-6 flex items-center justify-center">
+                          <img
+                            src="/Grubhub.webp"
+                            alt="Grubhub"
+                            className="h-5 w-auto object-contain group-hover:scale-110 transition-transform"
+                          />
+                        </div>
+                        <p className="text-[10px] text-gray-600 group-hover:text-desi-orange transition-colors font-medium">Grubhub</p>
+                      </div>
+                    </a>
+
+                    <a
+                      href="https://www.order.store/store/desi-flavors-katy-1989-fry-road/drrAdlMVTTin4O0Bdvzo2g"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="group bg-gray-50 hover:bg-white rounded-lg p-1.5 transition-all duration-300 hover:shadow-md border border-gray-100 hover:border-desi-orange/30"
+                    >
+                      <div className="flex flex-col items-center gap-0.5">
+                        <div className="h-6 flex items-center justify-center">
+                          <img
+                            src="/ubereats.png"
+                            alt="Uber Eats"
+                            className="h-5 w-auto object-contain group-hover:scale-110 transition-transform"
+                          />
+                        </div>
+                        <p className="text-[10px] text-gray-600 group-hover:text-desi-orange transition-colors font-medium">Uber Eats</p>
+                      </div>
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="p-2 bg-gray-50 border-t border-gray-100 text-center">
+                <p className="text-[10px] text-gray-500">
+                  Prices may vary. Contact us for dietary restrictions or special requests.
+                </p>
               </div>
             </div>
           </motion.div>

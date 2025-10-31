@@ -41,41 +41,14 @@ const Footer = () => {
 
     setIsSubscribing(true);
 
-    try {
-      const response = await fetch(
-        `https://tpncxlxsggpsiswoownv.supabase.co/functions/v1/add-newsletter-subscriber?t=${Date.now()}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`
-          },
-          body: JSON.stringify({
-            email: email.trim(),
-            name: email.split('@')[0] // Use email prefix as name
-          })
-        }
-      );
-
-      const result = await response.json();
-
-      if (response.ok && result.success) {
-        alert('Successfully subscribed to our newsletter!');
-        setEmail(''); // Clear the input
-      } else {
-        console.error('Newsletter subscription failed:', result);
-        if (result.error?.includes('already subscribed')) {
-          alert('You are already subscribed to our newsletter!');
-        } else {
-          alert('Failed to subscribe. Please try again.');
-        }
-      }
-    } catch (error) {
-      console.error('Newsletter subscription error:', error);
-      alert('Failed to subscribe. Please try again.');
-    } finally {
-      setIsSubscribing(false);
-    }
+    // Open email client with newsletter subscription request
+    const subject = encodeURIComponent('Newsletter Subscription Request');
+    const body = encodeURIComponent(`Please subscribe this email to your newsletter: ${email.trim()}`);
+    window.location.href = `mailto:desiflavorskaty@gmail.com?subject=${subject}&body=${body}`;
+    
+    setEmail(''); // Clear the input
+    setIsSubscribing(false);
+    alert('Opening your email client. Please send the email to complete your subscription!');
   };
 
   return <footer className="bg-desi-black text-white pt-12 pb-2">
@@ -223,7 +196,7 @@ const Footer = () => {
           </Link>
         </div>
         <div className="border-t border-gray-800 mt-1 pt-2 pb-4 flex flex-col md:flex-row justify-between items-center text-gray-400 text-sm">
-          <p className="mb-1 md:mb-0">Designed by <a href="https://sol3studio.framer.website" target="_blank" rel="noopener noreferrer" className="text-desi-orange hover:text-white transition-colors">Sol3 Studio</a></p>
+          <p className="mb-1 md:mb-0">Designed by <a href="https://sol3studio.com" target="_blank" rel="noopener noreferrer" className="text-desi-orange hover:text-white transition-colors">Sol3 Studio</a></p>
           <p>© {currentYear} Desi Flavors Katy. All rights reserved.</p>
         </div>
       </div>
