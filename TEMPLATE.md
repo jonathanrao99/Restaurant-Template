@@ -10,7 +10,7 @@ On GitHub: **Use this template** → name your new repository → clone it local
 
 1. Copy `.env.example` to `.env.local`.
 2. Fill in every `NEXT_PUBLIC_*` variable. They control branding, contact info, social links, SEO text, and structured data (JSON-LD).  
-3. Set `NEXT_PUBLIC_SITE_URL` to your real URL (e.g. `https://your-project.vercel.app` or your custom domain) **before** you care about correct Open Graph and sitemap URLs.
+3. Set `NEXT_PUBLIC_SITE_URL` to your real URL (e.g. `https://restaurant-template-dfk.vercel.app` for this template’s demo, or your own Vercel URL / custom domain) **before** you care about correct Open Graph and sitemap URLs.
 4. Add the same variables in **Vercel → Project → Settings → Environment Variables** for Production (and Preview if you use it).
 
 Rebuild after changing `NEXT_PUBLIC_*` values (they are inlined at build time).
@@ -22,7 +22,7 @@ Rebuild after changing `NEXT_PUBLIC_*` values (they are inlined at build time).
 | `src/data/menuData.ts` | Menu items, prices, images |
 | `src/app/about/page.tsx` | Story, team copy, long-form text |
 | `public/` assets | `favicon.ico`, logos, `Truck/`, `Food/`, `Menu_Images/` as needed |
-| `public/llms.txt` | Facts for AI crawlers — align with your real address and links |
+| `public/llms.txt` | Facts for AI crawlers - align with your real address and links |
 | `public/manifest.json` | PWA `name` / `short_name` |
 | `tailwind.config.ts` | Colors under `your.*` if you rebrand |
 
@@ -44,4 +44,4 @@ The template is under the [MIT License](LICENSE). When you ship a fork, you may 
 
 ---
 
-**Tip:** Search the codebase for `Your ` and `example.com` only if you left generic defaults in `src/config/site.ts` — the template is yourgned to be driven by `.env.local` instead.
+**Tip:** Search the codebase for `Your ` and `example.com` only if you left generic defaults in `src/config/site.ts` - the template is designed to be driven by `.env.local` instead.

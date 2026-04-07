@@ -1,4 +1,4 @@
-// Static menu data — replace with your menu (see TEMPLATE.md)
+// Static menu data - replace with your menu (see TEMPLATE.md)
 export interface MenuItem {
   id: number;
   name: string;

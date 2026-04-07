@@ -87,8 +87,8 @@ const HeroSection = () => {
             transition={{ delay: 0.3 }}
             className="flex flex-wrap items-center justify-center gap-4 mb-8 md:mb-10"
           >
-            <MagneticButton className="bg-white/10 backdrop-blur-sm text-green-500 px-5 py-2.5 rounded-full text-sm font-medium border border-white/10 flex items-center gap-2 hover:bg-white/20 transition-colors">
-              <Check size={16} />
+            <MagneticButton className="!bg-emerald-800/95 !text-white px-5 py-2.5 rounded-full text-sm font-medium !border !border-emerald-500/40 flex items-center gap-2 hover:!bg-emerald-700 backdrop-blur-sm shadow-emerald-900/30">
+              <Check size={16} className="text-emerald-200" />
               100% Halal
             </MagneticButton>
           </motion.div>
@@ -104,7 +104,7 @@ const HeroSection = () => {
           >
             <Link href="/menu">
               <MagneticButton
-                className="w-full sm:w-auto flex items-center justify-center gap-2 !bg-your-orange !text-white"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 !bg-your-orange !text-white hover:!bg-your-orange/90"
                 onClick={() => router.push('/menu')}
               >
                 <span>Order Online</span>
@@ -113,7 +113,7 @@ const HeroSection = () => {
             </Link>
             <Link href="/menu">
               <MagneticButton
-                className="w-full sm:w-auto bg-white/10 backdrop-blur-sm hover:bg-white/20 border border-white/10"
+                className="w-full sm:w-auto flex items-center justify-center !bg-white/10 !text-white backdrop-blur-md hover:!bg-white/20 !border-2 !border-white/70 hover:!border-white"
                 onClick={() => router.push('/menu')}
               >
                 View Menu

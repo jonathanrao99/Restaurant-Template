@@ -46,7 +46,7 @@ export const metadata: Metadata = {
         url: `${SITE_URL}/Truck/truck-4.jpg`,
         width: 1200,
         height: 630,
-        alt: `${siteConfig.businessName} — food`,
+        alt: `${siteConfig.businessName} - food`,
       },
       {
         url: `${SITE_URL}/Food/foodtable.webp`,

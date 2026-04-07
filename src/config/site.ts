@@ -29,7 +29,7 @@ export const siteConfig = {
   ).split(',').map((s) => s.trim()).filter(Boolean),
   phoneE164: env('NEXT_PUBLIC_PHONE_E164', '+15555550100'),
   phoneDisplay: env('NEXT_PUBLIC_PHONE_DISPLAY', '+1 (555) 555-0100'),
-  /** Digits only, no + — for wa.me links */
+  /** Digits only, no + - for wa.me links */
   whatsappDigits: env('NEXT_PUBLIC_WHATSAPP_DIGITS', '15555550100'),
   emailContact: env('NEXT_PUBLIC_EMAIL_CONTACT', 'hello@example.com'),
   orderUrl: env('NEXT_PUBLIC_ORDER_URL', 'https://example.com/order'),

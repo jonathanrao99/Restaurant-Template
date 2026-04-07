@@ -160,7 +160,7 @@ const Catering = () => {
               transition={{ duration: 0.7, delay: 0.8 }}
               className="text-lg md:text-xl lg:text-2xl text-white font-merriweather leading-relaxed max-w-10xl mx-auto mb-4"
             >
-              Flavors that bring people together — crafted for unforgettable gatherings.
+              Flavors that bring people together - crafted for unforgettable gatherings.
             </motion.p>
 
           </div>
@@ -187,10 +187,10 @@ const Catering = () => {
               </h3>
 
               <p className="text-lg md:text-xl text-your-black mb-4 font-medium">
-              Bring the vibrant taste of India to your next event with <span className="font-samarkan font-bold text-2xl text-your-orange">your</span> <span className="font-semibold text-your-black">brand</span>. Our handcrafted dishes and heartfelt hospitality make every celebration unforgettable — whether it’s an intimate gathering or a grand occasion.
+              Bring the vibrant taste of India to your next event with <span className="font-samarkan font-bold text-2xl text-your-orange">your</span> <span className="font-semibold text-your-black">brand</span>. Our handcrafted dishes and heartfelt hospitality make every celebration unforgettable - whether it’s an intimate gathering or a grand occasion.
               </p>
               <p className="text-lg md:text-xl text-your-black mb-4 font-medium">
-              We don’t just cater meals — we deliver an experience.
+              We don’t just cater meals - we deliver an experience.
               </p>
 
               <motion.ul
@@ -206,7 +206,7 @@ const Catering = () => {
                   🍽️ Homemade dishes cooked with bold spices and traditional flavors.
                 </motion.li>
                 <motion.li variants={listItem}>
-                  🚚 On-site food truck catering — fully equipped to serve hot, fresh meals at your party.
+                  🚚 On-site food truck catering - fully equipped to serve hot, fresh meals at your party.
                 </motion.li>
                 <motion.li variants={listItem}>
                   👨‍🍳 Professional & Friendly Team that ensures smooth service, from setup to the last bite.
@@ -256,7 +256,7 @@ const Catering = () => {
             <br />
           </p>
           <p className="text-gray-600 text-lg font-medium max-w-7xl mx-auto mb-4">
-            We've got you covered. You can still enjoy our delicious, handcrafted dishes through our convenient tray ordering service<br /> — perfect for home parties, office lunches, and small gatherings.
+            We've got you covered. You can still enjoy our delicious, handcrafted dishes through our convenient tray ordering service<br /> - perfect for home parties, office lunches, and small gatherings.
           </p>  
 
           <p className="text-gray-600 text-lg font-medium max-w-3xl mx-auto">

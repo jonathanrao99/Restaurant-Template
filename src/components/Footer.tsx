@@ -197,7 +197,7 @@ const Footer = () => {
           </Link>
         </div>
         <div className="border-t border-gray-800 mt-1 pt-2 pb-4 flex flex-col md:flex-row justify-between items-center text-gray-400 text-sm">
-          <p className="mb-1 md:mb-0">yourgned by <a href="https://sol3studio.com" target="_blank" rel="noopener noreferrer" className="text-your-orange hover:text-white transition-colors">Sol3 Studio</a></p>
+          <p className="mb-1 md:mb-0">designed by <a href="https://sol3studio.com" target="_blank" rel="noopener noreferrer" className="text-your-orange hover:text-white transition-colors">Sol3 Studio</a></p>
           <p>© {currentYear} {siteConfig.businessName}. All rights reserved.</p>
         </div>
       </div>

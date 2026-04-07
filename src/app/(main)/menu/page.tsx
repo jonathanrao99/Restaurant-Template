@@ -19,7 +19,7 @@ export const metadata: Metadata = {
         url: `${SITE_URL}/Food/foodtable.webp`,
         width: 1200,
         height: 630,
-        alt: `Menu — ${siteConfig.businessName}`,
+        alt: `Menu - ${siteConfig.businessName}`,
       },
     ],
   },

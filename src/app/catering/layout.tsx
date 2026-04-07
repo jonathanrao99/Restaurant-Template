@@ -13,13 +13,13 @@ export const metadata: Metadata = {
   ].filter(Boolean),
   openGraph: {
     title: `Catering | ${siteConfig.businessName}`,
-    description: `Catering services — ${siteConfig.description}`,
+    description: `Catering services - ${siteConfig.description}`,
     images: [
       {
         url: `${SITE_URL}/Truck/IMG-20250603-WA0005.jpg`,
         width: 1200,
         height: 630,
-        alt: `Catering — ${siteConfig.businessName}`,
+        alt: `Catering - ${siteConfig.businessName}`,
       },
     ],
   },

@@ -5,7 +5,6 @@ import { useRef, useState, useEffect } from 'react';
 import BestsellerCard from '@/components/BestsellerCard';
 import { SpinningText } from '@/components/magicui/spinning-text';
 import { fadeInUp } from '@/utils/motion.variants';
-import MagneticButton from '@/components/MagneticButton';
 import AnimatedCardGrid, { AnimatedCard } from '@/components/AnimatedCardGrid';
 
 const BestsellersSection = () => {
@@ -185,11 +184,12 @@ const BestsellersSection = () => {
             transition={{ delay: 0.6 }}
             className="mt-10 md:mt-12 text-center"
           >
-            <Link href="/menu">
-              <MagneticButton className="inline-flex items-center text-your-orange hover:text-white/80 font-medium transition-colors group transition-transform duration-300 hover:scale-105">
-                <span className="border-b border-your-orange/30 group-hover:border-your-orange/80 transition-colors pb-1">View Full Menu</span>
-                <ChevronRight size={16} className="ml-1 group-hover:translate-x-1 transition-transform duration-300" />
-              </MagneticButton>
+            <Link
+              href="/menu"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-your-orange hover:bg-your-orange/90 text-white rounded-full font-medium transition-all shadow-sm hover:shadow-md transform hover:-translate-y-0.5 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-your-orange"
+            >
+              View Full Menu
+              <ChevronRight size={18} className="shrink-0 text-white" aria-hidden />
             </Link>
           </motion.div>
         </div>
