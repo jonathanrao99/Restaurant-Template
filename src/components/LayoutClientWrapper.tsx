@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
+import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
 import Analytics from '@/components/Analytics';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -17,6 +18,7 @@ export default function LayoutClientWrapper({ children }: { children: React.Reac
   }, []);
   return (
     <>
+      <VercelAnalytics />
       <Analytics />
       <Navbar />
       <PageTransitionWrapper>
