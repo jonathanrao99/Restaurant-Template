@@ -8,7 +8,7 @@
 
 Brand, contact, social, SEO, and JSON-LD are driven by **`NEXT_PUBLIC_*` environment variables** (see `.env.example`). After creating a new repo from the template, copy `.env.example` → `.env.local`, fill in your values, and mirror them in Vercel.
 
-This codebase was originally built for **your brand** (Indian street food in Katy, Texas). Fork it, change the env and content, and make it yours.
+This codebase was originally built for **Desi Flavors Katyw** (Indian street food in Katy, Texas). Fork it, change the env and content, and make it yours.
 
 If you are a developer: hi, thanks for reading. If you are here because someone dropped a GitHub link in your lap with zero explanation: also hi. The food is real, the truck is real, and the menu has opinions.
 
